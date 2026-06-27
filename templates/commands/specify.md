@@ -18,6 +18,26 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Enterprise Governance Context
+
+Before generating or updating the specification, check for enterprise governance context in the project root and consider it in this precedence order:
+
+1. **Enterprise Constitution**: `enterprise/constitution.md`
+2. **Enterprise Principles**: `enterprise/principles/*.md`
+3. **Salesforce Standards**: `enterprise/salesforce/*.md`
+4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+5. **Feature Specification**: the current feature request and resulting `spec.md`
+
+If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory inputs for the specification:
+
+- Enterprise standards are mandatory and define cross-product architecture, security, compliance, scalability, and governance expectations.
+- Product standards are mandatory for features in that product domain.
+- Delivery teams should not redefine enterprise architecture in a feature specification.
+- Product teams own business-domain standards, product vocabulary, domain boundaries, and product-specific integration expectations.
+- Delivery teams own feature requirements, user scenarios, acceptance criteria, assumptions, and measurable outcomes.
+
+Use the governance context to shape requirements and assumptions, but keep the specification focused on **WHAT** users need and **WHY**. Do not add implementation details solely because a standard mentions a technology or platform.
+
 ## Pre-Execution Checks
 
 **Check for extension hooks (before specification)**:

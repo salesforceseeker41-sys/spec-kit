@@ -22,6 +22,26 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Enterprise Governance Context
+
+Before generating `tasks.md`, check for enterprise governance context in the project root and consider it in this precedence order:
+
+1. **Enterprise Constitution**: `enterprise/constitution.md`
+2. **Enterprise Principles**: `enterprise/principles/*.md`
+3. **Salesforce Standards**: `enterprise/salesforce/*.md`
+4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+5. **Feature Specification**: the active `spec.md` and design artifacts
+
+If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory task-generation inputs:
+
+- Enterprise standards are mandatory and must be reflected in concrete delivery tasks when they apply.
+- Product standards are mandatory for features in that product domain.
+- Delivery teams should not redefine enterprise architecture in `tasks.md`; they should create implementation, validation, and evidence tasks that comply with it.
+- Product teams own business-domain standards, product vocabulary, domain boundaries, and product-specific integration expectations.
+- Delivery teams own feature requirements, task breakdown, implementation sequencing, and completion evidence.
+
+Use the governance context to add actionable tasks for security, compliance, architecture, Salesforce, scalability, testing, deployment, observability, and exception evidence when applicable. Do not create vague governance tasks; each task must still follow the required task checklist format with a clear file path or artifact path.
+
 ## Pre-Execution Checks
 
 **Check for extension hooks (before tasks generation)**:
@@ -65,6 +85,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - **IF EXISTS**: Load `/memory/constitution.md` for project principles and governance constraints
+   - **IF EXISTS**: Load enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and applicable `products/<product-id>/*.md`
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:

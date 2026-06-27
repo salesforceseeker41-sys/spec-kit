@@ -1,0 +1,91 @@
+schema_version: "1.0"
+
+enterprise:
+  name: "Enterprise Governance"
+  purpose: "Starter governance knowledge base for Spec-Driven Development."
+  owner: "Enterprise Architecture"
+  status: "phase-1-documentation"
+
+principles:
+  constitution: "enterprise/constitution.md"
+  domains:
+    security:
+      owner: "Security Architecture"
+      path: "enterprise/principles/security.md"
+      applies_to:
+        - "specification"
+        - "planning"
+        - "tasks"
+    governance:
+      owner: "Enterprise Governance Board"
+      path: "enterprise/principles/governance.md"
+      applies_to:
+        - "specification"
+        - "planning"
+    scalability:
+      owner: "Platform Architecture"
+      path: "enterprise/principles/scalability.md"
+      applies_to:
+        - "planning"
+        - "tasks"
+    compliance:
+      owner: "Compliance and Risk"
+      path: "enterprise/principles/compliance.md"
+      applies_to:
+        - "specification"
+        - "planning"
+        - "tasks"
+    architecture:
+      owner: "Enterprise Architecture"
+      path: "enterprise/principles/architecture.md"
+      applies_to:
+        - "planning"
+        - "tasks"
+
+salesforce:
+  owner: "Salesforce Center of Excellence"
+  standards:
+    apex: "enterprise/salesforce/apex.md"
+    lwc: "enterprise/salesforce/lwc.md"
+    flow: "enterprise/salesforce/flow.md"
+    testing: "enterprise/salesforce/testing.md"
+    deployment: "enterprise/salesforce/deployment.md"
+
+products:
+  rdra:
+    owner: "RDRA Product Owner"
+    architecture_owner: "RDRA Architecture Owner"
+    documentation:
+      principles: "products/rdra/principles.md"
+      integrations: "products/rdra/integrations.md"
+      domain_model: "products/rdra/domain-model.md"
+      events: "products/rdra/events.md"
+
+future_extension:
+  recommended_hooks:
+    after_specify:
+      purpose: "Validate enterprise ownership, security, compliance, and product context after specification."
+      mode: "advisory"
+    after_plan:
+      purpose: "Validate architecture, Salesforce, scalability, and integration decisions after planning."
+      mode: "advisory"
+    after_tasks:
+      purpose: "Validate that governance findings are represented as actionable implementation tasks."
+      mode: "advisory"
+    before_implement:
+      purpose: "Optionally prevent implementation when critical governance evidence is missing."
+      mode: "future-blocking"
+
+customization_policy:
+  safe_to_customize:
+    - "enterprise/**"
+    - "products/**"
+    - "enterprise.yaml"
+    - "docs/enterprise-governance.md"
+    - "templates/commands/specify.md"
+    - "templates/commands/plan.md"
+    - "templates/commands/tasks.md"
+  do_not_modify_for_phase_1:
+    - "src/specify_cli/**"
+    - "scripts/**"
+    - "extensions/**"

@@ -26,6 +26,7 @@
 - [🤖 Supported AI Coding Agent Integrations](#-supported-ai-coding-agent-integrations)
 - [🔧 Specify CLI Reference](#-specify-cli-reference)
 - [🧩 Making Spec Kit Your Own: Extensions & Presets](#-making-spec-kit-your-own-extensions--presets)
+- [Enterprise Governance](#enterprise-governance)
 - [📦 Bundles: Role-Based Setups](#-bundles-role-based-setups)
 - [📚 Core Philosophy](#-core-philosophy)
 - [🌟 Development Phases](#-development-phases)
@@ -229,6 +230,48 @@ specify preset add <preset-name>
 For example, presets could restructure spec templates to require regulatory traceability, adapt the workflow to fit the methodology you use (e.g., Agile, Kanban, Waterfall, jobs-to-be-done, or domain-driven design), add mandatory security review gates to plans, enforce test-first task ordering, or localize the entire workflow to a different language. The [pirate-speak demo](https://github.com/mnriem/spec-kit-pirate-speak-preset-demo) shows just how deep the customization can go. Multiple presets can be stacked with priority ordering.
 
 See the [Presets reference](https://github.github.io/spec-kit/reference/presets.html) for the full command guide, including resolution order and priority stacking.
+
+## Enterprise Governance
+
+Enterprise Governance adds an organization-owned context layer for teams that need Spec Kit to respect enterprise architecture, product standards, Salesforce standards, security, compliance, scalability, and delivery evidence.
+
+The ownership model is:
+
+```text
+Platform Team
+  |
+  v
+Product Teams
+  |
+  v
+Delivery Teams
+```
+
+- **Platform Team** owns enterprise-wide standards in `enterprise/`, including the enterprise constitution, shared principles, Salesforce standards, and `enterprise.yaml`.
+- **Product Teams** own product-domain standards in `products/<product-id>/`, including product principles, integrations, domain model, and events.
+- **Delivery Teams** own feature requirements and delivery evidence in generated feature artifacts such as `spec.md`, `plan.md`, and `tasks.md`.
+
+The `/speckit.specify`, `/speckit.plan`, and `/speckit.tasks` prompt templates instruct agents to consider governance context, when present, in this order:
+
+```text
+Enterprise Constitution
+  |
+  v
+Enterprise Principles
+  |
+  v
+Salesforce Standards
+  |
+  v
+Product Standards
+  |
+  v
+Feature Specification
+```
+
+Enterprise and product standards are mandatory inputs. Delivery teams apply those standards to feature work; they should not redefine enterprise architecture in a feature spec or plan.
+
+See the full [Enterprise Governance guide](./docs/enterprise-governance.md) for folder ownership, diagrams, lifecycle guidance, an RDRA feature example, and the roadmap for automatic context loading, validation, a rule engine, and knowledge packs.
 
 ## 📦 Bundles: Role-Based Setups
 

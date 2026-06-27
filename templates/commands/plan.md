@@ -21,6 +21,26 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Enterprise Governance Context
+
+Before generating or updating the implementation plan, check for enterprise governance context in the project root and consider it in this precedence order:
+
+1. **Enterprise Constitution**: `enterprise/constitution.md`
+2. **Enterprise Principles**: `enterprise/principles/*.md`
+3. **Salesforce Standards**: `enterprise/salesforce/*.md`
+4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+5. **Feature Specification**: the active `spec.md`
+
+If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory planning inputs:
+
+- Enterprise standards are mandatory and define the architecture, security, compliance, scalability, and governance guardrails the plan must respect.
+- Product standards are mandatory for features in that product domain.
+- Delivery teams should not redefine enterprise architecture in the implementation plan; they should apply it to the feature context.
+- Product teams own business-domain standards, product vocabulary, domain boundaries, and product-specific integration expectations.
+- Delivery teams own feature requirements, technical execution choices within approved guardrails, implementation tasks, and delivery evidence.
+
+Use the governance context to inform Technical Context, Constitution Check, research decisions, design artifacts, and risk/exception notes. Document any conflict or required exception explicitly instead of silently overriding enterprise or product standards.
+
 ## Pre-Execution Checks
 
 **Check for extension hooks (before planning)**:
@@ -60,7 +80,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. Load IMPL_PLAN template (already copied).
+2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. If present, also read enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and applicable `products/<product-id>/*.md`. Load IMPL_PLAN template (already copied).
 
 3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
