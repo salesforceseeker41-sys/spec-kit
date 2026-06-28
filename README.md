@@ -358,6 +358,7 @@ The Enterprise Spec Framework documentation is organized by audience:
 | Product Teams | [docs/rule-catalog.md](./docs/rule-catalog.md) | Rule schema, ownership, future product rule packs, and rule lifecycle. |
 | Delivery Teams | [docs/context-loader.md](./docs/context-loader.md) | How enterprise and product context is discovered and ordered. |
 | Delivery Teams | [docs/governance-validation.md](./docs/governance-validation.md) | Advisory validation behavior, report formats, limitations, and report writing. |
+| Delivery Teams | [docs/practice-compliance.md](./docs/practice-compliance.md) | Opt-in Salesforce Practice Compliance matcher, evidence model, confidence, and privacy posture. |
 | Contributors | [CONTRIBUTING.md](./CONTRIBUTING.md) | Branching, review process, coding standards, documentation standards, and ESF contribution guidance. |
 | Contributors | [CHANGELOG.md](./CHANGELOG.md) | ESF sprint history and upstream Spec Kit release notes. |
 | Contributors | [RELEASE_NOTES_v1.0.md](./RELEASE_NOTES_v1.0.md) | Version 1.0 release notes, migration guidance, known limitations, and future roadmap. |
@@ -375,6 +376,9 @@ docs/context-loader.md
   |
   v
 docs/governance-validation.md
+  |
+  v
+docs/practice-compliance.md
   |
   v
 docs/rule-catalog.md

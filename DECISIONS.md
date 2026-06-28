@@ -170,3 +170,34 @@ Tradeoffs:
 
 - Some integrations require additional wrapper scripts instead of deep command changes.
 - Governance automation must respect existing Spec Kit behavior.
+
+## ADR-006: Salesforce Practice Compliance Is Opt-In and Local
+
+Status: Accepted
+
+Date: v1.1
+
+### Context
+
+Keyword matching provides useful early advisory feedback, but it cannot reliably distinguish evidence of Salesforce practice compliance from simple term presence. The Platform Team needs deterministic evidence checks for Apex bulkification, Salesforce security, integration reliability, testing, Flow, and LWC practices.
+
+### Decision
+
+ESF v1.1 introduces `PracticeComplianceMatcher` behind the existing `RuleMatcher` abstraction. It is opt-in and local-only. `KeywordMatcher` remains the default. Practice evidence is represented with additive rule fields: `practice`, `required_evidence`, `negative_evidence`, and `evidence_terms`.
+
+### Rationale
+
+This improves Salesforce-specific advisory review without changing existing behavior, introducing LLM risk, or coupling the Governance Engine to matcher selection.
+
+### Consequences
+
+Positive:
+
+- Better Salesforce practice signal than keyword matching alone.
+- Deterministic and testable.
+- Compatible with future CI/CD and multi-agent integrations.
+
+Tradeoffs:
+
+- Rule authors must maintain evidence terms carefully.
+- Confidence remains advisory and can be misunderstood if reports are read as formal approval.

@@ -283,6 +283,35 @@ Compatibility policy:
 - Script internals, module-level constants, private helper functions, and test fixtures are not stable APIs.
 - Blocking policy, CI behavior, semantic matching, and product rule precedence are future capabilities and are not part of the v1.0 stable API.
 
+## Salesforce Practice Compliance
+
+ESF v1.1 adds an opt-in `PracticeComplianceMatcher` behind the existing `RuleMatcher` abstraction.
+
+```text
+Validator / CLI
+  |
+  v
+MatcherResolver
+  |
+  v
+GovernanceEngine(matcher=selected_matcher)
+  |
+  v
+RuleMatcher
+  |
+  +--> KeywordMatcher
+  +--> PracticeComplianceMatcher
+```
+
+Design constraints:
+
+- `KeywordMatcher` remains the default.
+- Practice matching is local-only and deterministic.
+- Governance Engine does not select or construct matchers.
+- Rule practice fields are additive.
+- Reports remain advisory and include matcher metadata.
+- No LLMs, external APIs, telemetry, blocking validation, or CI behavior are introduced in v1.1.
+
 ## Error Handling and Logging
 
 ESF uses a lightweight exception hierarchy for runtime boundaries:

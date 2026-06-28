@@ -67,6 +67,8 @@ Current artifact targets:
 
 The current matcher is `KeywordMatcher`, which checks whether at least one configured rule keyword appears in the artifact content. This is intentionally simple and will be replaced or supplemented by richer matchers in later sprints.
 
+ESF v1.1 adds an opt-in `PracticeComplianceMatcher` for deterministic Salesforce practice evidence. `KeywordMatcher` remains the default.
+
 ## What Is Not Checked
 
 Sprint 4B does not implement:
@@ -135,6 +137,14 @@ JSON output for future automation:
 python scripts/validate-governance.py --feature specs/001-provider-program --artifact all --format json
 ```
 
+Opt in to Salesforce Practice Compliance:
+
+```bash
+python scripts/validate-governance.py --feature specs/001-provider-program --artifact plan --matcher practice
+```
+
+If `--matcher` is omitted, the validator uses `enterprise.yaml` when configured and otherwise falls back to `keyword`.
+
 ## Report File
 
 Use `--write-report` to write a markdown report to:
@@ -153,7 +163,8 @@ If the report already exists, the script overwrites it and clearly states that i
 
 ## Limitations
 
-- Findings are based on rule keyword coverage, not semantic rule evaluation.
+- Default findings are based on rule keyword coverage, not semantic rule evaluation.
+- Practice Compliance findings are deterministic evidence checks and remain advisory.
 - A mentioned keyword may satisfy a rule even if the design is incomplete.
 - A missing keyword may produce a finding even when the artifact addresses the rule indirectly.
 - Plan and task documents are added to the execution context by the validator; the Context Loader still loads feature specifications directly.

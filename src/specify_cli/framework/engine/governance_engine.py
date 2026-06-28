@@ -103,6 +103,13 @@ class GovernanceEngine:
                         source_path=rule.path,
                         matched_keywords=result.matched_keywords,
                         missing_keywords=result.missing_keywords,
+                        matcher=result.matcher,
+                        matcher_version=result.matcher_version,
+                        confidence=result.confidence,
+                        matched_evidence=result.matched_evidence,
+                        missing_evidence=result.missing_evidence,
+                        negative_evidence_found=result.negative_evidence_found,
+                        explanation=result.explanation,
                     )
                 )
 
@@ -123,6 +130,8 @@ class GovernanceEngine:
             warnings=warnings,
             errors=errors,
             statistics=statistics,
+            matcher=_matcher_name(self.matcher),
+            matcher_version=_matcher_version(self.matcher),
         )
         return ExecutionResult(report=report)
 
@@ -160,3 +169,11 @@ def _severity(value: str) -> Severity:
     if normalized in {"info", "advisory", "warning"}:
         return normalized  # type: ignore[return-value]
     return "advisory"
+
+
+def _matcher_name(matcher: RuleMatcher) -> str:
+    return str(getattr(matcher, "name", "keyword"))
+
+
+def _matcher_version(matcher: RuleMatcher) -> str:
+    return str(getattr(matcher, "version", "1.0"))

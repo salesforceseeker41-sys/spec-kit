@@ -22,6 +22,13 @@ class GovernanceFinding:
     source_path: str
     matched_keywords: list[str] = field(default_factory=list)
     missing_keywords: list[str] = field(default_factory=list)
+    matcher: str = "keyword"
+    matcher_version: str = "1.0"
+    confidence: float | None = None
+    matched_evidence: list[str] = field(default_factory=list)
+    missing_evidence: list[str] = field(default_factory=list)
+    negative_evidence_found: list[str] = field(default_factory=list)
+    explanation: str = ""
 
     @property
     def id(self) -> str:
@@ -45,4 +52,11 @@ class GovernanceFinding:
             "source_path": self.source_path,
             "matched_keywords": list(self.matched_keywords),
             "missing_keywords": list(self.missing_keywords),
+            "matcher": self.matcher,
+            "matcher_version": self.matcher_version,
+            "confidence": self.confidence,
+            "matched_evidence": list(self.matched_evidence),
+            "missing_evidence": list(self.missing_evidence),
+            "negative_evidence_found": list(self.negative_evidence_found),
+            "explanation": self.explanation,
         }

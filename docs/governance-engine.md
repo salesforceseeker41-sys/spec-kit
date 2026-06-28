@@ -35,7 +35,10 @@ src/specify_cli/framework/
     governance_engine.py
   matchers/
     base.py
+    evidence_model.py
     keyword_matcher.py
+    matcher_resolver.py
+    practice_compliance_matcher.py
   reports/
     governance_finding.py
     governance_report.py
@@ -66,12 +69,22 @@ RuleMatcher.match(rule, document_content) -> MatchResult
 - `matched`
 - `matched_keywords`
 - `missing_keywords`
+- optional matcher metadata
+- optional confidence and practice evidence fields
 
 This allows future matchers to be added without rewriting the engine.
 
+ESF v1.1 adds `PracticeComplianceMatcher` as an opt-in matcher. The engine still receives a matcher instance and does not decide matcher selection:
+
+```text
+MatcherResolver -> GovernanceEngine(matcher=selected_matcher)
+```
+
+`KeywordMatcher` remains the default.
+
 ## Keyword Matcher
 
-`KeywordMatcher` is the only matcher implemented in Sprint 4A.
+`KeywordMatcher` is the default matcher.
 
 Behavior:
 
@@ -80,7 +93,19 @@ Behavior:
 - Marks a rule as matched when at least one keyword is present.
 - Returns all matched and missing keywords.
 
-The matcher intentionally does not implement semantic matching, regular expression matching, AI evaluation, or scoring.
+The matcher intentionally does not implement semantic matching, regular expression matching, AI evaluation, or practice scoring.
+
+## Practice Compliance Matcher
+
+`PracticeComplianceMatcher` is opt-in in ESF v1.1.
+
+Behavior:
+
+- Reads additive rule fields from the Rule Catalog metadata.
+- Evaluates `required_evidence` and `negative_evidence` using deterministic `evidence_terms`.
+- Calculates advisory confidence.
+- Falls back to keyword evidence for rules without practice evidence.
+- Performs no LLM calls, external API calls, telemetry, or blocking decisions.
 
 ## Execution Flow
 
@@ -131,6 +156,13 @@ Rule catalog loader warnings and errors are carried into the returned report. If
 - `source_path`
 - `matched_keywords`
 - `missing_keywords`
+- `matcher`
+- `matcher_version`
+- `confidence`
+- `matched_evidence`
+- `missing_evidence`
+- `negative_evidence_found`
+- `explanation`
 
 `GovernanceReport` contains:
 
@@ -141,6 +173,8 @@ Rule catalog loader warnings and errors are carried into the returned report. If
 - `warnings`
 - `errors`
 - `statistics`
+- `matcher`
+- `matcher_version`
 
 Report helpers:
 

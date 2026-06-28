@@ -17,3 +17,37 @@ references:
   - Salesforce Apex Enterprise Patterns
 owner: Platform Team
 version: "1.0"
+practice:
+  type: salesforce_trigger_handler
+  min_confidence: 0.7
+required_evidence:
+  - uses trigger handler pattern
+  - separates trigger and business logic
+  - controls recursion
+  - supports bulk execution
+negative_evidence:
+  - business logic directly in trigger
+  - unguarded recursion
+evidence_terms:
+  uses trigger handler pattern:
+    - trigger handler
+    - trigger framework
+    - handler class
+  separates trigger and business logic:
+    - service class
+    - service layer
+    - separation of concerns
+  controls recursion:
+    - recursion guard
+    - recursion control
+    - prevent recursion
+  supports bulk execution:
+    - bulk-safe
+    - bulk execution
+    - trigger.new
+  business logic directly in trigger:
+    - logic in trigger
+    - business logic in trigger
+  unguarded recursion:
+    - recursive update
+    - no recursion guard

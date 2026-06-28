@@ -19,3 +19,37 @@ references:
   - Salesforce Flow Best Practices
 owner: Platform Team
 version: "1.0"
+practice:
+  type: salesforce_flow_maintainability
+  min_confidence: 0.7
+required_evidence:
+  - explains flow ownership
+  - avoids excessive automation overlap
+  - handles errors
+  - includes flow tests
+negative_evidence:
+  - duplicate automation
+  - no fault path
+evidence_terms:
+  explains flow ownership:
+    - flow owner
+    - automation owner
+    - flow responsibility
+  avoids excessive automation overlap:
+    - automation overlap
+    - single automation path
+    - avoids duplicate automation
+  handles errors:
+    - fault path
+    - error handling
+    - fault connector
+  includes flow tests:
+    - flow test
+    - flow tests
+    - test scenario
+  duplicate automation:
+    - duplicate automation
+    - multiple flows on same object
+  no fault path:
+    - no fault path
+    - missing fault path
