@@ -71,6 +71,8 @@
       href: rule-catalog.md
     - name: Governance Engine
       href: governance-engine.md
+    - name: Project Bootstrap
+      href: project-bootstrap.md
     - name: Architecture Review
       href: architecture-review.md
     - name: Compatibility Matrix

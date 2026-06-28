@@ -30,6 +30,7 @@ To build the documentation locally:
 - `quickstart.md` - Quick start guide
 - `enterprise-governance.md` - Enterprise Spec Framework governance overview
 - `practice-compliance.md` - Salesforce Practice Compliance matcher documentation
+- `project-bootstrap.md` - optional Salesforce enterprise init profile documentation
 - `compatibility.md` - Enterprise Spec Framework compatibility matrix
 - `release-checklist.md` - Enterprise Spec Framework release readiness checklist
 - `_site/` - Generated documentation output (ignored by git)

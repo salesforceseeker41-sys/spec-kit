@@ -342,6 +342,18 @@ python scripts/load-rules.py --yaml
 
 See the [Rule Catalog guide](./docs/rule-catalog.md) for schema fields, ownership, versioning, lifecycle, and the migration path toward a future rule engine.
 
+### Version 1.2: Project Bootstrap
+
+Project Bootstrap adds an optional Salesforce enterprise profile for `specify init`. Teams that want the enterprise scaffold can initialize with:
+
+```bash
+specify init my-project --integration codex --profile salesforce-enterprise
+```
+
+When the profile is omitted, `specify init` behaves as before. The profile adds `enterprise/`, `products/sample-product/`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/` after the standard Spec Kit scaffold and selected integration are installed.
+
+See the [Project Bootstrap guide](./docs/project-bootstrap.md) for generated folders, ownership, configuration, and limitations.
+
 ## Enterprise Documentation Map
 
 The Enterprise Spec Framework documentation is organized by audience:
@@ -354,6 +366,7 @@ The Enterprise Spec Framework documentation is organized by audience:
 | Platform Team | [docs/architecture-review.md](./docs/architecture-review.md) | Architecture hardening review, dependency graph, technical debt, and release readiness. |
 | Platform Team | [docs/compatibility.md](./docs/compatibility.md) | Version 1.0 compatibility matrix for Spec Kit, Python, operating systems, agents, and governance packs. |
 | Platform Team | [docs/release-checklist.md](./docs/release-checklist.md) | Release readiness checklist for architecture, documentation, tests, security, packaging, and tagging. |
+| Platform Team | [docs/project-bootstrap.md](./docs/project-bootstrap.md) | Salesforce enterprise init profile behavior, generated files, ownership, and limitations. |
 | Product Teams | [docs/enterprise-governance.md](./docs/enterprise-governance.md) | Ownership model, product governance responsibilities, lifecycle, and RDRA examples. |
 | Product Teams | [docs/rule-catalog.md](./docs/rule-catalog.md) | Rule schema, ownership, future product rule packs, and rule lifecycle. |
 | Delivery Teams | [docs/context-loader.md](./docs/context-loader.md) | How enterprise and product context is discovered and ordered. |

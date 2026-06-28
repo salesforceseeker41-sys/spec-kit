@@ -20,6 +20,7 @@ from .._agent_config import (
 from .._assets import (
     _locate_bundled_extension,
     _locate_bundled_preset,
+    _locate_bundled_profile,
     _locate_bundled_workflow,
     get_speckit_version,
 )
@@ -124,6 +125,11 @@ def register(app: typer.Typer) -> None:
             "--preset",
             help="Install a preset during initialization (by preset ID)",
         ),
+        profile: str = typer.Option(
+            None,
+            "--profile",
+            help="Install a project bootstrap profile (supported: salesforce-enterprise)",
+        ),
         integration: str = typer.Option(
             None,
             "--integration",
@@ -166,6 +172,7 @@ def register(app: typer.Typer) -> None:
             specify init --here --integration gemini
             specify init my-project --integration generic --integration-options="--commands-dir .myagent/commands/"  # Bring your own agent; requires --commands-dir
             specify init my-project --integration claude --preset healthcare-compliance  # With preset
+            specify init my-project --integration codex --profile salesforce-enterprise  # Enterprise Salesforce bootstrap
         """
         # Lazy imports to avoid circular dependency — __init__.py imports this module
         from .. import (
@@ -194,6 +201,11 @@ def register(app: typer.Typer) -> None:
                 available = ", ".join(sorted(INTEGRATION_REGISTRY))
                 console.print(f"[yellow]Available integrations:[/yellow] {available}")
                 raise typer.Exit(1)
+
+        if profile and not _locate_bundled_profile(profile):
+            console.print(f"[red]Error:[/red] Unknown profile: '{profile}'")
+            console.print("[yellow]Available profiles:[/yellow] salesforce-enterprise")
+            raise typer.Exit(1)
 
         if project_name == ".":
             here = True
@@ -377,9 +389,11 @@ def register(app: typer.Typer) -> None:
             ("constitution", "Constitution setup"),
             ("workflow", "Install bundled workflow"),
             ("agent-context", "Install agent-context extension"),
-            ("final", "Finalize"),
         ]:
             tracker.add(key, label)
+        if profile:
+            tracker.add("profile", "Install project profile")
+        tracker.add("final", "Finalize")
 
         # Disable transient mode on Windows: PowerShell 5.1's legacy console
         # hangs when Rich tries to restore cursor state via VT escape sequences.
@@ -499,6 +513,8 @@ def register(app: typer.Typer) -> None:
                     "feature_numbering": "sequential",
                     "speckit_version": get_speckit_version(),
                 }
+                if profile:
+                    init_opts["profile"] = profile
                 from ..integrations.base import SkillsIntegration as _SkillsPersist
 
                 if isinstance(resolved_integration, _SkillsPersist) or getattr(
@@ -549,6 +565,39 @@ def register(app: typer.Typer) -> None:
                     )
 
                 ensure_executable_scripts(project_path, tracker=tracker)
+
+                if profile:
+                    try:
+                        from ..bootstrap import install_profile
+
+                        tracker.start("profile")
+                        profile_path = _locate_bundled_profile(profile)
+                        if not profile_path:
+                            raise RuntimeError(
+                                f"Bundled profile '{profile}' could not be found"
+                            )
+                        profile_result = install_profile(
+                            project_path,
+                            profile_path,
+                            profile,
+                            force=force,
+                        )
+                        detail = (
+                            f"{profile_result.profile} "
+                            f"({len(profile_result.copied)} files)"
+                        )
+                        if profile_result.skipped:
+                            detail += f", {len(profile_result.skipped)} preserved"
+                        tracker.complete("profile", detail)
+                    except Exception as profile_err:
+                        sanitized_profile = (
+                            str(profile_err).replace("\n", " ").strip()
+                        )
+                        tracker.error(
+                            "profile",
+                            f"profile install failed: {sanitized_profile[:120]}",
+                        )
+                        raise
 
                 if preset:
                     try:

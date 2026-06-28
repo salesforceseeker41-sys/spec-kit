@@ -1,0 +1,20 @@
+id: ARCH-001
+title: Enterprise Architecture Alignment
+category: Architecture
+description: Delivery plans should align with enterprise architecture rather than redefine it.
+rationale: Centralized architecture avoids divergent patterns across Salesforce applications.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+keywords:
+  - architecture
+  - pattern
+  - exception
+  - standard
+recommendation: Reference enterprise architecture standards and document exceptions explicitly.
+references:
+  - Enterprise Architecture Principles
+owner: Platform Team
+version: "1.0"

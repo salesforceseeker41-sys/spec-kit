@@ -101,6 +101,28 @@ def _locate_bundled_preset(preset_id: str) -> Path | None:
     return None
 
 
+def _locate_bundled_profile(profile_id: str) -> Path | None:
+    """Return the path to a bundled project bootstrap profile, or None.
+
+    Checks the wheel's core_pack first, then falls back to the
+    source-checkout ``profiles/<id>/`` directory.
+    """
+    if not re.match(r'^[a-z0-9-]+$', profile_id):
+        return None
+
+    core = _locate_core_pack()
+    if core is not None:
+        candidate = core / "profiles" / profile_id
+        if (candidate / "profile.yml").is_file():
+            return candidate
+
+    candidate = _repo_root() / "profiles" / profile_id
+    if (candidate / "profile.yml").is_file():
+        return candidate
+
+    return None
+
+
 def get_speckit_version() -> str:
     """Get current spec-kit version."""
     try:

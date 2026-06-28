@@ -4,6 +4,21 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) st
 
 ## Enterprise Spec Framework
 
+### [1.2.0-alpha.1] - Project Bootstrap
+
+#### Added
+
+- Optional `specify init --profile salesforce-enterprise` bootstrap profile.
+- Bundled Salesforce enterprise scaffold with `enterprise/`, `products/sample-product/`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/`.
+- Project bootstrap installer that preserves existing files unless `--force` is used.
+- Project Bootstrap documentation.
+
+#### Compatibility
+
+- `specify init` behavior is unchanged when `--profile` is omitted.
+- Codex and other integrations continue to install through the existing integration flow.
+- Governance validation, matchers, rule loading, and engine behavior are unchanged.
+
 ### [1.1.0-alpha.1] - Salesforce Practice Compliance
 
 #### Added

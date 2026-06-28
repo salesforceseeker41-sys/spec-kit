@@ -1,0 +1,21 @@
+id: GOV-001
+title: Error Handling and Logging
+category: Governance
+description: Feature plans should describe error handling, observability, and support handoff.
+rationale: Operational readiness depends on clear diagnostics and recoverable failure paths.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - tasks
+keywords:
+  - logging
+  - error handling
+  - support
+  - monitoring
+recommendation: Describe expected logging, error handling, and operational support evidence.
+references:
+  - Enterprise Operational Readiness Standard
+owner: Platform Team
+version: "1.0"
