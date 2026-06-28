@@ -55,6 +55,174 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
 - Test your changes with the Spec-Driven Development workflow to ensure compatibility.
 
+## Enterprise Spec Framework contributions
+
+The Enterprise Spec Framework (ESF) is an additive governance layer on top of Spec Kit for large Salesforce organizations. ESF contributions must preserve existing Spec Kit behavior unless a change is explicitly approved as a core Spec Kit change.
+
+### ESF repository structure
+
+| Path | Ownership | Contribution guidance |
+| --- | --- | --- |
+| `enterprise/` | Platform Team | Enterprise constitution, principles, Salesforce standards, and rule catalog. |
+| `enterprise/rules/` | Platform Team | Machine-readable enterprise rules. Rules are data and must not require Python changes to edit policy. |
+| `products/` | Product Teams | Product-domain standards, integrations, domain models, events, and future product rule packs. |
+| `docs/enterprise-governance.md` | Platform Team | Operating model and ownership documentation. |
+| `docs/context-loader.md` | Platform Team | Context Loader documentation. |
+| `docs/governance-validation.md` | Platform Team | Advisory validation documentation. |
+| `docs/rule-catalog.md` | Platform Team | Rule schema and catalog lifecycle documentation. |
+| `ARCHITECTURE.md` | Platform Team | Authoritative ESF technical architecture. |
+| `ROADMAP.md` | Platform Team | ESF version and sprint roadmap. |
+| `DECISIONS.md` | Platform Team | Architecture Decision Records. |
+| `scripts/load-enterprise-context.py` | Platform Team | Context inspection CLI. Keep behavior additive. |
+| `scripts/validate-governance.py` | Platform Team | Advisory validation CLI. Do not introduce blocking behavior without an accepted ADR. |
+| `scripts/load-rules.py` | Platform Team | Rule catalog inspection CLI. It must load and render rules only. |
+| `src/specify_cli/enterprise_context.py` | Platform Team | Context Loader model and logic. |
+| `src/specify_cli/governance_validation.py` | Platform Team | Advisory validation model and logic. |
+| `src/specify_cli/rule_catalog.py` | Platform Team | Rule model and loader. |
+
+### ESF branch strategy
+
+Use the standard branch naming guidance in [Branch naming](#branch-naming). ESF documentation-only work should use `docs/`. ESF implementation work should use `feat/` unless it is a defect fix.
+
+Examples:
+
+```text
+docs/esf-architecture-documentation
+feat/esf-rule-engine
+fix/esf-context-loader-warning
+```
+
+### ESF commit message convention
+
+Use concise conventional-style messages:
+
+```text
+docs: add enterprise architecture documentation
+feat: add enterprise rule catalog loader
+fix: keep governance validation json output parseable
+```
+
+Every agent-authored commit must include the AI disclosure trailer required by this repository's agent disclosure policy.
+
+### ESF code review process
+
+ESF pull requests should answer:
+
+- Does this preserve existing Spec Kit behavior?
+- Is the change additive and backward compatible?
+- Does the ownership model remain clear?
+- Are enterprise rules represented as data rather than embedded policy?
+- Are advisory and blocking behaviors clearly separated?
+- Are docs, tests, and examples updated together?
+
+### ESF coding standards
+
+- Keep loaders separate from validators.
+- Keep rule definitions out of Python.
+- Prefer structured models over concatenated strings.
+- Return warnings for missing optional governance files.
+- Use errors only for malformed required inputs or runtime failures.
+- Avoid command renames and workflow changes unless explicitly approved.
+- Keep output deterministic for CI and multi-agent consumption.
+
+### ESF documentation standards
+
+Documentation should use consistent terminology:
+
+- Enterprise Spec Framework or ESF.
+- Platform Team.
+- Product Teams.
+- Delivery Teams.
+- Context Loader.
+- ContextBundle.
+- Rule Catalog.
+- Rule Pack.
+- Governance Engine.
+- Advisory Validation.
+
+When adding or changing architecture, update the relevant document:
+
+- Architecture: `ARCHITECTURE.md`.
+- Roadmap: `ROADMAP.md`.
+- Decisions: `DECISIONS.md`.
+- User navigation: `README.md`.
+- Operational details: `docs/*.md`.
+- Release notes: `CHANGELOG.md`.
+
+### How to add Enterprise Rules
+
+1. Add one YAML file per rule under `enterprise/rules/<category>/`.
+1. Use the rule ID as the filename, for example `SEC-006.yaml`.
+1. Include every required field documented in `docs/rule-catalog.md`.
+1. Set `owner: Platform Team`.
+1. Use `severity: advisory` unless an accepted ADR defines another policy.
+1. Run the rule catalog tests.
+
+Enterprise rules are platform-owned. Delivery teams should not edit them inside feature work.
+
+### How to add Product Rule Packs
+
+Product rule packs are planned but not implemented yet. Until the structure is formalized:
+
+1. Document proposed product-specific governance in `products/<product-id>/`.
+1. Avoid adding product rules under `enterprise/rules/`.
+1. Propose the product rule pack structure in an ADR before implementation.
+1. Preserve enterprise-rule precedence.
+
+### How to add Context Providers
+
+Context providers are planned extension points. A new provider should:
+
+- Return structured data.
+- Preserve deterministic ordering.
+- Avoid prompt-specific formatting in the provider.
+- Degrade gracefully when optional files are missing.
+- Include tests for missing, malformed, and ordered inputs.
+
+### How to add Validators
+
+Validators should:
+
+- Consume `ContextBundle` and, after Sprint 4, `RuleCatalog` or `GovernanceEngine`.
+- Produce structured findings and reports.
+- Keep advisory behavior as the default.
+- Avoid blocking delivery unless an accepted policy model enables it.
+- Support deterministic text, markdown, and JSON output when exposed through a CLI.
+
+### ESF testing expectations
+
+For ESF changes, add or update focused tests:
+
+- Context loading: `tests/test_enterprise_context_loader.py`.
+- Governance validation: `tests/test_governance_validation.py`.
+- Rule catalog: `tests/test_rule_catalog.py`.
+- Existing Spec Kit compatibility: command package and console import smoke tests.
+
+Recommended local checks:
+
+```bash
+.venv/bin/python -m pytest tests/test_enterprise_context_loader.py tests/test_governance_validation.py tests/test_rule_catalog.py -q
+.venv/bin/python -m pytest tests/test_commands_package.py tests/test_console_imports.py -q
+```
+
+On Windows:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests\test_enterprise_context_loader.py tests\test_governance_validation.py tests\test_rule_catalog.py -q
+.\.venv\Scripts\python.exe -m pytest tests\test_commands_package.py tests\test_console_imports.py -q
+```
+
+### ESF release process
+
+Document ESF changes in `CHANGELOG.md` under the Enterprise Spec Framework section. For release candidates and final releases, also update `VERSION`, `RELEASE_NOTES_v1.0.md`, `docs/compatibility.md`, and `docs/release-checklist.md` as needed. Include:
+
+- Sprint or version placeholder.
+- Added, Changed, Fixed, or Documentation entries.
+- Any compatibility note.
+- Any migration note.
+
+Before tagging a release, complete the release checklist and run the focused ESF tests plus relevant Spec Kit smoke tests in a clean environment.
+
 ### Branch naming
 
 We recommend naming branches as `<type>/<number>-<short-slug>`, where `<number>` is the issue or PR number (whichever comes first) and `<type>` is one of:

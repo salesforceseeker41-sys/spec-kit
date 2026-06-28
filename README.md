@@ -27,6 +27,7 @@
 - [🔧 Specify CLI Reference](#-specify-cli-reference)
 - [🧩 Making Spec Kit Your Own: Extensions & Presets](#-making-spec-kit-your-own-extensions--presets)
 - [Enterprise Governance](#enterprise-governance)
+- [Enterprise Documentation Map](#enterprise-documentation-map)
 - [📦 Bundles: Role-Based Setups](#-bundles-role-based-setups)
 - [📚 Core Philosophy](#-core-philosophy)
 - [🌟 Development Phases](#-development-phases)
@@ -272,6 +273,121 @@ Feature Specification
 Enterprise and product standards are mandatory inputs. Delivery teams apply those standards to feature work; they should not redefine enterprise architecture in a feature spec or plan.
 
 See the full [Enterprise Governance guide](./docs/enterprise-governance.md) for folder ownership, diagrams, lifecycle guidance, an RDRA feature example, and the roadmap for automatic context loading, validation, a rule engine, and knowledge packs.
+
+### Sprint 2: Context Loader
+
+The deterministic Enterprise Context Loader reads `enterprise.yaml`, resolves the selected product, and returns a structured Context Bundle for future prompt builders and validators.
+
+```bash
+python scripts/load-enterprise-context.py --format list
+python scripts/load-enterprise-context.py --format markdown
+python scripts/load-enterprise-context.py --format json
+```
+
+See the [Context Loader guide](./docs/context-loader.md) for architecture, config fields, loading order, CLI examples, output formats, and current limitations.
+
+### Sprint 3: Advisory Governance Validation
+
+Advisory Governance Validation checks feature artifacts for governance-topic coverage and reports recommendations without blocking delivery.
+
+```bash
+python scripts/validate-governance.py --feature specs/001-provider-program --artifact spec
+python scripts/validate-governance.py --feature specs/001-provider-program --artifact all --format markdown
+python scripts/validate-governance.py --feature specs/001-provider-program --artifact all --write-report
+```
+
+See the [Governance Validation guide](./docs/governance-validation.md) for checked topics, output formats, report writing, limitations, and the roadmap toward a structured rule engine.
+
+### Sprint 3.5: Enterprise Rule Catalog
+
+The Enterprise Rule Catalog stores governance rules as YAML data under `enterprise/rules/`. This becomes the machine-readable source of truth for future validators and rule engines while keeping Sprint 3 advisory validation behavior unchanged.
+
+```text
+Platform Team
+  |
+  v
+enterprise/rules/**/*.yaml
+  |
+  v
+RuleLoader -> RuleCollection -> RuleCatalog
+  |
+  v
+Future Rule Engine
+```
+
+Rule lifecycle:
+
+```text
+Draft
+  |
+  v
+Platform Review
+  |
+  v
+Catalog Merge
+  |
+  v
+Advisory Consumption
+  |
+  v
+Version or Retire
+```
+
+```bash
+python scripts/load-rules.py --list
+python scripts/load-rules.py --category security
+python scripts/load-rules.py --json
+python scripts/load-rules.py --yaml
+```
+
+See the [Rule Catalog guide](./docs/rule-catalog.md) for schema fields, ownership, versioning, lifecycle, and the migration path toward a future rule engine.
+
+## Enterprise Documentation Map
+
+The Enterprise Spec Framework documentation is organized by audience:
+
+| Audience | Start here | Use this for |
+| --- | --- | --- |
+| Platform Team | [ARCHITECTURE.md](./ARCHITECTURE.md) | Technical architecture, component boundaries, extension points, and future engine design. |
+| Platform Team | [DECISIONS.md](./DECISIONS.md) | Architecture Decision Records and rationale for major ESF choices. |
+| Platform Team | [ROADMAP.md](./ROADMAP.md) | Version planning, sprint sequencing, dependencies, and acceptance criteria. |
+| Platform Team | [docs/architecture-review.md](./docs/architecture-review.md) | Architecture hardening review, dependency graph, technical debt, and release readiness. |
+| Platform Team | [docs/compatibility.md](./docs/compatibility.md) | Version 1.0 compatibility matrix for Spec Kit, Python, operating systems, agents, and governance packs. |
+| Platform Team | [docs/release-checklist.md](./docs/release-checklist.md) | Release readiness checklist for architecture, documentation, tests, security, packaging, and tagging. |
+| Product Teams | [docs/enterprise-governance.md](./docs/enterprise-governance.md) | Ownership model, product governance responsibilities, lifecycle, and RDRA examples. |
+| Product Teams | [docs/rule-catalog.md](./docs/rule-catalog.md) | Rule schema, ownership, future product rule packs, and rule lifecycle. |
+| Delivery Teams | [docs/context-loader.md](./docs/context-loader.md) | How enterprise and product context is discovered and ordered. |
+| Delivery Teams | [docs/governance-validation.md](./docs/governance-validation.md) | Advisory validation behavior, report formats, limitations, and report writing. |
+| Contributors | [CONTRIBUTING.md](./CONTRIBUTING.md) | Branching, review process, coding standards, documentation standards, and ESF contribution guidance. |
+| Contributors | [CHANGELOG.md](./CHANGELOG.md) | ESF sprint history and upstream Spec Kit release notes. |
+| Contributors | [RELEASE_NOTES_v1.0.md](./RELEASE_NOTES_v1.0.md) | Version 1.0 release notes, migration guidance, known limitations, and future roadmap. |
+
+Suggested first read:
+
+```text
+ARCHITECTURE.md
+  |
+  v
+docs/enterprise-governance.md
+  |
+  v
+docs/context-loader.md
+  |
+  v
+docs/governance-validation.md
+  |
+  v
+docs/rule-catalog.md
+  |
+  v
+ROADMAP.md + DECISIONS.md
+  |
+  v
+docs/architecture-review.md
+  |
+  v
+RELEASE_NOTES_v1.0.md + docs/compatibility.md + docs/release-checklist.md
+```
 
 ## 📦 Bundles: Role-Based Setups
 

@@ -1,0 +1,22 @@
+id: FLOW-005
+title: Flow and Apex Boundary
+category: Flow
+description: Designs must explain when logic belongs in Flow versus Apex.
+rationale: Clear ownership avoids fragmented business logic and untestable automation.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - flow
+  - apex
+keywords:
+  - flow
+  - apex
+  - boundary
+  - invocable
+recommendation: Document why the selected automation tool is appropriate and where handoff boundaries exist.
+references:
+  - Enterprise Automation Strategy
+owner: Platform Team
+version: "1.0"

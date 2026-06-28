@@ -1,0 +1,21 @@
+id: LWC-002
+title: Client-Side Data Exposure
+category: LWC
+description: LWC designs must avoid exposing sensitive fields or unauthorized records in client state.
+rationale: Browser-visible state can leak data through debugging, caching, or unintended rendering.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - lwc
+keywords:
+  - client state
+  - sensitive data
+  - cache
+  - field access
+recommendation: Describe which data is sent to the browser and how field and record access are controlled.
+references:
+  - Salesforce LWC Security Guide
+owner: Platform Team
+version: "1.0"

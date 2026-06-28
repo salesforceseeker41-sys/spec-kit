@@ -1,0 +1,21 @@
+id: FLOW-003
+title: Flow Fault Paths
+category: Flow
+description: Flows must define fault handling for data operations, callouts, and subflow failures.
+rationale: Unhandled flow faults create poor user experiences and difficult support cases.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - flow
+  - testing
+keywords:
+  - fault path
+  - error handling
+  - flow error
+  - exception
+recommendation: Document fault paths, user messaging, logging, and escalation behavior.
+references:
+  - Salesforce Flow Error Handling
+owner: Platform Team
+version: "1.0"

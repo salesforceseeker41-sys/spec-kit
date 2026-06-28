@@ -1,0 +1,21 @@
+id: SEC-002
+title: Sharing Model Alignment
+category: Security
+description: Feature designs must state how the implementation respects the applicable Salesforce sharing model.
+rationale: Consistent sharing behavior prevents unauthorized access across products and business units.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+keywords:
+  - sharing
+  - with sharing
+  - inherited sharing
+  - record access
+recommendation: Document the expected record access model and how Apex, Flow, or UI behavior honors it.
+references:
+  - Salesforce Apex Developer Guide
+owner: Platform Team
+version: "1.0"

@@ -1,0 +1,22 @@
+id: SCALE-004
+title: Large Data Volume Readiness
+category: Scalability
+description: Features that query large objects must address selectivity, indexing, and pagination.
+rationale: Large data volume behavior can degrade sharply without selective queries and careful UI patterns.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+  - lwc
+keywords:
+  - large data volume
+  - LDV
+  - selective query
+  - pagination
+recommendation: State expected data volume, query selectivity, index needs, and user navigation behavior.
+references:
+  - Salesforce Large Data Volumes Best Practices
+owner: Platform Team
+version: "1.0"

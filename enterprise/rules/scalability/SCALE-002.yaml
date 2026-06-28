@@ -1,0 +1,21 @@
+id: SCALE-002
+title: Governor Limit Awareness
+category: Scalability
+description: Designs must identify relevant Salesforce governor limits and mitigation strategies.
+rationale: Limit-aware design prevents production failures under realistic enterprise workloads.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - apex
+  - testing
+keywords:
+  - governor limit
+  - limits
+  - query limit
+  - CPU
+recommendation: Identify key limits, expected consumption, and design mitigations.
+references:
+  - Salesforce Governor Limits
+owner: Platform Team
+version: "1.0"

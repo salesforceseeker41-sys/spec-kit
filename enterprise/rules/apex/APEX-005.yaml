@@ -1,0 +1,20 @@
+id: APEX-005
+title: Apex Limit-Safe Collections
+category: Apex
+description: Apex implementation plans must use maps, sets, and lists to avoid repeated work.
+rationale: Collection-first design supports bulk execution and reduces limit consumption.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - apex
+keywords:
+  - map
+  - set
+  - list
+  - collection
+recommendation: Describe collection usage for lookups, deduplication, and batched persistence.
+references:
+  - Salesforce Apex Developer Guide
+owner: Platform Team
+version: "1.0"

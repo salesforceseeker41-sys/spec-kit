@@ -1,0 +1,20 @@
+id: TEST-001
+title: Unit Test Coverage
+category: Testing
+description: Feature plans must identify unit tests for business logic and automation.
+rationale: Unit tests provide fast evidence that core logic behaves as expected.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - tasks
+  - testing
+keywords:
+  - unit test
+  - unit tests
+  - test class
+recommendation: Add unit test tasks for service logic, trigger handlers, flows, and utility classes.
+references:
+  - Salesforce Apex Testing Best Practices
+owner: Platform Team
+version: "1.0"

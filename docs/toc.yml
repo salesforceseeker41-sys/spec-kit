@@ -56,6 +56,26 @@
     - name: Monorepos
       href: guides/monorepo.md
 
+# Enterprise Spec Framework
+- name: Enterprise Governance
+  items:
+    - name: Governance Overview
+      href: enterprise-governance.md
+    - name: Context Loader
+      href: context-loader.md
+    - name: Governance Validation
+      href: governance-validation.md
+    - name: Rule Catalog
+      href: rule-catalog.md
+    - name: Governance Engine
+      href: governance-engine.md
+    - name: Architecture Review
+      href: architecture-review.md
+    - name: Compatibility Matrix
+      href: compatibility.md
+    - name: Release Checklist
+      href: release-checklist.md
+
 # Community
 - name: Community
   href: community/overview.md

@@ -1,0 +1,21 @@
+id: ARCH-004
+title: Event Model Consistency
+category: Architecture
+description: Event-driven designs must align with the product event model and enterprise event naming.
+rationale: Consistent event semantics improve reuse, traceability, and integration reliability.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+keywords:
+  - event
+  - platform event
+  - event model
+  - naming
+recommendation: Identify event names, producers, consumers, payload ownership, and versioning expectations.
+references:
+  - Salesforce Platform Events Documentation
+owner: Platform Team
+version: "1.0"

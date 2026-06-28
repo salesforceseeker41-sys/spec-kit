@@ -28,6 +28,8 @@ Before generating or updating the specification, check for enterprise governance
 4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
 5. **Feature Specification**: the current feature request and resulting `spec.md`
 
+Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
+
 If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory inputs for the specification:
 
 - Enterprise standards are mandatory and define cross-product architecture, security, compliance, scalability, and governance expectations.
@@ -256,6 +258,8 @@ Given that feature description, do this:
 ## Mandatory Post-Execution Hooks
 
 **You MUST complete this section before reporting completion to the user.**
+
+After generating or updating this artifact, run advisory governance validation when available. Treat findings as recommendations unless your organization has enabled blocking validation.
 
 Check if `.specify/extensions.yml` exists in the project root.
 - If it does not exist, or no hooks are registered under `hooks.after_specify`, skip to the Completion Report.

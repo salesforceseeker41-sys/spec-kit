@@ -1,0 +1,21 @@
+id: LWC-004
+title: User Feedback States
+category: LWC
+description: UI plans must describe loading, empty, success, and error states.
+rationale: Complete state handling improves usability and supportability.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - lwc
+keywords:
+  - loading
+  - empty state
+  - toast
+  - error state
+recommendation: Define user feedback for each async action and data state.
+references:
+  - Salesforce Lightning Design System
+owner: Platform Team
+version: "1.0"

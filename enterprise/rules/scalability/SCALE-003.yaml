@@ -1,0 +1,22 @@
+id: SCALE-003
+title: Async Processing Strategy
+category: Scalability
+description: Long-running or high-volume work must identify whether asynchronous processing is required.
+rationale: Async patterns protect user experience and platform limits for heavy operations.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+keywords:
+  - async
+  - asynchronous
+  - queueable
+  - batch
+  - scheduled
+recommendation: Document whether Queueable, Batch, Scheduled Apex, Platform Events, or Flow async paths are required.
+references:
+  - Salesforce Asynchronous Apex
+owner: Platform Team
+version: "1.0"

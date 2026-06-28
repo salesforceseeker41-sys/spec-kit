@@ -1,0 +1,21 @@
+id: COMP-004
+title: Consent and Purpose Limitation
+category: Compliance
+description: Features using personal data must respect consent, purpose, and minimization expectations.
+rationale: Personal data processing requires clear purpose and least-data handling.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - lwc
+keywords:
+  - consent
+  - purpose
+  - minimization
+  - personal data
+recommendation: Describe why personal data is needed, how consent is respected, and how unnecessary data is avoided.
+references:
+  - Enterprise Privacy Principles
+owner: Platform Team
+version: "1.0"
