@@ -1,0 +1,20 @@
+id: FLOW-002
+title: Flow Entry Criteria
+category: Flow
+description: Record-triggered flows must have explicit entry criteria and recursion considerations.
+rationale: Precise entry criteria reduces unintended automation and performance issues.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - flow
+keywords:
+  - entry criteria
+  - recursion
+  - trigger
+  - flow
+recommendation: Define trigger conditions, recursion risk, and how repeated updates are avoided.
+references:
+  - Salesforce Record-Triggered Flow Guidance
+owner: Platform Team
+version: "1.0"

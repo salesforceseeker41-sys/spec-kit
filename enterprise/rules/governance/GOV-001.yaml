@@ -1,0 +1,19 @@
+id: GOV-001
+title: Trigger Handler Pattern
+category: Governance
+description: Trigger-based automation must use the enterprise trigger handler pattern.
+rationale: A standard trigger pattern reduces recursion defects and keeps cross-object automation maintainable.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - apex
+keywords:
+  - trigger handler
+  - trigger framework
+  - recursion
+recommendation: Identify the trigger handler class, execution context, and recursion controls.
+references:
+  - Salesforce Apex Enterprise Patterns
+owner: Platform Team
+version: "1.0"

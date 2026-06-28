@@ -31,6 +31,8 @@ Before generating or updating the implementation plan, check for enterprise gove
 4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
 5. **Feature Specification**: the active `spec.md`
 
+Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
+
 If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory planning inputs:
 
 - Enterprise standards are mandatory and define the architecture, security, compliance, scalability, and governance guardrails the plan must respect.
@@ -94,6 +96,8 @@ Use the governance context to inform Technical Context, Constitution Check, rese
 ## Mandatory Post-Execution Hooks
 
 **You MUST complete this section before reporting completion to the user.**
+
+After generating or updating this artifact, run advisory governance validation when available. Treat findings as recommendations unless your organization has enabled blocking validation.
 
 Check if `.specify/extensions.yml` exists in the project root.
 - If it does not exist, or no hooks are registered under `hooks.after_plan`, skip to the Completion Report.

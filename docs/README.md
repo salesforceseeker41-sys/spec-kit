@@ -28,6 +28,9 @@ To build the documentation locally:
 - `toc.yml` - Table of contents configuration
 - `installation.md` - Installation guide
 - `quickstart.md` - Quick start guide
+- `enterprise-governance.md` - Enterprise Spec Framework governance overview
+- `compatibility.md` - Enterprise Spec Framework compatibility matrix
+- `release-checklist.md` - Enterprise Spec Framework release readiness checklist
 - `_site/` - Generated documentation output (ignored by git)
 
 ## Deployment

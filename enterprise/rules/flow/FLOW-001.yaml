@@ -1,0 +1,21 @@
+id: FLOW-001
+title: Flow Ownership and Type
+category: Flow
+description: Feature plans must identify flow type, owner, and invocation path for declarative automation.
+rationale: Flow ownership prevents unmanaged automation sprawl and unclear support paths.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - flow
+keywords:
+  - flow
+  - record-triggered flow
+  - screen flow
+  - owner
+recommendation: Document flow type, entry condition, owner, and support responsibility.
+references:
+  - Salesforce Flow Best Practices
+owner: Platform Team
+version: "1.0"

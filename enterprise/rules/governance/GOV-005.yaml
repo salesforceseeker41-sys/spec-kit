@@ -1,0 +1,21 @@
+id: GOV-005
+title: Exception Documentation
+category: Governance
+description: Deviations from enterprise standards must be captured as explicit exceptions.
+rationale: Architecture exceptions need visibility so they can be approved, remediated, or retired.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - tasks
+keywords:
+  - exception
+  - deviation
+  - waiver
+  - risk
+recommendation: Record the standard being bypassed, reason, owner, risk, and expected remediation date.
+references:
+  - Enterprise Governance Constitution
+owner: Platform Team
+version: "1.0"

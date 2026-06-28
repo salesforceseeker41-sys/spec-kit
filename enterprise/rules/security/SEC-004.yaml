@@ -1,0 +1,22 @@
+id: SEC-004
+title: Sensitive Data Handling
+category: Security
+description: Features that touch sensitive data must describe masking, encryption, logging, and access expectations.
+rationale: Sensitive data exposure must be controlled consistently across enterprise applications.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - lwc
+  - apex
+keywords:
+  - sensitive data
+  - PII
+  - encryption
+  - masking
+recommendation: Add explicit handling requirements for PII, PHI, financial, or regulated data.
+references:
+  - Salesforce Shield Platform Encryption
+owner: Platform Team
+version: "1.0"

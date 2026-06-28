@@ -1,0 +1,21 @@
+id: ARCH-005
+title: Nonfunctional Requirement Traceability
+category: Architecture
+description: Plans must trace nonfunctional requirements to design choices and tasks.
+rationale: Enterprise quality attributes must remain visible through delivery.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - tasks
+keywords:
+  - nonfunctional
+  - performance
+  - availability
+  - traceability
+recommendation: Link security, performance, reliability, and supportability requirements to design and task evidence.
+references:
+  - Enterprise Architecture Review Checklist
+owner: Platform Team
+version: "1.0"

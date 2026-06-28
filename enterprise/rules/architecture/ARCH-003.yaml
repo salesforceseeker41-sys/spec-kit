@@ -1,0 +1,20 @@
+id: ARCH-003
+title: API Contract Ownership
+category: Architecture
+description: Integration features must identify API contract ownership and compatibility expectations.
+rationale: Stable contracts prevent downstream breakage across Salesforce applications.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+keywords:
+  - API
+  - contract
+  - version
+  - compatibility
+recommendation: Document the owning team, contract version, compatibility expectations, and change process.
+references:
+  - Enterprise API Governance
+owner: Platform Team
+version: "1.0"

@@ -1,0 +1,19 @@
+id: APEX-001
+title: Apex Service Layer
+category: Apex
+description: Complex Apex behavior should be organized behind service classes with clear responsibilities.
+rationale: A service layer improves reuse, testability, and separation from triggers or controllers.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - apex
+keywords:
+  - service class
+  - service layer
+  - separation of concerns
+recommendation: Identify service classes and responsibilities for business logic.
+references:
+  - Salesforce Apex Enterprise Patterns
+owner: Platform Team
+version: "1.0"

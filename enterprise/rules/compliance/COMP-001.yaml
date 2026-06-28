@@ -1,0 +1,21 @@
+id: COMP-001
+title: Audit Trail Coverage
+category: Compliance
+description: Compliance-relevant changes must define what audit evidence is captured.
+rationale: Enterprise applications must support audit and investigation needs.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - tasks
+keywords:
+  - audit
+  - audit trail
+  - evidence
+  - history
+recommendation: Identify auditable events, fields, actors, timestamps, and evidence retention locations.
+references:
+  - Salesforce Field Audit Trail
+owner: Platform Team
+version: "1.0"

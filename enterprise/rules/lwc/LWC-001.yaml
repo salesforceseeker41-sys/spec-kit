@@ -1,0 +1,21 @@
+id: LWC-001
+title: Accessible Component Behavior
+category: LWC
+description: Lightning Web Components must address accessibility for interactive behavior.
+rationale: Enterprise UI must be usable with keyboard navigation and assistive technology.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - lwc
+keywords:
+  - accessibility
+  - keyboard
+  - screen reader
+  - ARIA
+recommendation: Document keyboard behavior, labels, focus management, and assistive technology expectations.
+references:
+  - Salesforce Lightning Design System Accessibility
+owner: Platform Team
+version: "1.0"

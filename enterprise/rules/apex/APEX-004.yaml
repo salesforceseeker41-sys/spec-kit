@@ -1,0 +1,21 @@
+id: APEX-004
+title: Apex Integration Callout Isolation
+category: Apex
+description: Apex callouts must be isolated behind integration services and tested with mocks.
+rationale: Isolating callouts improves retry behavior, testability, and credential management.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - apex
+  - testing
+keywords:
+  - callout
+  - mock
+  - integration service
+  - HttpCalloutMock
+recommendation: Identify callout services, mock strategy, timeout behavior, and retry ownership.
+references:
+  - Salesforce Apex Callouts
+owner: Platform Team
+version: "1.0"

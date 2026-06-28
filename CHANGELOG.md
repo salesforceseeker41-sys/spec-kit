@@ -1,5 +1,132 @@
 # Changelog
 
+This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) style for project-level notes. Upstream Spec Kit release notes remain below. Enterprise Spec Framework entries use semantic version placeholders until ESF releases are versioned independently.
+
+## Enterprise Spec Framework
+
+### [1.0.0] - Version 1.0 Release Candidate
+
+#### Added
+
+- `VERSION` metadata for Enterprise Spec Framework v1.0.
+- `RELEASE_NOTES_v1.0.md` with vision, features, architecture, limitations, migration notes, and roadmap.
+- Compatibility matrix in `docs/compatibility.md`.
+- Release checklist in `docs/release-checklist.md`.
+
+#### Changed
+
+- Updated ESF documentation navigation for v1.0 release readiness.
+- Clarified stable public APIs and release candidate status.
+
+#### Compatibility
+
+- Existing Spec Kit commands remain unchanged.
+- Governance validation remains advisory.
+- No blocking validation, CI integration, semantic matching, telemetry, or dashboard capability was introduced.
+
+### [1.0.0-alpha.6] - Sprint 4.5
+
+#### Added
+
+- Architecture hardening review documentation.
+- Enterprise Spec Framework exception hierarchy.
+- Architecture tests for circular imports and report-layer dependency direction.
+- Public extension point documentation.
+
+#### Changed
+
+- Moved `ExecutionStatistics` to the reports layer with a backward-compatible engine re-export.
+- Added quiet library logging at defensive boundaries.
+- Updated architecture and roadmap documentation for release readiness.
+
+#### Compatibility
+
+- No CLI behavior changed.
+- No governance evaluation behavior changed.
+- Existing engine import path for `ExecutionStatistics` remains supported.
+
+### [1.0.0-alpha.5] - Sprints 4A and 4B
+
+#### Added
+
+- Governance Engine core.
+- `ExecutionContext`, `ExecutionStatistics`, `GovernanceReport`, and `GovernanceFinding`.
+- `RuleMatcher` abstraction and `KeywordMatcher`.
+- Governance Engine documentation.
+
+#### Changed
+
+- Refactored advisory governance validation to use `GovernanceEngine` as the single execution path.
+- Preserved existing validation CLI behavior and report formats.
+
+#### Compatibility
+
+- Validation remains advisory only.
+- No blocking validation, CI integration, semantic matching, or AI evaluation was introduced.
+
+### [1.0.0-alpha.4] - Sprint 3.5
+
+#### Added
+
+- Enterprise Rule Catalog under `enterprise/rules/`.
+- YAML rule schema for enterprise-owned governance rules.
+- Sample rule packs for security, governance, scalability, compliance, architecture, Apex, LWC, Flow, and testing.
+- Rule model, catalog, collection, and loader abstractions.
+- Rule catalog loader CLI for list, category, JSON, and YAML output.
+- Rule catalog documentation and tests.
+
+#### Compatibility
+
+- Existing Sprint 3 advisory validation behavior is unchanged.
+- Rule loading does not evaluate, enforce, or block.
+
+### [1.0.0-alpha.3] - Sprint 3
+
+#### Added
+
+- Advisory Governance Validation for feature specifications, plans, and tasks.
+- Structured governance findings and validation reports.
+- Text, markdown, and JSON report formats.
+- Optional `governance-review.md` report generation.
+- Governance validation documentation and tests.
+
+#### Compatibility
+
+- Findings are recommendations only.
+- No blocking validation, rule engine, CI gate, or exception workflow was introduced.
+
+### [1.0.0-alpha.2] - Sprint 2
+
+#### Added
+
+- Deterministic Enterprise Context Loader.
+- `EnterpriseConfig`, `ContextDocument`, and `ContextBundle`.
+- Product resolution from `enterprise.yaml`.
+- Deterministic enterprise, Salesforce, product, and optional feature context loading.
+- Context loader CLI and documentation.
+
+#### Compatibility
+
+- Missing enterprise governance config degrades gracefully with warnings.
+- Existing Spec Kit commands remain unchanged.
+
+### [1.0.0-alpha.1] - Sprint 1
+
+#### Added
+
+- Enterprise governance scaffold under `enterprise/`.
+- Salesforce standards under `enterprise/salesforce/`.
+- Product governance scaffold under `products/`.
+- Sample RDRA product documentation.
+- `enterprise.yaml`.
+- Enterprise governance documentation.
+- Additive prompt guidance for `/speckit.specify`, `/speckit.plan`, and `/speckit.tasks`.
+
+#### Compatibility
+
+- No command names were changed.
+- Existing Spec Kit workflow behavior was preserved.
+
 <!-- insert new changelog below this comment -->
 
 ## [0.11.9] - 2026-06-26

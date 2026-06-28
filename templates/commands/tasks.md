@@ -32,6 +32,8 @@ Before generating `tasks.md`, check for enterprise governance context in the pro
 4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
 5. **Feature Specification**: the active `spec.md` and design artifacts
 
+Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
+
 If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory task-generation inputs:
 
 - Enterprise standards are mandatory and must be reflected in concrete delivery tasks when they apply.
@@ -115,6 +117,8 @@ Use the governance context to add actionable tasks for security, compliance, arc
 ## Mandatory Post-Execution Hooks
 
 **You MUST complete this section before reporting completion to the user.**
+
+After generating or updating this artifact, run advisory governance validation when available. Treat findings as recommendations unless your organization has enabled blocking validation.
 
 Check if `.specify/extensions.yml` exists in the project root.
 - If it does not exist, or no hooks are registered under `hooks.after_tasks`, skip to the Completion Report.

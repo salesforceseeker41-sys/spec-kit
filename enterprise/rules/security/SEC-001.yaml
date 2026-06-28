@@ -1,0 +1,21 @@
+id: SEC-001
+title: CRUD/FLS Enforcement
+category: Security
+description: All Apex data access must describe how object and field permissions are enforced.
+rationale: Enterprise security policy requires object and field permission enforcement before data is read or changed.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+keywords:
+  - CRUD
+  - FLS
+  - field-level security
+  - security enforcement
+recommendation: Explicitly describe CRUD/FLS enforcement for each Salesforce object and field touched by the feature.
+references:
+  - Salesforce Secure Coding Guide
+owner: Platform Team
+version: "1.0"

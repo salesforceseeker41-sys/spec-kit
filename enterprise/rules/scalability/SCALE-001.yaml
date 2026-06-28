@@ -1,0 +1,22 @@
+id: SCALE-001
+title: Bulkification
+category: Scalability
+description: Salesforce logic must be designed for bulk records rather than single-record execution only.
+rationale: Enterprise data operations frequently execute through imports, integrations, and batch jobs.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+keywords:
+  - bulk
+  - bulkification
+  - collection
+  - batch
+recommendation: Describe expected bulk volume and how the design processes records in collections.
+references:
+  - Salesforce Apex Best Practices
+owner: Platform Team
+version: "1.0"

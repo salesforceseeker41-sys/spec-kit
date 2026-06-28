@@ -1,0 +1,21 @@
+id: SEC-003
+title: Permission Set Strategy
+category: Security
+description: Access changes must identify permission sets, permission set groups, or profiles impacted by the feature.
+rationale: Centralized access management keeps enterprise authorization auditable and maintainable.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - deployment
+keywords:
+  - permission set
+  - permission set group
+  - profile
+  - access
+recommendation: Identify required permission changes and ownership for each persona or integration user.
+references:
+  - Salesforce User Access and Permissions Assistant
+owner: Platform Team
+version: "1.0"
