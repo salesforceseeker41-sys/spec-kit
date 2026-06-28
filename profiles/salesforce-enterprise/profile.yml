@@ -1,0 +1,5 @@
+id: salesforce-enterprise
+name: Salesforce Enterprise
+version: 1.0.0
+description: Enterprise-ready Salesforce governance scaffold for Spec Kit projects.
+owner: Platform Team

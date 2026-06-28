@@ -59,3 +59,5 @@ docs/dev
 .github/copilot-instructions.md
 .specify/
 specs/
+!profiles/salesforce-enterprise/specs/
+!profiles/salesforce-enterprise/specs/.gitkeep

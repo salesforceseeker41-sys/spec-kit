@@ -1,0 +1,15 @@
+enterprise:
+  version: 1.0
+
+platform:
+  name: Salesforce
+
+product:
+  name: sample-product
+
+context:
+  loadEnterprise: true
+  loadProduct: true
+
+governance:
+  matcher: keyword

@@ -1,0 +1,20 @@
+id: TEST-001
+title: Salesforce Test Coverage Evidence
+category: Testing
+description: Plans and tasks should include positive, negative, bulk, and integration test evidence.
+rationale: Enterprise delivery requires test evidence beyond nominal happy paths.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+  - tasks
+keywords:
+  - unit test
+  - negative test
+  - bulk test
+  - integration test
+recommendation: Add explicit test scenarios for positive, negative, bulk, and integration behavior.
+references:
+  - Enterprise Testing Standard
+owner: Platform Team
+version: "1.0"

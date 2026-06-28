@@ -294,6 +294,35 @@ Future Work:
 - CI report consumption.
 - Optional AI-assisted reasoning after privacy review.
 
+## Version 1.2: Project Bootstrap
+
+Version 1.2 adds an optional enterprise-ready Salesforce bootstrap profile for new projects.
+
+### Sprint 1: Salesforce Enterprise Init Profile
+
+Objective: Extend `specify init` with an optional profile that creates enterprise governance scaffolding without changing the default Spec Kit initialization path.
+
+Deliverables:
+
+- optional `--profile salesforce-enterprise` argument
+- bundled `profiles/salesforce-enterprise/` assets
+- generated `enterprise/`, `products/sample-product/`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/`
+- project bootstrap documentation
+- profile and non-profile init tests
+
+Acceptance Criteria:
+
+- `specify init` without a profile is unchanged.
+- `specify init --profile salesforce-enterprise` creates the enterprise Salesforce scaffold.
+- Invalid profiles produce clear errors.
+- Existing validation, rule loading, matcher, and governance engine behavior are unchanged.
+
+Future Work:
+
+- Knowledge-pack synchronization.
+- Enterprise profile version upgrade guidance.
+- Additional profiles after governance ownership and packaging models mature.
+
 ### Sprint 5: Product Rule Packs
 
 Objective: Allow Product Teams to add product-specific rule packs.

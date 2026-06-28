@@ -246,10 +246,38 @@ Expected responsibilities:
 - Enable product-specific packs.
 - Support installation and upgrade across many Salesforce applications.
 
+### Project Bootstrap
+
+Project Bootstrap is an optional `specify init` profile mechanism for creating enterprise-ready projects.
+
+```text
+specify init
+  |
+  v
+Spec Kit scaffold and integration setup
+  |
+  v
+optional profile installer
+  |
+  v
+enterprise Salesforce scaffold
+```
+
+Responsibilities:
+
+- Resolve bundled bootstrap profiles.
+- Copy profile files into the initialized project.
+- Preserve existing files unless `--force` is supplied.
+- Record profile installation metadata in `.specify/profile.json`.
+- Avoid changing default init behavior when no profile is requested.
+
+The first supported profile is `salesforce-enterprise`, which creates `enterprise/`, `products/sample-product/`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/`.
+
 ## Component Responsibilities
 
 | Component | Owner | Depends on | Produces | Must not do |
 | --- | --- | --- | --- | --- |
+| Project Bootstrap | Platform Team | bundled profile files | enterprise-ready project scaffold | change default init behavior |
 | `EnterpriseConfig` | Platform Team | `enterprise.yaml` | normalized config | load files |
 | `ContextLoader` | Platform Team | filesystem, `EnterpriseConfig` | `ContextBundle` | validate rules |
 | `ContextBundle` | Platform Team | loaded documents | structured context | execute prompts |

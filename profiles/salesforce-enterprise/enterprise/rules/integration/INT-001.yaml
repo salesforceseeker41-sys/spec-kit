@@ -1,0 +1,21 @@
+id: INT-001
+title: Reliable Salesforce Integrations
+category: Integration
+description: Integration designs should define authentication, retries, timeouts, idempotency, and logging.
+rationale: Reliable integrations need predictable failure handling and operational visibility.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+keywords:
+  - Named Credential
+  - retry
+  - timeout
+  - idempotency
+  - logging
+recommendation: Describe Named Credentials, retry strategy, timeout handling, idempotency, and logging.
+references:
+  - Enterprise Integration Standard
+owner: Platform Team
+version: "1.0"
