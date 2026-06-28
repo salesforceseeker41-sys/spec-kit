@@ -1,0 +1,38 @@
+id: SFAPEX-028
+title: Avoid Case-Sensitive Key Surprises
+category: Salesforce Apex
+description: String-keyed maps must normalize case and whitespace when keys come from users or external systems.
+rationale: External and user-provided strings often vary in casing and formatting.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+keywords:
+  - Maps
+  - Avoid
+  - Apex
+  - apex
+recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this rule.
+references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-apex
+domain: Apex
+topic: Maps
+required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+examples:
+  compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+  non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.

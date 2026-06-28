@@ -1,0 +1,27 @@
+id: SFINT-040
+title: Integration Error Ownership Must Be Clear
+category: Salesforce Integration
+description: Each integration error class must have an owning team, notification path, severity, and response expectation.
+rationale: Unowned integration errors linger and create business process disruption.
+severity: warning
+default_enabled: true
+applies_to: [plan, integration, operations]
+keywords: [error handling, ownership, escalation, support]
+recommendation: Map each error category to Salesforce team, middleware team, vendor, data steward, or business owner.
+references: [Salesforce Integration Patterns, Enterprise Governance Constitution]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Error Handling
+required_evidence:
+  - Error ownership matrix is documented.
+  - Notification and escalation path is assigned.
+  - Severity or SLA is stated for critical errors.
+negative_evidence:
+  - Errors go to a shared mailbox with no owner.
+  - Vendor errors have no escalation path.
+  - Business data corrections are unassigned.
+examples:
+  compliant: Authentication errors page Platform Engineering, validation errors route to Data Steward queue, and vendor outages notify Integration Support.
+  non_compliant: All integration failures create generic tasks for the product owner.

@@ -1,0 +1,25 @@
+id: SFTEST-003
+title: Flow Tests Must Cover Successful Paths
+category: Salesforce Testing
+description: Flow changes must include automated Flow tests, Apex-driven tests, or documented validation evidence for primary successful paths.
+rationale: Flow activation changes runtime behavior and requires evidence that the intended process works.
+severity: warning
+default_enabled: true
+applies_to: [plan, flow, testing]
+keywords: [Flow Tests, happy path, validation, automation]
+recommendation: Test the primary flow path with representative users, records, inputs, and expected outputs.
+references: [Salesforce Flow Builder Documentation, Salesforce Flow Best Practices]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Flow Tests
+required_evidence:
+  - Primary Flow scenario is documented.
+  - Expected record changes or screen outcomes are verified.
+negative_evidence:
+  - Flow is activated after only visual inspection.
+  - No validation evidence exists for the primary path.
+examples:
+  compliant: Record-triggered Flow test verifies that qualifying Case records receive the expected escalation fields.
+  non_compliant: Admin manually clicks through the Flow once and activates it without evidence.

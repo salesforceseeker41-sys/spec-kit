@@ -1,0 +1,24 @@
+id: SFSEC-011
+title: Define Secret Rotation And Revocation
+category: Salesforce Security
+description: Designs that use credentials, certificates, tokens, or integration secrets must define how they are rotated, revoked, and validated after rotation.
+rationale: Long-lived unmanaged credentials increase blast radius after leakage or personnel changes.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, integration, deployment, operations]
+keywords: [secret rotation, revocation, certificate rotation, token rotation, credential lifecycle]
+recommendation: Include rotation frequency, owner, operational runbook, and rollback approach for each secret.
+references: [Salesforce Security Guide, Salesforce Named Credentials Documentation]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Rotation cadence is documented.
+  - Owner and approver are named.
+  - Validation and rollback steps are defined.
+negative_evidence:
+  - Secret has no expiry or owner.
+  - Rotation requires code changes.
+  - No plan exists for compromised credential response.
+examples:
+  compliant: Certificate-backed integration has a 90-day rotation runbook and validation smoke test.
+  non_compliant: API key is created once by a developer and reused indefinitely.

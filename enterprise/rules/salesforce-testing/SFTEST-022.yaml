@@ -1,0 +1,25 @@
+id: SFTEST-022
+title: Negative Tests Required For Downstream Failures
+category: Salesforce Testing
+description: Tests must cover downstream dependency failures such as callout errors, event publish failures, async job failures, missing configuration, and unavailable services where relevant.
+rationale: Enterprise Salesforce features depend on external and asynchronous systems that fail in production.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, flow, integration, testing]
+keywords: [Negative Testing, downstream failure, missing configuration, async failure]
+recommendation: Simulate downstream failures and assert retry, recovery, logging, and user or support behavior.
+references: [Salesforce Integration Patterns, Salesforce Apex Testing Best Practices]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Negative Testing
+required_evidence:
+  - Downstream failure scenarios are identified.
+  - Tests assert recovery, logging, or terminal failure behavior.
+negative_evidence:
+  - Dependency failure path is untested.
+  - Missing configuration causes uncontrolled exception.
+examples:
+  compliant: Test simulates vendor timeout and asserts Integration_Error__c with retry eligibility and correlation ID.
+  non_compliant: Callout catch block is never executed by tests.

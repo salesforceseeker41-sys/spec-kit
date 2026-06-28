@@ -1,0 +1,27 @@
+id: SFINT-050
+title: Integration Users Must Be Least Privilege
+category: Salesforce Integration
+description: Integration users and principals must receive only the permissions required by the integration contract.
+rationale: Overprivileged integration identities increase breach impact and bypass business access controls.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, integration, deployment]
+keywords: [security, integration user, least privilege, permission set]
+recommendation: Use dedicated permission sets or permission set groups scoped to objects, fields, classes, flows, and API operations.
+references: [Salesforce Security Guide, Salesforce Permission Sets Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Security
+required_evidence:
+  - Integration principal is identified.
+  - Required permissions are mapped to operations.
+  - Privileged permissions are justified and reviewed.
+negative_evidence:
+  - Integration uses System Administrator profile.
+  - View All Data or Modify All Data is granted for convenience.
+  - One integration user is shared by unrelated systems.
+examples:
+  compliant: ERP integration user has object and field permissions only for order sync objects.
+  non_compliant: Vendor integration uses an admin account shared across multiple products.

@@ -249,7 +249,7 @@ Delivery Teams
 ```
 
 - **Platform Team** owns enterprise-wide standards in `enterprise/`, including the enterprise constitution, shared principles, Salesforce standards, and `enterprise.yaml`.
-- **Product Teams** own product-domain standards in `products/<product-id>/`, including product principles, integrations, domain model, and events.
+- **Product Teams** own product-domain standards in `products/<product-id>/`, including product principles, domain model, business rules, integrations, and events.
 - **Delivery Teams** own feature requirements and delivery evidence in generated feature artifacts such as `spec.md`, `plan.md`, and `tasks.md`.
 
 The `/speckit.specify`, `/speckit.plan`, and `/speckit.tasks` prompt templates instruct agents to consider governance context, when present, in this order:
@@ -271,6 +271,26 @@ Feature Specification
 ```
 
 Enterprise and product standards are mandatory inputs. Delivery teams apply those standards to feature work; they should not redefine enterprise architecture in a feature spec or plan.
+
+### Dynamic Product Context
+
+`enterprise.yaml` selects the active product:
+
+```yaml
+product:
+  name: rdra
+```
+
+or:
+
+```yaml
+product:
+  name: product-team1
+```
+
+The Enterprise Context Loader reads `products/<product-name>/` dynamically on each run. Product files include `principles.md`, `domain-model.md`, `business-rules.yaml`, `events.md`, `integrations.md`, and future `.md`, `.yaml`, or `.yml` files.
+
+If Product Team 1 updates `products/product-team1/domain-model.md`, `products/product-team1/events.md`, `products/product-team1/integrations.md`, or `products/product-team1/business-rules.yaml`, future `/speckit-specify`, `/speckit-plan`, and `/speckit-implement` runs use the updated content automatically. Enterprise rules remain platform-owned; product business rules remain product-owned.
 
 See the full [Enterprise Governance guide](./docs/enterprise-governance.md) for folder ownership, diagrams, lifecycle guidance, an RDRA feature example, and the roadmap for automatic context loading, validation, a rule engine, and knowledge packs.
 
@@ -350,7 +370,7 @@ Project Bootstrap adds an optional Salesforce enterprise profile for `specify in
 specify init my-project --integration codex --profile salesforce-enterprise
 ```
 
-When the profile is omitted, `specify init` behaves as before. The profile adds `enterprise/`, `products/sample-product/`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/` after the standard Spec Kit scaffold and selected integration are installed.
+When the profile is omitted, `specify init` behaves as before. The profile adds `enterprise/`, `products/sample-product/` including `business-rules.yaml`, `enterprise.yaml`, `docs/esf-onboarding.md`, and `specs/` after the standard Spec Kit scaffold and selected integration are installed.
 
 See the [Project Bootstrap guide](./docs/project-bootstrap.md) for generated folders, ownership, configuration, and limitations.
 

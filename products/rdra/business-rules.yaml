@@ -1,0 +1,26 @@
+business_rules:
+  - id: BR-001
+    name: Contact Onboarding Eligibility
+    description: Contacts are eligible for onboarding only when required demographic and program data is present.
+    applies_to:
+      - specification
+      - plan
+      - implementation
+    required_evidence:
+      - eligibility criteria
+      - required fields
+      - validation behavior
+    recommendation: Describe eligibility rules before designing automation.
+
+  - id: BR-002
+    name: Regulated Account Review Completion
+    description: Regulated account reviews are complete only when required approvals, audit evidence, and disposition fields are present.
+    applies_to:
+      - specification
+      - plan
+      - implementation
+    required_evidence:
+      - approval criteria
+      - audit evidence
+      - completion status behavior
+    recommendation: Define review completion rules before publishing events or updating account status.

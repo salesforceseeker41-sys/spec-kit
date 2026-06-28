@@ -1,0 +1,19 @@
+name: salesforce-flow
+title: Enterprise Salesforce Flow Knowledge Pack
+description: Enterprise-approved Salesforce Flow governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Salesforce Center of Excellence
+rule_root: enterprise/rules/salesforce-flow
+rule_id_prefix: SFFLOW
+domains:
+  - Flow
+applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  - deployment
+  - operations
+release_channel: preview
+minimum_esf_version: "1.0"

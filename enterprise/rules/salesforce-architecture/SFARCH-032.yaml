@@ -1,0 +1,37 @@
+id: SFARCH-032
+title: Use Correlation IDs Across Boundaries
+category: Salesforce Architecture
+description: Architecture involving async work, events, or integrations must propagate correlation identifiers where practical.
+rationale: Correlation IDs let support teams trace one business transaction across Salesforce and external systems.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - operations
+keywords:
+  - Observability
+  - Use
+  - Architecture
+  - operations
+recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact for this rule.
+references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+owner: Enterprise Architecture
+version: "1.0.0"
+rule_pack: salesforce-architecture
+domain: Architecture
+topic: Observability
+required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+examples:
+  compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+  non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.

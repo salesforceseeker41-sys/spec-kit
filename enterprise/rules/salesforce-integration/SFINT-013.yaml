@@ -1,0 +1,27 @@
+id: SFINT-013
+title: Platform Event Schemas Must Be Versioned
+category: Salesforce Integration
+description: Platform Event schemas used for integrations must have versioning and compatibility expectations.
+rationale: Event schemas become contracts for asynchronous consumers and should not change unpredictably.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, integration, metadata]
+keywords: [Platform Events, schema, versioning, contract]
+recommendation: Use additive changes where possible and document event field semantics, deprecation, and consumer migration.
+references: [Salesforce Platform Events Documentation, Salesforce Integration Patterns]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Platform Events
+required_evidence:
+  - Event schema and field semantics are documented.
+  - Versioning or compatibility strategy is stated.
+  - Consumer migration expectations are defined.
+negative_evidence:
+  - Event fields are repurposed without notice.
+  - Required fields are removed without migration.
+  - Consumers infer schema from examples only.
+examples:
+  compliant: Order_Status__e adds optional FulfillmentCenter__c and documents consumers can ignore unknown fields.
+  non_compliant: Existing event field changes meaning from status code to display label.

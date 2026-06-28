@@ -1,0 +1,37 @@
+id: SFARCH-024
+title: Configuration Must Not Store Secrets
+category: Salesforce Architecture
+description: Configuration metadata must not store passwords, tokens, API keys, or private credentials.
+rationale: Configuration is often visible to admins and source control systems.
+severity: blocking
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - metadata
+keywords:
+  - Configuration
+  - Configuration
+  - Architecture
+  - metadata
+recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact for this rule.
+references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+owner: Enterprise Architecture
+version: "1.0.0"
+rule_pack: salesforce-architecture
+domain: Architecture
+topic: Configuration
+required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+examples:
+  compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+  non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.

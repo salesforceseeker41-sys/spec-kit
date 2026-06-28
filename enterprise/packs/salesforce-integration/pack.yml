@@ -1,0 +1,21 @@
+name: salesforce-integration
+title: Enterprise Salesforce Integration Knowledge Pack
+description: Enterprise-approved Salesforce integration governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Integration Architecture
+rule_root: enterprise/rules/salesforce-integration
+rule_id_prefix: SFINT
+domains:
+  - Integrations
+applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  - metadata
+  - deployment
+  - operations
+release_channel: preview
+minimum_esf_version: "1.0"

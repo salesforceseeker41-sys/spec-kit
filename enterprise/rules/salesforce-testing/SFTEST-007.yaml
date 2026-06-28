@@ -1,0 +1,25 @@
+id: SFTEST-007
+title: Security Tests Must Use Least-Privilege Personas
+category: Salesforce Testing
+description: Security-sensitive features must test behavior with users that represent least-privilege business personas, not only admin or implicit test context.
+rationale: Admin-context tests hide CRUD, FLS, sharing, and permission defects.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, flow, testing]
+keywords: [Security Tests, least privilege, runAs, permissions]
+recommendation: Create test users with representative permission sets and assert allowed and denied behavior.
+references: [Salesforce Secure Coding Guide, Salesforce Apex Testing Best Practices]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Security Tests
+required_evidence:
+  - Least-privilege persona is defined.
+  - Tests run under representative user context where feasible.
+negative_evidence:
+  - All tests run as implicit system context.
+  - Permission-sensitive feature has no persona-based tests.
+examples:
+  compliant: Test uses System.runAs standard user with assigned permission set and verifies restricted fields are not updated.
+  non_compliant: Test runs as admin-equivalent context and never verifies access denial.

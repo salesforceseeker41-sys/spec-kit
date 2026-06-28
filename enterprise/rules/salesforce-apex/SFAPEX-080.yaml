@@ -1,0 +1,37 @@
+id: SFAPEX-080
+title: Use Test Data Factories For Shared Setup
+category: Salesforce Apex
+description: Repeated Apex test setup must use approved test data factory patterns.
+rationale: Factories reduce duplication and make required data relationships clear.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - testing
+keywords:
+  - Test Data Factory
+  - Use
+  - Apex
+  - testing
+recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this rule.
+references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-apex
+domain: Apex
+topic: Test Data Factory
+required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+examples:
+  compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+  non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.

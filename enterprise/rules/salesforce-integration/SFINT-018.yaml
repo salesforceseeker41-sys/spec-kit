@@ -1,0 +1,27 @@
+id: SFINT-018
+title: CDC Consumers Must Handle Replay And Gaps
+category: Salesforce Integration
+description: CDC consumers must define replay ID storage, gap detection, replay window handling, and resynchronization behavior.
+rationale: CDC delivery can be interrupted, and consumers need a recovery path when replay windows are missed.
+severity: blocking
+default_enabled: true
+applies_to: [plan, integration, operations]
+keywords: [CDC, replay ID, gap detection, resync]
+recommendation: Persist replay checkpoints and define full or partial resync procedures for missed events.
+references: [Salesforce Change Data Capture Documentation, Salesforce Streaming API Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: CDC
+required_evidence:
+  - Replay ID storage is documented.
+  - Gap detection and missed-window handling are defined.
+  - Resynchronization process is tested.
+negative_evidence:
+  - Consumer starts from latest after outage.
+  - Replay IDs are stored only in memory.
+  - No procedure exists for missed retention window.
+examples:
+  compliant: Consumer persists replay ID per channel and triggers bulk reconciliation if replay fails.
+  non_compliant: Consumer restarts from new events and ignores changes during downtime.

@@ -1,0 +1,27 @@
+id: SFINT-036
+title: Timeout Thresholds Must Be Monitored
+category: Salesforce Integration
+description: Integration timeout rates and latency thresholds must be monitored for critical integrations.
+rationale: Rising latency is often an early signal of downstream degradation or capacity issues.
+severity: advisory
+default_enabled: true
+applies_to: [plan, integration, operations]
+keywords: [timeout, latency, monitoring, threshold]
+recommendation: Define latency metrics, timeout thresholds, alert routing, and trend review cadence.
+references: [Salesforce Event Monitoring Documentation, Salesforce Integration Patterns]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Timeout
+required_evidence:
+  - Latency and timeout metrics are defined.
+  - Alert thresholds are documented.
+  - Owner response path is assigned.
+negative_evidence:
+  - Timeouts are visible only in debug logs.
+  - No threshold exists for degradation.
+  - Operations discovers timeout spike from users.
+examples:
+  compliant: Integration dashboard alerts when timeout rate exceeds two percent for fifteen minutes.
+  non_compliant: Support learns about timeout incidents only from failed business users.

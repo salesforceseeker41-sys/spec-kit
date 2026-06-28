@@ -1,0 +1,27 @@
+id: SFINT-052
+title: Integration Secrets Must Be Governed
+category: Salesforce Integration
+description: Integration secrets, certificates, tokens, and OAuth clients must have governed storage, rotation, revocation, and incident response.
+rationale: Integration credentials are high-value assets and require lifecycle controls.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, integration, deployment, operations]
+keywords: [security, secrets, certificate, OAuth, rotation]
+recommendation: Store secrets in approved mechanisms and document owner, expiry, rotation cadence, and compromise response.
+references: [Salesforce Named Credentials Documentation, Salesforce Security Guide, Salesforce OAuth Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Security
+required_evidence:
+  - Secret or certificate inventory is documented.
+  - Storage and rotation process are approved.
+  - Revocation and compromise response are defined.
+negative_evidence:
+  - Secrets are committed to source control.
+  - Certificates expire without owner alerts.
+  - OAuth clients have no revocation process.
+examples:
+  compliant: OAuth client secret is managed through External Credential with tracked rotation and revocation runbook.
+  non_compliant: Certificate expiry is discovered only after production callouts fail.

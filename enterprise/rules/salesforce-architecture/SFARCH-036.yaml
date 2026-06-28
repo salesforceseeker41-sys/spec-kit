@@ -1,0 +1,37 @@
+id: SFARCH-036
+title: Release Must Coordinate Cross-System Dependencies
+category: Salesforce Architecture
+description: Deployments that affect integrations, events, middleware, or downstream consumers must coordinate release windows and compatibility.
+rationale: Cross-system changes fail when each team deploys as if it owns the whole universe.
+severity: warning
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - deployment
+keywords:
+  - Deployment
+  - Release
+  - Architecture
+  - deployment
+recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact for this rule.
+references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+owner: Enterprise Architecture
+version: "1.0.0"
+rule_pack: salesforce-architecture
+domain: Architecture
+topic: Deployment
+required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+examples:
+  compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+  non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.

@@ -1,0 +1,38 @@
+id: SFFLOW-027
+title: Subflows Must Not Hide Heavy Side Effects
+category: Salesforce Flow
+description: Subflows that perform DML, callouts, Apex actions, or event publishing must make those side effects visible to callers.
+rationale: Hidden side effects make flow orchestration and rollback behavior hard to reason about.
+severity: warning
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+keywords:
+  - Subflows
+  - Subflows
+  - Flow
+  - flow
+recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for this rule.
+references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-flow
+domain: Flow
+topic: Subflows
+required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+examples:
+  compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation plan.
+  non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback plan.

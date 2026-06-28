@@ -1,0 +1,24 @@
+id: SFSEC-033
+title: Review Third-Party JavaScript In Lightning
+category: Salesforce Security
+description: Third-party JavaScript used by Lightning components must be reviewed for source, licensing, integrity, data access, LWS compatibility, and maintenance risk.
+rationale: Client-side libraries can exfiltrate data, introduce vulnerabilities, or break platform security assumptions.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, lwc, deployment]
+keywords: [third-party JavaScript, static resource, LWC library, supply chain, LWS]
+recommendation: Package approved libraries as static resources, pin versions, and document review evidence.
+references: [Lightning Web Components Developer Guide, Lightning Web Security Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Library name, version, and source are documented.
+  - Security and license review is complete.
+  - Data accessed by the library is described.
+negative_evidence:
+  - Library is loaded from public CDN without approval.
+  - Version floats to latest.
+  - Library receives record data without review.
+examples:
+  compliant: Approved chart library is pinned as a static resource and tested under LWS.
+  non_compliant: LWC loads a remote minified script from a CDN at runtime.

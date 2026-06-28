@@ -1,0 +1,25 @@
+id: SFTEST-015
+title: Test Data Factories Must Create Valid Minimal Data
+category: Salesforce Testing
+description: Test data factories must create valid, minimal, reusable records with explicit options for scenario-specific fields and relationships.
+rationale: Bloated or unclear factories hide test intent and make schema changes expensive.
+severity: advisory
+default_enabled: true
+applies_to: [plan, apex, testing]
+keywords: [Test Data Factory, factory, minimal data, reusable]
+recommendation: Build factories with sane defaults, explicit overrides, and clear relationship helpers.
+references: [Salesforce Apex Testing Best Practices]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Test Data Factory
+required_evidence:
+  - Factory creates required valid records.
+  - Scenario-specific values are explicit in tests.
+negative_evidence:
+  - Factory creates large unrelated object graphs by default.
+  - Tests hide important setup values inside opaque factory calls.
+examples:
+  compliant: AccountFactory.createCustomer accepts named overrides for region and status while defaulting only required fields.
+  non_compliant: Factory creates Account, five Contacts, Opportunity, Case, and Orders for every test regardless of need.

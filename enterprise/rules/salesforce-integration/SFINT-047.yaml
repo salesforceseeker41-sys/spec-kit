@@ -1,0 +1,27 @@
+id: SFINT-047
+title: Monitoring Must Include Business Impact
+category: Salesforce Integration
+description: Integration monitoring must include business impact indicators such as delayed orders, unsynced accounts, failed payments, or stale case updates.
+rationale: Technical availability alone does not prove business process health.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, integration, operations]
+keywords: [monitoring, business impact, SLA, KPI]
+recommendation: Pair technical metrics with business outcome metrics and product owner review.
+references: [Salesforce Integration Patterns, Enterprise Governance Constitution]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Monitoring
+required_evidence:
+  - Business impact metric is defined.
+  - Thresholds map to business severity.
+  - Product owner or operations review cadence is assigned.
+negative_evidence:
+  - Only server uptime is monitored.
+  - Failed business records are not counted.
+  - SLA breach is discovered manually.
+examples:
+  compliant: Monitoring tracks number and age of orders waiting for ERP acknowledgement.
+  non_compliant: API endpoint returns 200 while thousands of records fail validation unnoticed.

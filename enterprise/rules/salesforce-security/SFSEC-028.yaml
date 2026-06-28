@@ -1,0 +1,24 @@
+id: SFSEC-028
+title: Require Access Review For Privileged Permissions
+category: Salesforce Security
+description: Privileged Salesforce permissions must have an assigned owner, approval record, periodic review cadence, and removal process.
+rationale: Privileged access tends to accumulate and must be reviewed to maintain least privilege over time.
+severity: warning
+default_enabled: true
+applies_to: [plan, metadata, deployment, operations]
+keywords: [access review, privileged permission, permission governance, user access review]
+recommendation: Include privileged permissions in recurring access certification and remove unused assignments.
+references: [Salesforce Security Guide, Salesforce Permission Sets Documentation]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Privileged permissions are listed.
+  - Review owner and cadence are documented.
+  - Deprovisioning process is defined.
+negative_evidence:
+  - Privileged permission sets have no owner.
+  - Access is granted permanently for temporary needs.
+  - No evidence of review or attestation.
+examples:
+  compliant: Data export permission set is reviewed quarterly by Data Governance.
+  non_compliant: Admin-like permission set remains assigned to former project users indefinitely.

@@ -1,0 +1,27 @@
+id: SFINT-051
+title: Integration Data Must Be Classified
+category: Salesforce Integration
+description: Integration payloads must classify sensitive, regulated, confidential, internal, and public data before data leaves Salesforce.
+rationale: Data classification determines encryption, masking, logging, retention, and downstream access controls.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, integration, security]
+keywords: [security, data classification, sensitive data, payload]
+recommendation: Document payload classification and downstream controls for each integrated system.
+references: [Salesforce Data Classification Documentation, Salesforce Security Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Security
+required_evidence:
+  - Payload fields are classified.
+  - Sensitive data handling is documented.
+  - Downstream retention and access are reviewed.
+negative_evidence:
+  - Payload sends regulated data without classification review.
+  - Downstream storage controls are unknown.
+  - Logs duplicate sensitive payloads.
+examples:
+  compliant: Customer eligibility integration documents confidential fields and downstream retention controls.
+  non_compliant: Full customer profile is sent to middleware without data classification.

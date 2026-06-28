@@ -1,0 +1,24 @@
+id: SFSEC-032
+title: Do Not Bypass Lightning Web Security Controls
+category: Salesforce Security
+description: Lightning components must not use unsupported DOM, script loading, or iframe patterns to bypass Lightning Web Security, Locker, or platform isolation controls.
+rationale: Lightning security isolation protects Salesforce pages from cross-component tampering and unsafe script behavior.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, lwc]
+keywords: [Lightning Web Security, Locker, DOM access, iframe, script injection]
+recommendation: Use supported LWC APIs and approved third-party libraries that operate within Lightning Web Security constraints.
+references: [Lightning Web Security Documentation, Lightning Locker Documentation, Lightning Web Components Developer Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Third-party script and DOM requirements are described.
+  - Compatibility with Lightning Web Security is confirmed.
+  - Unsupported bypass techniques are absent.
+negative_evidence:
+  - Component manipulates global DOM outside its template.
+  - Script injection is used to work around platform restrictions.
+  - iframe is used to avoid Salesforce security controls.
+examples:
+  compliant: LWC uses scoped template DOM APIs and a reviewed static-resource library compatible with LWS.
+  non_compliant: Component injects remote script tags into document.body to load an unreviewed widget.

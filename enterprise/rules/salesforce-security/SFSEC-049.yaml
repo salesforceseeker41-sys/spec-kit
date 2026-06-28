@@ -1,0 +1,24 @@
+id: SFSEC-049
+title: Require Security Review For Managed Packages And AppExchange Apps
+category: Salesforce Security
+description: Managed packages, AppExchange apps, and third-party Salesforce components must be reviewed for permissions, data access, integration endpoints, vendor risk, and operational ownership.
+rationale: Installed packages can introduce code, permissions, integrations, and data access outside product team control.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, metadata, deployment, operations]
+keywords: [managed package, AppExchange, vendor risk, package permission, third-party app]
+recommendation: Complete vendor and package security review before installation or production enablement.
+references: [Salesforce AppExchange Security Review Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Package name, vendor, and version are documented.
+  - Requested permissions and data access are reviewed.
+  - Support and upgrade ownership are assigned.
+negative_evidence:
+  - Package installed directly in production.
+  - Permission sets are assigned without review.
+  - Vendor integration endpoints are unknown.
+examples:
+  compliant: AppExchange app undergoes vendor review, sandbox testing, and permission analysis before production install.
+  non_compliant: Admin installs a managed package and assigns all included permission sets to users.

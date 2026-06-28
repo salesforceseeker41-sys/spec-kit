@@ -1,0 +1,37 @@
+id: SFFLOW-035
+title: Retired Flow Versions Must Be Cleaned Up
+category: Salesforce Flow
+description: Obsolete inactive Flow versions must be reviewed and retired according to enterprise retention policy.
+rationale: Old versions increase metadata noise and can be reactivated accidentally.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - deployment
+keywords:
+  - Versioning
+  - Retired
+  - Flow
+  - deployment
+recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for this rule.
+references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-flow
+domain: Flow
+topic: Versioning
+required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+examples:
+  compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation plan.
+  non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback plan.

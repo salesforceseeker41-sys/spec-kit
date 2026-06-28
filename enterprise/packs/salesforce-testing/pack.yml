@@ -1,0 +1,20 @@
+name: salesforce-testing
+title: Enterprise Salesforce Testing Knowledge Pack
+description: Enterprise-approved Salesforce testing governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Quality Engineering
+rule_root: enterprise/rules/salesforce-testing
+rule_id_prefix: SFTEST
+domains:
+  - Testing
+applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  - deployment
+release_channel: preview
+minimum_esf_version: "1.0"

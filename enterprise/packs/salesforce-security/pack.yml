@@ -1,0 +1,22 @@
+name: salesforce-security
+title: Enterprise Salesforce Security Knowledge Pack
+description: Enterprise-approved Salesforce security governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Enterprise Salesforce Security Architecture
+rule_root: enterprise/rules/salesforce-security
+rule_id_prefix: SFSEC
+domains:
+  - Security
+applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  - metadata
+  - integration
+  - deployment
+  - operations
+release_channel: preview
+minimum_esf_version: "1.0"

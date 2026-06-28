@@ -1,0 +1,24 @@
+id: SFSEC-003
+title: Use Security.stripInaccessible For Untrusted Record Payloads
+category: Salesforce Security
+description: Apex that processes user-supplied, integration-supplied, or UI-supplied sObject payloads must sanitize inaccessible fields before DML or response serialization.
+rationale: Untrusted payloads can include fields the caller is not allowed to create, update, or read.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, integration, lwc]
+keywords: [stripInaccessible, sanitize, untrusted payload, AccessType, field security]
+recommendation: Use `Security.stripInaccessible` with the correct access type before DML and before returning sObjects to callers.
+references: [Salesforce Apex Developer Guide, Salesforce Secure Coding Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Payload sources are identified.
+  - Correct AccessType is selected for create, update, or read.
+  - Removed fields are handled safely.
+negative_evidence:
+  - Deserialized JSON is directly upserted.
+  - LWC payload fields are trusted because the UI hides fields.
+  - Removed fields are ignored without audit or user feedback.
+examples:
+  compliant: Controller calls Security.stripInaccessible(AccessType.UPDATABLE, records) before update.
+  non_compliant: REST resource deserializes Account JSON and performs upsert immediately.

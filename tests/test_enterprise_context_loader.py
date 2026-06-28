@@ -60,6 +60,96 @@ def test_valid_enterprise_yaml_loads_enterprise_and_product_docs(
     ]
 
 
+def test_product_context_includes_business_rules_yaml_in_defined_order(
+    tmp_path: Path,
+) -> None:
+    _write_config(tmp_path)
+    _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
+    _write(tmp_path / "products/rdra/integrations.md", "# Integrations\n")
+    _write(tmp_path / "products/rdra/events.md", "# Events\n")
+    _write(tmp_path / "products/rdra/domain-model.md", "# Domain Model\n")
+    _write(tmp_path / "products/rdra/principles.md", "# RDRA Principles\n")
+    _write(
+        tmp_path / "products/rdra/business-rules.yaml",
+        "business_rules:\n  - id: BR-001\n    name: Eligibility\n",
+    )
+    _write(tmp_path / "products/rdra/z-extra.yml", "extra: true\n")
+    _write(tmp_path / "products/rdra/a-extra.md", "# Extra\n")
+
+    bundle = ContextLoader(tmp_path).load()
+
+    assert not bundle.has_errors()
+    assert bundle.list_loaded_paths() == [
+        "enterprise/constitution.md",
+        "products/rdra/principles.md",
+        "products/rdra/domain-model.md",
+        "products/rdra/business-rules.yaml",
+        "products/rdra/events.md",
+        "products/rdra/integrations.md",
+        "products/rdra/a-extra.md",
+        "products/rdra/z-extra.yml",
+    ]
+    business_doc = next(
+        doc for doc in bundle.documents if doc.path == "products/rdra/business-rules.yaml"
+    )
+    assert business_doc.category == "business-rules"
+    assert "BR-001" in business_doc.content
+
+
+def test_context_loader_uses_product_name_from_enterprise_yaml(
+    tmp_path: Path,
+) -> None:
+    _write_config(tmp_path, product_name="product-team1")
+    _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
+    _write(tmp_path / "products/rdra/principles.md", "# RDRA Principles\n")
+    _write(tmp_path / "products/product-team1/principles.md", "# Team 1 Principles\n")
+    _write(
+        tmp_path / "products/product-team1/business-rules.yaml",
+        "business_rules:\n  - id: BR-TEAM1\n    name: Team 1 Rule\n",
+    )
+
+    bundle = ContextLoader(tmp_path).load()
+
+    assert bundle.product_name == "product-team1"
+    assert "products/product-team1/principles.md" in bundle.list_loaded_paths()
+    assert "products/product-team1/business-rules.yaml" in bundle.list_loaded_paths()
+    assert "products/rdra/principles.md" not in bundle.list_loaded_paths()
+
+
+def test_different_product_names_load_different_product_folders(
+    tmp_path: Path,
+) -> None:
+    _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
+    _write(tmp_path / "products/alpha/principles.md", "# Alpha\n")
+    _write(tmp_path / "products/beta/principles.md", "# Beta\n")
+
+    _write_config(tmp_path, product_name="alpha")
+    alpha = ContextLoader(tmp_path).load().list_loaded_paths()
+
+    _write_config(tmp_path, product_name="beta")
+    beta = ContextLoader(tmp_path).load().list_loaded_paths()
+
+    assert "products/alpha/principles.md" in alpha
+    assert "products/beta/principles.md" not in alpha
+    assert "products/beta/principles.md" in beta
+    assert "products/alpha/principles.md" not in beta
+
+
+def test_missing_business_rules_warns_without_crashing(tmp_path: Path) -> None:
+    _write_config(tmp_path)
+    _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
+    _write(tmp_path / "products/rdra/principles.md", "# RDRA Principles\n")
+
+    bundle = ContextLoader(tmp_path).load()
+
+    assert not bundle.has_errors()
+    assert bundle.list_loaded_paths() == [
+        "enterprise/constitution.md",
+        "products/rdra/principles.md",
+    ]
+    assert any("Product business rules file was not found" in warning for warning in bundle.warnings)
+
+
 def test_missing_product_folder_warns_without_crashing(tmp_path: Path) -> None:
     _write_config(tmp_path)
     _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")

@@ -1,0 +1,27 @@
+id: SFINT-035
+title: Long-Running Work Must Be Asynchronous
+category: Salesforce Integration
+description: Integration work expected to exceed acceptable synchronous latency must use async Apex, middleware, events, or scheduled processing.
+rationale: Long-running synchronous operations degrade user experience and increase transaction failure risk.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, apex, flow, integration]
+keywords: [timeout, async, long-running, latency]
+recommendation: Move long-running work behind queueable, batch, Platform Event, or middleware orchestration with status tracking.
+references: [Salesforce Apex Developer Guide, Salesforce Integration Patterns]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Timeout
+required_evidence:
+  - Expected latency is documented.
+  - Async pattern is justified.
+  - User status and completion notification are defined.
+negative_evidence:
+  - UI transaction waits on long external processing.
+  - Flow blocks user while downstream system completes heavy work.
+  - No status tracking exists after async handoff.
+examples:
+  compliant: Screen Flow submits request and Queueable handles vendor processing with status updates.
+  non_compliant: Button click synchronously waits for multiple downstream systems to respond.

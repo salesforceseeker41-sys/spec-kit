@@ -1,0 +1,24 @@
+id: SFSEC-043
+title: Govern Data Export Capabilities
+category: Salesforce Security
+description: Features that enable data export, download, sync, or bulk extraction must define authorization, monitoring, volume limits, purpose, and retention controls.
+rationale: Export paths are high-risk because they move Salesforce data outside platform access controls.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, integration, metadata, operations]
+keywords: [data export, download, bulk API, report export, extract, sync]
+recommendation: Restrict export capability to approved personas and monitor high-volume or sensitive exports.
+references: [Salesforce Security Guide, Salesforce Event Monitoring Documentation, Salesforce Data Export Documentation]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Exported data scope and purpose are documented.
+  - Authorization and monitoring controls are defined.
+  - Downstream retention and protection are addressed.
+negative_evidence:
+  - Users can export regulated data without approval.
+  - Bulk API extraction has no monitoring.
+  - Export destination retention is unknown.
+examples:
+  compliant: Approved analysts export limited fields with Event Monitoring alerts and downstream retention policy.
+  non_compliant: All sales users can download full customer lists including sensitive fields.

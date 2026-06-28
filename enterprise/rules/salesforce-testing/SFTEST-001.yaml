@@ -1,0 +1,25 @@
+id: SFTEST-001
+title: Apex Tests Must Assert Business Behavior
+category: Salesforce Testing
+description: Apex tests must assert business outcomes, persisted data, emitted events, queued work, and error behavior rather than only executing code for coverage.
+rationale: Line execution without assertions does not prove that Salesforce behavior is correct or safe.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, testing]
+keywords: [Apex Tests, assertions, business behavior, unit tests]
+recommendation: Write Apex tests around observable business outcomes and include assertions for both changed and unchanged state.
+references: [Salesforce Apex Testing Best Practices, Salesforce Apex Developer Guide]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Apex Tests
+required_evidence:
+  - Test methods assert expected records, fields, events, jobs, or errors.
+  - Tests prove the business rule, not only code execution.
+negative_evidence:
+  - Test has no assertions.
+  - Test only calls methods to increase coverage.
+examples:
+  compliant: Test updates an Opportunity and asserts renewal task creation, expected owner, and no duplicate tasks.
+  non_compliant: Test inserts an Opportunity, calls the handler, and performs no assertions.

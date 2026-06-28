@@ -1,0 +1,24 @@
+id: SFSEC-015
+title: Require Integration User Least Privilege
+category: Salesforce Security
+description: Integration users and principals must receive only the permission sets, object access, field access, and system permissions needed for the integration contract.
+rationale: Over-privileged integration identities can create broad data exposure if credentials or tokens are compromised.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, integration, deployment]
+keywords: [integration user, least privilege, permission set, API user, principal]
+recommendation: Define a dedicated integration permission set or permission set group scoped to the exact objects, fields, and operations required.
+references: [Salesforce Security Guide, Salesforce Integration Patterns]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Integration principal is identified.
+  - Required permissions are mapped to API operations.
+  - Privileged system permissions are justified.
+negative_evidence:
+  - Integration uses System Administrator profile.
+  - Permission set grants broad modify-all data without approval.
+  - Shared integration user serves unrelated systems.
+examples:
+  compliant: Billing integration user has read/write access only to Invoice__c and required Account fields.
+  non_compliant: External middleware authenticates as a System Administrator user.

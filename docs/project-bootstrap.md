@@ -73,9 +73,30 @@ governance:
 | Area | Owner | Purpose |
 | --- | --- | --- |
 | `enterprise/` | Platform Team | Enterprise constitution, principles, Salesforce standards, and rules. |
-| `products/sample-product/` | Product Team | Product-specific domain, integration, and event guidance. |
+| `products/sample-product/` | Product Team | Product-specific principles, domain model, business rules, integrations, and event guidance. |
 | `specs/` | Delivery Team | Feature specifications, plans, tasks, and governance reports. |
 | `.specify/` | Spec Kit | Core workflows, templates, scripts, and integration metadata. |
+
+## Dynamic Product Context
+
+Generated Salesforce Enterprise projects include a product folder selected by `enterprise.yaml`:
+
+```yaml
+product:
+  name: sample-product
+```
+
+Product teams own files under `products/<product-name>/`, including:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+
+The Enterprise Context Loader reads the selected product folder dynamically on each command run. If a team renames `products/sample-product/` to `products/product-team1/`, updates `enterprise.yaml`, and edits product files, future `/speckit-specify`, `/speckit-plan`, and `/speckit-implement` runs use the new product context automatically.
+
+Enterprise rules remain platform-owned in `enterprise/`; product business rules remain product-owned in `products/<product-name>/business-rules.yaml`.
 
 ## Backward Compatibility
 

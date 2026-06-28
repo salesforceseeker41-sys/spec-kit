@@ -1,0 +1,27 @@
+id: SFINT-030
+title: Retry Must Use Backoff And Limits
+category: Salesforce Integration
+description: Retry behavior must use bounded attempts, backoff, and jitter where appropriate.
+rationale: Immediate repeated retries can overload Salesforce, middleware, or downstream systems.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, integration, operations]
+keywords: [retry, backoff, jitter, max attempts]
+recommendation: Use exponential or policy-based backoff and cap total retry duration.
+references: [Salesforce Integration Patterns, Salesforce API Limits Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Retry
+required_evidence:
+  - Retry intervals and max attempts are documented.
+  - Backoff strategy avoids thundering herd behavior.
+  - Total retry window is aligned to business need.
+negative_evidence:
+  - Retry loop runs immediately in the same transaction.
+  - Infinite retries are possible.
+  - All failed records retry at the same instant.
+examples:
+  compliant: Middleware retries transient ERP errors with exponential backoff and dead-letters after six attempts.
+  non_compliant: Apex catches callout failure and immediately calls the endpoint again in a loop.

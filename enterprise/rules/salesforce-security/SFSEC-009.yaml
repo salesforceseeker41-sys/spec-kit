@@ -1,0 +1,24 @@
+id: SFSEC-009
+title: Use Named Credentials For External Authentication
+category: Salesforce Security
+description: External callouts requiring authentication must use Named Credentials or External Credentials rather than hard-coded endpoints, usernames, passwords, tokens, or certificates.
+rationale: Named Credentials centralize authentication, rotation, endpoint governance, and secret protection.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, apex, integration, deployment]
+keywords: [Named Credential, External Credential, callout, endpoint, authentication]
+recommendation: Define the Named Credential, authentication protocol, principal type, and deployment ownership in the integration design.
+references: [Salesforce Named Credentials Documentation, Salesforce Integration Patterns, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Named Credential or External Credential name is specified.
+  - Authentication method and principal model are documented.
+  - Secret rotation ownership is assigned.
+negative_evidence:
+  - Endpoint credentials are stored in Apex or custom settings.
+  - Callout code constructs Authorization headers from plain text secrets.
+  - Integration depends on a shared human user password.
+examples:
+  compliant: Apex callout uses callout:Billing_API with per-org External Credential configuration.
+  non_compliant: Apex reads API key from custom metadata and adds it to Authorization header.
