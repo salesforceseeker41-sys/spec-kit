@@ -4,6 +4,26 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) st
 
 ## Enterprise Spec Framework
 
+### [1.1.0-alpha.1] - Salesforce Practice Compliance
+
+#### Added
+
+- Opt-in `PracticeComplianceMatcher` for deterministic Salesforce practice evidence matching.
+- `MatcherResolver` for keyword or practice matcher selection.
+- Optional `--matcher keyword|practice` validation CLI argument.
+- Additive practice evidence fields for selected Salesforce rules.
+- Integration reliability sample rules.
+- Matcher metadata, confidence, matched evidence, missing evidence, negative evidence, and explanations in governance reports.
+- Salesforce Practice Compliance documentation.
+
+#### Compatibility
+
+- `KeywordMatcher` remains the default.
+- Existing validation commands remain backward compatible.
+- Existing rule files continue loading because practice fields are additive.
+- Validation remains advisory only.
+- No LLM matching, external API calls, telemetry, CI integration, or blocking governance was introduced.
+
 ### [1.0.0] - Version 1.0 Release Candidate
 
 #### Added

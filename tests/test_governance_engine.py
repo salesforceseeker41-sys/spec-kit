@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from specify_cli.enterprise_context import ContextBundle, ContextDocument, EnterpriseConfig
 from specify_cli.framework.engine import ExecutionContext, GovernanceEngine
-from specify_cli.framework.matchers import KeywordMatcher
+from specify_cli.framework.matchers import KeywordMatcher, PracticeComplianceMatcher
 from specify_cli.framework.reports import GovernanceFinding, GovernanceReport
 from specify_cli.rule_catalog import Rule, RuleCatalog, RuleCollection
 
@@ -18,6 +18,7 @@ def _rule(
     category: str = "Security",
     applies_to: list[str] | None = None,
     keywords: list[str] | None = None,
+    metadata: dict | None = None,
 ) -> Rule:
     return Rule(
         id=rule_id,
@@ -34,6 +35,7 @@ def _rule(
         owner="Platform Team",
         version="1.0",
         path=f"enterprise/rules/security/{rule_id}.yaml",
+        metadata=metadata or {},
     )
 
 
@@ -104,6 +106,126 @@ def test_keyword_matcher_returns_missing_keywords_when_none_found() -> None:
     assert result.missing_keywords == ["CRUD", "FLS"]
 
 
+def test_practice_compliance_matcher_matches_required_evidence() -> None:
+    rule = _rule(
+        "APEX-001",
+        category="Apex",
+        applies_to=["plan"],
+        metadata={
+            "practice": {"type": "salesforce_apex_bulkification", "min_confidence": 0.7},
+            "required_evidence": [
+                "processes records in collections",
+                "avoids SOQL inside loops",
+                "avoids DML inside loops",
+            ],
+            "negative_evidence": ["DML inside loop"],
+            "evidence_terms": {
+                "processes records in collections": ["collections"],
+                "avoids SOQL inside loops": ["query outside loop"],
+                "avoids DML inside loops": ["DML outside loop"],
+                "DML inside loop": ["DML inside loop"],
+            },
+        },
+    )
+
+    result = PracticeComplianceMatcher().match(
+        rule,
+        "The plan processes records in collections, performs query outside loop, "
+        "and uses DML outside loop.",
+    )
+
+    assert result.matched
+    assert result.matcher == "practice"
+    assert result.matcher_version == "1.1"
+    assert result.confidence == 1.0
+    assert result.missing_evidence == []
+
+
+def test_practice_compliance_matcher_detects_missing_and_negative_evidence() -> None:
+    rule = _rule(
+        "APEX-001",
+        category="Apex",
+        applies_to=["plan"],
+        metadata={
+            "practice": {"type": "salesforce_apex_bulkification", "min_confidence": 0.7},
+            "required_evidence": [
+                "processes records in collections",
+                "avoids SOQL inside loops",
+                "avoids DML inside loops",
+            ],
+            "negative_evidence": ["DML inside loop"],
+            "evidence_terms": {
+                "processes records in collections": ["collections"],
+                "avoids SOQL inside loops": ["query outside loop"],
+                "avoids DML inside loops": ["DML outside loop"],
+                "DML inside loop": ["DML inside loop"],
+            },
+        },
+    )
+
+    result = PracticeComplianceMatcher().match(
+        rule,
+        "The plan processes records in collections but performs DML inside loop.",
+    )
+
+    assert not result.matched
+    assert result.confidence == 0.18
+    assert result.matched_evidence == ["processes records in collections"]
+    assert result.missing_evidence == [
+        "avoids SOQL inside loops",
+        "avoids DML inside loops",
+    ]
+    assert result.negative_evidence_found == ["DML inside loop"]
+
+
+def test_practice_compliance_matcher_does_not_penalize_negated_anti_pattern() -> None:
+    rule = _rule(
+        "APEX-001",
+        category="Apex",
+        applies_to=["plan"],
+        metadata={
+            "practice": {"type": "salesforce_apex_bulkification", "min_confidence": 0.7},
+            "required_evidence": ["avoids DML inside loops"],
+            "negative_evidence": ["DML inside loop"],
+            "evidence_terms": {
+                "avoids DML inside loops": ["no DML inside loop"],
+                "DML inside loop": ["DML inside loop"],
+            },
+        },
+    )
+
+    result = PracticeComplianceMatcher().match(rule, "The plan uses no DML inside loop.")
+
+    assert result.matched
+    assert result.confidence == 1.0
+    assert result.negative_evidence_found == []
+
+
+def test_practice_compliance_matcher_uses_keywords_as_fallback_evidence() -> None:
+    rule = _rule(
+        "APEX-001",
+        category="Apex",
+        applies_to=["plan"],
+        keywords=["bulkification"],
+        metadata={
+            "practice": {"type": "salesforce_apex_bulkification", "min_confidence": 0.3},
+            "required_evidence": [
+                "processes records in collections",
+                "avoids SOQL inside loops",
+                "avoids DML inside loops",
+            ],
+        },
+    )
+
+    result = PracticeComplianceMatcher().match(
+        rule, "The plan explicitly addresses bulkification."
+    )
+
+    assert result.matched
+    assert result.confidence == 0.33
+    assert result.matched_evidence == ["keyword: bulkification"]
+
+
 def test_governance_engine_creates_no_finding_when_keyword_exists() -> None:
     context = _context(
         rules=[_rule()],
@@ -138,6 +260,47 @@ def test_governance_engine_creates_advisory_finding_when_keyword_missing() -> No
     assert report.findings[0].severity == "advisory"
     assert report.findings[0].rule_id == "SEC-001"
     assert report.findings[0].missing_keywords == ["CRUD", "FLS"]
+
+
+def test_governance_engine_works_with_practice_compliance_matcher() -> None:
+    context = _context(
+        artifact="plan",
+        rules=[
+            _rule(
+                "APEX-001",
+                category="Apex",
+                applies_to=["plan"],
+                metadata={
+                    "practice": {
+                        "type": "salesforce_apex_bulkification",
+                        "min_confidence": 0.7,
+                    },
+                    "required_evidence": [
+                        "processes records in collections",
+                        "avoids SOQL inside loops",
+                    ],
+                    "evidence_terms": {
+                        "processes records in collections": ["collections"],
+                        "avoids SOQL inside loops": ["query outside loop"],
+                    },
+                },
+            )
+        ],
+        documents=[
+            _document(
+                "specs/001-provider-program/plan.md",
+                "The implementation processes records in collections only.",
+            )
+        ],
+    )
+
+    report = GovernanceEngine(matcher=PracticeComplianceMatcher()).execute(context).report
+
+    assert report.matcher == "practice"
+    assert report.matcher_version == "1.1"
+    assert report.findings[0].confidence == 0.5
+    assert report.findings[0].matched_evidence == ["processes records in collections"]
+    assert report.findings[0].missing_evidence == ["avoids SOQL inside loops"]
 
 
 def test_governance_engine_filters_rules_by_applies_to() -> None:

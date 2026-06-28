@@ -21,6 +21,8 @@ class GovernanceReport:
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     statistics: ExecutionStatistics = field(default_factory=ExecutionStatistics)
+    matcher: str = "keyword"
+    matcher_version: str = "1.0"
 
     def has_findings(self) -> bool:
         return bool(self.findings)
@@ -59,6 +61,10 @@ class GovernanceReport:
             "warnings": list(self.warnings),
             "errors": list(self.errors),
             "statistics": self.statistics.to_dict(),
+            "matcher": {
+                "name": self.matcher,
+                "version": self.matcher_version,
+            },
             "findings": [finding.to_dict() for finding in self.findings],
         }
 
@@ -71,6 +77,7 @@ class GovernanceReport:
             f"Feature: {self.feature_path or 'none'}",
             f"Product: {self.product_name or 'none'}",
             f"Artifact: {self.artifact}",
+            f"Matcher: {self.matcher} {self.matcher_version}",
             (
                 "Summary: "
                 f"{len(self.findings)} finding(s), "
@@ -102,8 +109,26 @@ class GovernanceReport:
                             f"({finding.category}): {finding.message}"
                         ),
                         f"  Recommendation: {finding.recommendation}",
+                        f"  Matcher: {finding.matcher} {finding.matcher_version}",
                     ]
                 )
+                if finding.confidence is not None:
+                    lines.append(f"  Confidence: {finding.confidence:.2f}")
+                if finding.matched_evidence:
+                    lines.append(
+                        "  Matched evidence: " + ", ".join(finding.matched_evidence)
+                    )
+                if finding.missing_evidence:
+                    lines.append(
+                        "  Missing evidence: " + ", ".join(finding.missing_evidence)
+                    )
+                if finding.negative_evidence_found:
+                    lines.append(
+                        "  Negative evidence: "
+                        + ", ".join(finding.negative_evidence_found)
+                    )
+                if finding.explanation:
+                    lines.append(f"  Explanation: {finding.explanation}")
         return "\n".join(lines) + "\n"
 
     def render_text(self) -> str:
@@ -116,6 +141,8 @@ class GovernanceReport:
             f"- Feature: `{self.feature_path or 'none'}`",
             f"- Product: `{self.product_name or 'none'}`",
             f"- Artifact: `{self.artifact}`",
+            f"- Matcher: `{self.matcher}`",
+            f"- Matcher version: `{self.matcher_version}`",
             f"- Findings: `{len(self.findings)}`",
             f"- Warnings: `{len(self.warnings)}`",
             f"- Errors: `{len(self.errors)}`",
@@ -152,9 +179,16 @@ class GovernanceReport:
                     f"- Category: `{finding.category}`",
                     f"- Artifact: `{finding.artifact}`",
                     f"- Source: `{finding.source_path}`",
+                    f"- Matcher: `{finding.matcher}`",
+                    f"- Matcher version: `{finding.matcher_version}`",
+                    f"- Confidence: `{finding.confidence if finding.confidence is not None else 'n/a'}`",
                     f"- Message: {finding.message}",
                     f"- Recommendation: {finding.recommendation}",
                     f"- Missing keywords: `{', '.join(finding.missing_keywords)}`",
+                    f"- Matched evidence: `{', '.join(finding.matched_evidence)}`",
+                    f"- Missing evidence: `{', '.join(finding.missing_evidence)}`",
+                    f"- Negative evidence: `{', '.join(finding.negative_evidence_found)}`",
+                    f"- Explanation: {finding.explanation or 'n/a'}",
                     "",
                 ]
             )

@@ -15,6 +15,7 @@ from typing import Literal
 from .enterprise_context import ContextBundle, ContextDocument, ContextLoader
 from .framework.exceptions import ValidationError
 from .framework.engine import ExecutionContext, GovernanceEngine
+from .framework.matchers import MatcherResolver
 from .framework.reports import GovernanceReport
 from .rule_catalog import RuleCatalog, RuleLoader
 
@@ -38,19 +39,23 @@ class GovernanceValidator:
         root_path: str | Path | None = None,
         *,
         engine: GovernanceEngine | None = None,
+        matcher: str | None = None,
     ):
         self.context_loader = ContextLoader(root_path)
         self.rule_loader = RuleLoader(self.context_loader.root_path)
-        self.engine = engine or GovernanceEngine()
+        self.engine = engine
+        self.matcher = matcher
+        self.matcher_resolver = MatcherResolver(self.context_loader.root_path)
         self.root_path = self.context_loader.root_path
 
     def validate(
         self,
         feature_path: str | Path,
         artifact: ArtifactName = "all",
+        matcher: str | None = None,
     ) -> GovernanceReport:
         try:
-            return self._validate(feature_path, artifact)
+            return self._validate(feature_path, artifact, matcher or self.matcher)
         except Exception as exc:  # pragma: no cover - defensive CLI boundary
             logger.exception("Governance validation failed")
             return GovernanceReport(
@@ -64,6 +69,7 @@ class GovernanceValidator:
         self,
         feature_path: str | Path,
         artifact: ArtifactName,
+        matcher: str | None,
     ) -> GovernanceReport:
         requested_artifact = _normalize_artifact(artifact)
         feature_dir = self._resolve_feature_dir(feature_path)
@@ -100,7 +106,10 @@ class GovernanceValidator:
             feature_path=_display_path(feature_dir, self.root_path),
             product_name=context_bundle.product_name,
         )
-        report = self.engine.execute(execution_context).report
+        engine = self.engine or GovernanceEngine(
+            matcher=self.matcher_resolver.resolve(matcher)
+        )
+        report = engine.execute(execution_context).report
         if artifact == "spec":
             return replace(report, artifact="spec")
         return report

@@ -17,3 +17,60 @@ references:
   - Salesforce Apex Enterprise Patterns
 owner: Platform Team
 version: "1.0"
+practice:
+  type: salesforce_apex_bulkification
+  min_confidence: 0.7
+required_evidence:
+  - processes records in collections
+  - avoids SOQL inside loops
+  - avoids DML inside loops
+  - uses maps or sets for lookups
+  - includes bulk test scenarios
+negative_evidence:
+  - one record at a time
+  - SOQL inside loop
+  - DML inside loop
+  - future method from trigger
+evidence_terms:
+  processes records in collections:
+    - bulk records
+    - collections
+    - List<
+    - Set<
+    - process all records
+    - bulk-safe
+  avoids SOQL inside loops:
+    - query outside loop
+    - no SOQL in loop
+    - no SOQL inside loop
+    - avoid SOQL inside loops
+  avoids DML inside loops:
+    - DML outside loop
+    - no DML in loop
+    - no DML inside loop
+    - avoid DML inside loops
+    - bulk DML
+  uses maps or sets for lookups:
+    - Map<
+    - Set<
+    - maps for lookups
+    - sets for deduplication
+    - key lookup
+  includes bulk test scenarios:
+    - bulk test
+    - bulk tests
+    - 200 records
+    - multiple records
+  one record at a time:
+    - one record at a time
+    - single record only
+  SOQL inside loop:
+    - SOQL inside loop
+    - query inside loop
+  DML inside loop:
+    - DML inside loop
+    - insert inside loop
+    - update inside loop
+  future method from trigger:
+    - future method from trigger
+    - "@future from trigger"

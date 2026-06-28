@@ -51,6 +51,7 @@ enterprise/rules/
   compliance/
   architecture/
   apex/
+  integration/
   lwc/
   flow/
   testing/
@@ -106,6 +107,26 @@ version: "1.0"
 ## Optional and Future Fields
 
 The loader preserves unknown fields in a rule's `metadata` payload. This allows future schema additions without breaking older consumers.
+
+ESF v1.1 adds optional Salesforce Practice Compliance fields:
+
+```yaml
+practice:
+  type: salesforce_apex_bulkification
+  min_confidence: 0.7
+required_evidence:
+  - processes records in collections
+negative_evidence:
+  - DML inside loop
+evidence_terms:
+  processes records in collections:
+    - collections
+    - bulk records
+  DML inside loop:
+    - DML inside loop
+```
+
+These fields are consumed only when the opt-in practice matcher is selected. Existing keyword-only rules remain valid.
 
 Likely future fields:
 

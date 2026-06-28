@@ -49,9 +49,14 @@ def main(argv: list[str] | None = None) -> int:
         "--root",
         help="Optional repository root. Defaults to auto-discovery from cwd.",
     )
+    parser.add_argument(
+        "--matcher",
+        choices=("keyword", "practice"),
+        help="Optional matcher override. Defaults to enterprise.yaml or keyword.",
+    )
     args = parser.parse_args(argv)
 
-    validator = GovernanceValidator(args.root)
+    validator = GovernanceValidator(args.root, matcher=args.matcher)
     report = validator.validate(args.feature, artifact=args.artifact)
 
     if args.format == "json":

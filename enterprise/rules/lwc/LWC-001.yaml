@@ -19,3 +19,37 @@ references:
   - Salesforce Lightning Design System Accessibility
 owner: Platform Team
 version: "1.0"
+practice:
+  type: salesforce_lwc_client_security
+  min_confidence: 0.7
+required_evidence:
+  - avoids trusting client input
+  - uses server-side authorization
+  - handles errors
+  - avoids exposing sensitive data
+negative_evidence:
+  - client-side only authorization
+  - sensitive data in browser storage
+evidence_terms:
+  avoids trusting client input:
+    - validate server-side
+    - server-side validation
+    - do not trust client input
+  uses server-side authorization:
+    - server-side authorization
+    - Apex permission check
+    - CRUD/FLS
+  handles errors:
+    - error handling
+    - user friendly error
+    - toast error
+  avoids exposing sensitive data:
+    - sensitive data
+    - PII
+    - avoid browser storage
+  client-side only authorization:
+    - client-side only authorization
+    - hide button only
+  sensitive data in browser storage:
+    - localStorage PII
+    - sessionStorage PII

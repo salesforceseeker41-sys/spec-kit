@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from specify_cli.framework.engine import ExecutionResult
+from specify_cli.framework.matchers import KeywordMatcher, MatcherResolver, PracticeComplianceMatcher
 from specify_cli.framework.reports import GovernanceReport
 from specify_cli.governance_validation import GovernanceValidator
 
@@ -67,6 +68,99 @@ owner: Platform Team
 version: "1.0"
 """.lstrip(),
     )
+
+
+def _write_practice_rule(root: Path) -> None:
+    _write(
+        root / "enterprise/rules/apex/APEX-PRACTICE.yaml",
+        """
+id: APEX-PRACTICE
+title: Apex Bulkification
+category: Apex
+description: Apex plans must show bulk-safe design evidence.
+rationale: Bulk-safe design protects governor limits.
+severity: advisory
+default_enabled: true
+applies_to:
+  - plan
+keywords:
+  - bulkification
+recommendation: Add explicit bulkification evidence.
+references:
+  - Salesforce Apex Best Practices
+owner: Platform Team
+version: "1.1"
+practice:
+  type: salesforce_apex_bulkification
+  min_confidence: 0.7
+required_evidence:
+  - processes records in collections
+  - avoids SOQL inside loops
+  - avoids DML inside loops
+negative_evidence:
+  - DML inside loop
+evidence_terms:
+  processes records in collections:
+    - collections
+  avoids SOQL inside loops:
+    - query outside loop
+  avoids DML inside loops:
+    - DML outside loop
+  DML inside loop:
+    - DML inside loop
+""".lstrip(),
+    )
+
+
+def test_matcher_resolver_selects_keyword_by_default(tmp_path: Path) -> None:
+    _write_minimum_context(tmp_path)
+
+    matcher = MatcherResolver(tmp_path).resolve()
+
+    assert isinstance(matcher, KeywordMatcher)
+
+
+def test_matcher_resolver_selects_practice_from_enterprise_yaml(tmp_path: Path) -> None:
+    _write_minimum_context(tmp_path)
+    config = (tmp_path / "enterprise.yaml").read_text(encoding="utf-8")
+    (tmp_path / "enterprise.yaml").write_text(
+        config + "\ngovernance:\n  matcher: practice\n",
+        encoding="utf-8",
+    )
+
+    matcher = MatcherResolver(tmp_path).resolve()
+
+    assert isinstance(matcher, PracticeComplianceMatcher)
+
+
+def test_matcher_resolver_cli_override_wins_over_config(tmp_path: Path) -> None:
+    _write_minimum_context(tmp_path)
+    config = (tmp_path / "enterprise.yaml").read_text(encoding="utf-8")
+    (tmp_path / "enterprise.yaml").write_text(
+        config + "\ngovernance:\n  matcher: practice\n",
+        encoding="utf-8",
+    )
+
+    matcher = MatcherResolver(tmp_path).resolve("keyword")
+
+    assert isinstance(matcher, KeywordMatcher)
+
+
+def test_invalid_matcher_config_returns_clear_report_error(tmp_path: Path) -> None:
+    _write_minimum_context(tmp_path)
+    config = (tmp_path / "enterprise.yaml").read_text(encoding="utf-8")
+    (tmp_path / "enterprise.yaml").write_text(
+        config + "\ngovernance:\n  matcher: unsupported\n",
+        encoding="utf-8",
+    )
+    _write(tmp_path / "specs/001-provider-program/plan.md", "# Plan\n")
+
+    report = GovernanceValidator(tmp_path).validate(
+        "specs/001-provider-program", artifact="plan"
+    )
+
+    assert report.has_errors()
+    assert "Unsupported governance matcher 'unsupported'" in report.errors[0]
 
 
 def test_missing_feature_folder_produces_warning(tmp_path: Path) -> None:
@@ -253,6 +347,50 @@ def test_json_output_stays_parseable_when_writing_report(tmp_path: Path) -> None
     assert result.returncode == 0
     assert json.loads(result.stdout)["artifact"] == "spec"
     assert "governance report" in result.stderr
+
+
+def test_cli_practice_matcher_outputs_matcher_metadata(tmp_path: Path) -> None:
+    _write_minimum_context(tmp_path)
+    _write_practice_rule(tmp_path)
+    _write(
+        tmp_path / "specs/001-provider-program/plan.md",
+        "# Plan\n\nThe Apex service processes records in collections but uses DML inside loop.\n",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate-governance.py",
+            "--root",
+            str(tmp_path),
+            "--feature",
+            "specs/001-provider-program",
+            "--artifact",
+            "plan",
+            "--matcher",
+            "practice",
+            "--format",
+            "json",
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    payload = json.loads(result.stdout)
+
+    assert result.returncode == 0
+    assert payload["matcher"] == {"name": "practice", "version": "1.1"}
+    practice_finding = next(
+        finding for finding in payload["findings"] if finding["rule_id"] == "APEX-PRACTICE"
+    )
+    assert practice_finding["matcher"] == "practice"
+    assert practice_finding["confidence"] == 0.18
+    assert practice_finding["matched_evidence"] == [
+        "processes records in collections"
+    ]
+    assert practice_finding["negative_evidence_found"] == ["DML inside loop"]
 
 
 def test_validator_invokes_governance_engine(tmp_path: Path) -> None:

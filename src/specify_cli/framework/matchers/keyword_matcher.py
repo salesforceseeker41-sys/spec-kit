@@ -12,6 +12,9 @@ class KeywordMatcher:
     Sprint 4A intentionally does not implement semantic, regex, or AI matching.
     """
 
+    name = "keyword"
+    version = "1.0"
+
     def match(self, rule: Rule, document_content: str) -> MatchResult:
         normalized_content = document_content.lower()
         matched_keywords: list[str] = []
@@ -27,5 +30,7 @@ class KeywordMatcher:
             matched=bool(matched_keywords),
             matched_keywords=matched_keywords,
             missing_keywords=missing_keywords,
+            matcher=self.name,
+            matcher_version=self.version,
+            confidence=1.0 if matched_keywords else 0.0,
         )
-

@@ -263,9 +263,36 @@ Future Work:
 - Artifact constant consolidation.
 - Dedicated report renderer abstraction if additional formats are added.
 
-## Version 1.1: Operationalization
+## Version 1.1: Salesforce Practice Compliance
 
-Version 1.1 moves ESF from foundation to adoption across product teams.
+Version 1.1 moves ESF from keyword-only advisory validation toward deterministic evidence-based Salesforce practice compliance.
+
+### Sprint 1: Salesforce Practice Compliance Matcher
+
+Objective: Add opt-in local evidence matching for enterprise Salesforce practices while preserving v1.0 behavior.
+
+Deliverables:
+
+- `PracticeComplianceMatcher`
+- `MatcherResolver`
+- optional `--matcher keyword|practice`
+- additive rule fields: `practice`, `required_evidence`, `negative_evidence`, and `evidence_terms`
+- matcher metadata in reports
+- Salesforce Practice Compliance documentation
+
+Acceptance Criteria:
+
+- `KeywordMatcher` remains the default.
+- Practice matching is opt-in.
+- Governance Engine receives a matcher and does not decide matcher selection.
+- Confidence is deterministic and advisory.
+- No LLMs, external APIs, telemetry, CI integration, or blocking validation are introduced.
+
+Future Work:
+
+- Product-specific practice packs.
+- CI report consumption.
+- Optional AI-assisted reasoning after privacy review.
 
 ### Sprint 5: Product Rule Packs
 

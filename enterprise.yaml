@@ -19,6 +19,9 @@ context:
   loadEnterprise: true
   loadProduct: true
 
+governance:
+  matcher: keyword
+
 principles:
   constitution: "enterprise/constitution.md"
   domains:
