@@ -1,0 +1,27 @@
+id: SFINT-006
+title: REST Endpoints Must Validate Inputs
+category: Salesforce Integration
+description: Custom Salesforce REST endpoints must validate method, headers, content type, payload size, required fields, allowed values, and record scope.
+rationale: REST endpoints are trust boundaries and must not rely on callers to send valid or authorized data.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, integration, testing]
+keywords: [REST, validation, payload, endpoint]
+recommendation: Implement server-side validation and return structured, safe error responses for invalid requests.
+references: [Salesforce Apex REST Documentation, Salesforce Secure Coding Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: REST
+required_evidence:
+  - Validation rules are documented.
+  - Invalid request behavior is tested.
+  - Authorization and record ownership checks are included.
+negative_evidence:
+  - Endpoint deserializes and upserts payload directly.
+  - Content type and payload size are not constrained.
+  - Tests only cover valid requests.
+examples:
+  compliant: Apex REST validates JSON schema fields, allowed status values, and Account ownership before update.
+  non_compliant: Apex REST accepts arbitrary JSON and performs Database.upsert immediately.

@@ -1,0 +1,27 @@
+id: SFINT-009
+title: Govern SOAP Contract Changes
+category: Salesforce Integration
+description: SOAP integrations must govern WSDL versions, generated stubs, schema changes, and compatibility with consuming or provider systems.
+rationale: SOAP integrations are tightly bound to contracts and can break when schemas or generated classes drift.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, apex, integration, deployment]
+keywords: [SOAP, WSDL, contract, generated stubs]
+recommendation: Version WSDL artifacts, document regeneration process, and test backward compatibility before deployment.
+references: [Salesforce SOAP API Documentation, Salesforce Apex Web Services Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: SOAP
+required_evidence:
+  - WSDL version and source are identified.
+  - Generated class update process is documented.
+  - Compatibility tests are planned.
+negative_evidence:
+  - Generated stubs are changed without contract review.
+  - WSDL source is unknown.
+  - Breaking schema changes are deployed without consumer coordination.
+examples:
+  compliant: Payment SOAP WSDL v3 is stored with release notes and regression tests against provider sandbox.
+  non_compliant: Developer regenerates SOAP classes from a vendor URL and deploys them directly.

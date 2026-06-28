@@ -20,12 +20,31 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Enterprise Governance Context
 
+Before generating output, use the Enterprise Context Loader.
+
+Load product-specific context from `products/<product-name>/`, where `product-name` comes from `enterprise.yaml`:
+
+```yaml
+product:
+  name: rdra
+```
+
+Product files include:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+
+Treat these files as product-specific constraints. The loader reads the configured product folder at runtime, so updates made by a Product Team are picked up on the next `/speckit-specify` run.
+
 Before generating or updating the specification, check for enterprise governance context in the project root and consider it in this precedence order:
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
 3. **Salesforce Standards**: `enterprise/salesforce/*.md`
-4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the current feature request and resulting `spec.md`
 
 Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.

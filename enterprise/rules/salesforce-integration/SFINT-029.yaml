@@ -1,0 +1,27 @@
+id: SFINT-029
+title: Retry Policy Must Distinguish Failure Types
+category: Salesforce Integration
+description: Retry policies must distinguish transient, throttling, authentication, validation, authorization, and permanent business failures.
+rationale: Retrying non-retryable failures wastes limits and can worsen incidents.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, apex, integration, operations]
+keywords: [retry, transient failure, permanent failure, throttling]
+recommendation: Define retry eligibility, max attempts, backoff, and terminal failure handling for each error class.
+references: [Salesforce Integration Patterns, Salesforce Apex Callouts Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Retry
+required_evidence:
+  - Failure classes are documented.
+  - Retryable and non-retryable errors are separated.
+  - Max attempts and terminal handling are defined.
+negative_evidence:
+  - All failures are retried.
+  - Validation errors retry until limit exhaustion.
+  - Authentication failures retry without credential incident.
+examples:
+  compliant: HTTP 503 retries with backoff while HTTP 400 creates a data remediation exception.
+  non_compliant: Integration retries invalid payload errors every five minutes for a day.

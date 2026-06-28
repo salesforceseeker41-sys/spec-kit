@@ -1,0 +1,27 @@
+id: SFINT-041
+title: Integration Logs Must Include Correlation Context
+category: Salesforce Integration
+description: Integration logs must include correlation ID, source system, target system, operation, source key, status, and safe error category where applicable.
+rationale: Distributed integration failures cannot be diagnosed reliably without consistent correlation context.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, flow, integration, operations]
+keywords: [logging, correlation ID, integration log, trace]
+recommendation: Use an enterprise logging model and propagate correlation IDs across Salesforce, middleware, and downstream systems.
+references: [Salesforce Event Monitoring Documentation, Salesforce Integration Patterns]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Logging
+required_evidence:
+  - Log fields are documented.
+  - Correlation ID propagation is defined.
+  - Log lookup procedure is included in support runbook.
+negative_evidence:
+  - Logs contain only timestamps and free text.
+  - Salesforce and middleware logs cannot be joined.
+  - Source business key is missing.
+examples:
+  compliant: Every order sync log contains correlation ID, source order ID, operation, outcome, duration, and error category.
+  non_compliant: Integration writes a debug line saying callout failed.

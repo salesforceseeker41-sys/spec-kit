@@ -1,0 +1,22 @@
+name: salesforce-architecture
+title: Enterprise Salesforce Architecture Knowledge Pack
+description: Enterprise-approved Salesforce architecture governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Enterprise Architecture
+rule_root: enterprise/rules/salesforce-architecture
+rule_id_prefix: SFARCH
+domains:
+  - Architecture
+applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  - integration
+  - metadata
+  - deployment
+  - operations
+release_channel: preview
+minimum_esf_version: "1.0"

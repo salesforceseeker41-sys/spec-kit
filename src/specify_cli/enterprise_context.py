@@ -24,6 +24,7 @@ Category = Literal[
     "standards",
     "integrations",
     "domain-model",
+    "business-rules",
     "events",
     "specification",
     "other",
@@ -316,7 +317,7 @@ class ContextLoader:
 
     def _load_enterprise_documents(self, warnings: list[str]) -> list[ContextDocument]:
         docs = [
-            self._load_markdown_document(
+            self._load_context_document(
                 self.root_path / "enterprise" / "constitution.md",
                 layer="enterprise",
                 category="constitution",
@@ -351,14 +352,27 @@ class ContextLoader:
                 f"Product context folder was not found: {product_dir.as_posix()}"
             )
             return []
+
+        business_rules = product_dir / "business-rules.yaml"
+        if not business_rules.is_file():
+            warnings.append(
+                f"Product business rules file was not found: {_display_path(business_rules, self.root_path)}"
+            )
+
+        supported = {
+            path
+            for pattern in ("*.md", "*.yaml", "*.yml")
+            for path in product_dir.glob(pattern)
+            if path.is_file()
+        }
         return [
-            self._load_markdown_document(
+            self._load_context_document(
                 path,
                 layer="product",
                 category=_category_from_name(path.stem),
                 required=False,
             )
-            for path in sorted(product_dir.glob("*.md"), key=lambda item: item.name)
+            for path in sorted(supported, key=_product_document_sort_key)
         ]
 
     def _load_folder_documents(
@@ -373,7 +387,7 @@ class ContextLoader:
             warnings.append(f"Context folder was not found: {folder.as_posix()}")
             return []
         return [
-            self._load_markdown_document(
+            self._load_context_document(
                 path, layer=layer, category=category, required=False
             )
             for path in sorted(folder.glob("*.md"), key=lambda item: item.name)
@@ -402,14 +416,14 @@ class ContextLoader:
         return candidate
 
     def _load_feature_document(self, path: Path) -> ContextDocument:
-        return self._load_markdown_document(
+        return self._load_context_document(
             path,
             layer="feature",
             category="specification",
             required=False,
         )
 
-    def _load_markdown_document(
+    def _load_context_document(
         self,
         path: Path,
         *,
@@ -486,6 +500,7 @@ def _category_from_name(name: str) -> Category:
         "standards",
         "integrations",
         "domain-model",
+        "business-rules",
         "events",
         "specification",
     }:
@@ -506,3 +521,15 @@ def _display_path(path: Path, root: Path) -> str:
         return path.resolve().relative_to(root.resolve()).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def _product_document_sort_key(path: Path) -> tuple[int, str]:
+    priority = {
+        "principles.md": 0,
+        "domain-model.md": 1,
+        "business-rules.yaml": 2,
+        "business-rules.yml": 2,
+        "events.md": 3,
+        "integrations.md": 4,
+    }
+    return (priority.get(path.name, 5), path.name)

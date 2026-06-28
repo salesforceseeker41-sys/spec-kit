@@ -1,0 +1,24 @@
+id: SFSEC-036
+title: Prevent SOQL Injection
+category: Salesforce Security
+description: Dynamic SOQL must use bind variables, allowlists, escaping, and structured query construction to prevent SOQL injection.
+rationale: Unsafe dynamic SOQL can allow attackers to alter filters and access unauthorized data.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex]
+keywords: [SOQL injection, dynamic SOQL, bind variable, allowlist, escapeSingleQuotes]
+recommendation: Prefer static SOQL; when dynamic SOQL is necessary, bind values and allowlist object, field, sort, and direction inputs.
+references: [Salesforce Secure Coding Guide, Salesforce Apex Developer Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Dynamic query inputs are identified.
+  - Bind variables or allowlists are used.
+  - User-controlled fields and sort clauses are constrained.
+negative_evidence:
+  - User input is concatenated into WHERE clauses.
+  - Object or field names are accepted without allowlist.
+  - Escaping is used as the only control for all query parts.
+examples:
+  compliant: Search term is bound in dynamic SOQL and sort field is selected from an allowlist.
+  non_compliant: Apex builds `WHERE Name LIKE '%` plus user input plus `%'`.

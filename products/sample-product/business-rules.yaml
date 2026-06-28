@@ -1,0 +1,13 @@
+business_rules:
+  - id: BR-001
+    name: Contact Onboarding Eligibility
+    description: Contacts are eligible for onboarding only when required demographic and program data is present.
+    applies_to:
+      - specification
+      - plan
+      - implementation
+    required_evidence:
+      - eligibility criteria
+      - required fields
+      - validation behavior
+    recommendation: Describe eligibility rules before designing automation.

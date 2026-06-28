@@ -1,0 +1,27 @@
+id: SFINT-025
+title: Idempotency Keys Required For Create And Update Integrations
+category: Salesforce Integration
+description: Integrations that create or update Salesforce or downstream records must use idempotency keys, external IDs, or equivalent duplicate prevention.
+rationale: Network retries, event replay, and user resubmission can otherwise duplicate business effects.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, apex, integration]
+keywords: [idempotency, external ID, duplicate prevention, retry]
+recommendation: Define the business idempotency key and enforce uniqueness at the target boundary.
+references: [Salesforce Integration Patterns, Salesforce External ID Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Idempotency
+required_evidence:
+  - Idempotency key is identified.
+  - Duplicate detection behavior is documented.
+  - Retry and replay tests prove no duplicate side effects.
+negative_evidence:
+  - Retried create calls insert duplicate records.
+  - External ID strategy is missing.
+  - Duplicate detection relies on manual cleanup.
+examples:
+  compliant: Order ingestion upserts by SourceOrderId__c and treats repeated requests as the same business operation.
+  non_compliant: Every inbound order POST inserts a new Order__c record.

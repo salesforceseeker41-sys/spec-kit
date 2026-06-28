@@ -13,6 +13,29 @@ $ARGUMENTS
 
 You **MUST** consider the user input before proceeding (if not empty).
 
+## Enterprise Governance Context
+
+Before generating output, use the Enterprise Context Loader.
+
+Load product-specific context from `products/<product-name>/`, where `product-name` comes from `enterprise.yaml`:
+
+```yaml
+product:
+  name: rdra
+```
+
+Product files include:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+
+Treat these files as product-specific constraints during implementation. The loader reads the configured product folder at runtime, so updates made by a Product Team are picked up on the next `/speckit-implement` run.
+
+If loader output is unavailable, fall back to reading `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and the configured product folder manually.
+
 ## Pre-Execution Checks
 
 **Check for extension hooks (before implementation)**:
@@ -90,6 +113,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read /memory/constitution.md for governance constraints
+   - **IF EXISTS**: Use the Enterprise Context Loader to load enterprise and product-specific context from the `product.name` configured in `enterprise.yaml`, including product `business-rules.yaml`
    - **IF EXISTS**: Read quickstart.md for integration scenarios
 
 4. **Project Setup Verification**:

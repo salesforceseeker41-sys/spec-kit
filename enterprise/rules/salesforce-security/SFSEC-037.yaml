@@ -1,0 +1,24 @@
+id: SFSEC-037
+title: Prevent SOSL Injection
+category: Salesforce Security
+description: Dynamic SOSL and search features must constrain user input, use bind variables where supported, and avoid exposing unauthorized object or field search scope.
+rationale: Unsafe search construction can expose data across objects or alter intended search behavior.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, lwc]
+keywords: [SOSL injection, search, dynamic SOSL, FIND, allowlist]
+recommendation: Use allowlisted search scopes and sanitize or bind search terms according to Salesforce guidance.
+references: [Salesforce Secure Coding Guide, Salesforce Apex Developer Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Searchable objects and fields are listed.
+  - User search terms are constrained.
+  - Result visibility is security-enforced.
+negative_evidence:
+  - User controls returned object list.
+  - Search term is concatenated without safeguards.
+  - Results include fields without FLS enforcement.
+examples:
+  compliant: Global search component searches only allowlisted objects and strips inaccessible result fields.
+  non_compliant: LWC passes raw search text and object names into an Apex SOSL string.

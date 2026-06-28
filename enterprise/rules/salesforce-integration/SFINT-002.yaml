@@ -1,0 +1,27 @@
+id: SFINT-002
+title: Separate Environment Endpoints From Code
+category: Salesforce Integration
+description: Integration endpoint URLs must be environment-specific configuration managed through Named Credentials or approved deployment configuration, not hard-coded in Apex or Flow.
+rationale: Hard-coded endpoints cause deployment errors, unsafe production testing, and difficult environment promotion.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, flow, integration, deployment]
+keywords: [Named Credentials, endpoint, environment, configuration]
+recommendation: Use endpoint aliases and document sandbox, UAT, production, and disaster recovery endpoint mapping.
+references: [Salesforce Named Credentials Documentation, Salesforce Metadata API Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Named Credentials
+required_evidence:
+  - Environment endpoint mapping is documented.
+  - Endpoint values are externalized from code.
+  - Deployment process validates endpoint configuration.
+negative_evidence:
+  - Apex contains production URL literals.
+  - Sandbox code must be edited before production deployment.
+  - Flow stores endpoint strings in unmanaged variables.
+examples:
+  compliant: Each org tier configures the same Named Credential alias with the appropriate endpoint.
+  non_compliant: Queueable Apex switches endpoint URLs using an if statement on Organization.Name.

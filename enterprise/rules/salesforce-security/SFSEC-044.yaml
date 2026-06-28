@@ -1,0 +1,24 @@
+id: SFSEC-044
+title: Secure Sandbox Data
+category: Salesforce Security
+description: Sandbox usage must define whether production data is copied, masked, minimized, encrypted, and access-controlled.
+rationale: Non-production environments often have broader access and weaker monitoring but may contain production-sensitive data.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, deployment, operations]
+keywords: [sandbox, data masking, production data, non-production, test data]
+recommendation: Use data minimization and masking for sensitive production data in sandboxes and restrict sandbox access.
+references: [Salesforce Data Mask Documentation, Salesforce Sandbox Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Sandbox type and data source are documented.
+  - Masking or minimization strategy is defined.
+  - Sandbox access is reviewed.
+negative_evidence:
+  - Full copy sandbox contains regulated data without masking.
+  - Contractors receive broad sandbox access to production data.
+  - Refresh process ignores data protection.
+examples:
+  compliant: Full sandbox refresh applies Data Mask rules before testers receive access.
+  non_compliant: Production customer data is copied to developer sandbox with unrestricted developer access.

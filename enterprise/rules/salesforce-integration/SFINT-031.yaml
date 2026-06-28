@@ -1,0 +1,27 @@
+id: SFINT-031
+title: Retry Must Not Duplicate Business Effects
+category: Salesforce Integration
+description: Retry design must be paired with idempotency controls before retry is enabled for write operations.
+rationale: Retrying writes without duplicate prevention creates duplicated orders, payments, cases, or notifications.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, integration, testing]
+keywords: [retry, idempotency, duplicate, write operation]
+recommendation: Require idempotency keys or target-side duplicate handling for every retried create or update operation.
+references: [Salesforce Integration Patterns, Salesforce External ID Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Retry
+required_evidence:
+  - Retried operations are listed.
+  - Duplicate prevention is documented.
+  - Retry tests prove single business outcome.
+negative_evidence:
+  - Write operation retries without idempotency.
+  - Timeout retry may submit duplicate external transaction.
+  - Tests do not simulate duplicate retry.
+examples:
+  compliant: Fulfillment retry uses OrderId as provider idempotency key.
+  non_compliant: Queueable retries order submission after timeout and creates duplicate shipment.

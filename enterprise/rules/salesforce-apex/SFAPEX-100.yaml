@@ -1,0 +1,37 @@
+id: SFAPEX-100
+title: Configuration Changes Require Ownership
+category: Salesforce Apex
+description: Apex configuration records must have an owner, change process, and rollback plan.
+rationale: Configuration can change behavior as much as code and needs governance.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - operations
+keywords:
+  - Configuration
+  - Configuration
+  - Apex
+  - operations
+recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this rule.
+references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-apex
+domain: Apex
+topic: Configuration
+required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+examples:
+  compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+  non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.

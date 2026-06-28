@@ -1,0 +1,24 @@
+id: SFSEC-045
+title: Secure Change Sets And Deployment Credentials
+category: Salesforce Security
+description: Deployment tools, CI/CD connections, and release users must use approved authentication, least privilege, and auditable deployment paths.
+rationale: Deployment credentials can change security posture across the org and must be controlled like privileged access.
+severity: warning
+default_enabled: true
+applies_to: [plan, deployment, operations]
+keywords: [deployment credential, CI/CD, DevOps, release user, change set]
+recommendation: Use dedicated release principals, approved OAuth or certificate-based auth, and audit deployment activity.
+references: [Salesforce CLI Documentation, Salesforce DevOps Center Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Deployment principal and permissions are documented.
+  - Authentication method is approved.
+  - Deployment audit path is defined.
+negative_evidence:
+  - CI uses a personal admin account.
+  - Deployment token is stored in plain text.
+  - Release user has unnecessary broad access.
+examples:
+  compliant: CI deploys through a dedicated release user with scoped permissions and protected credential storage.
+  non_compliant: Developer's System Administrator refresh token is stored in CI variables for production deployments.

@@ -1,0 +1,24 @@
+id: SFSEC-020
+title: Assess Shield Platform Encryption For Regulated Data
+category: Salesforce Security
+description: Regulated or highly restricted Salesforce data must be assessed for Shield Platform Encryption or an approved compensating control.
+rationale: Encryption helps protect sensitive data at rest and supports regulatory and contractual requirements.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, metadata, deployment]
+keywords: [Shield Platform Encryption, encryption at rest, regulated data, encrypted field]
+recommendation: Document whether Shield encryption is required, supported field behavior, search/reporting impact, and key ownership.
+references: [Salesforce Shield Platform Encryption Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Regulated fields are identified.
+  - Encryption decision and rationale are recorded.
+  - Functional impacts are assessed.
+negative_evidence:
+  - Regulated fields are stored unencrypted without review.
+  - Encryption impact on filters or integrations is ignored.
+  - Key management ownership is undefined.
+examples:
+  compliant: National ID field is evaluated for deterministic encryption and reporting impact before implementation.
+  non_compliant: Sensitive identifier field is added as plain text because users need to search it.

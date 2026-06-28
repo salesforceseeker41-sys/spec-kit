@@ -1,0 +1,19 @@
+name: salesforce-apex
+title: Enterprise Salesforce Apex Knowledge Pack
+description: Enterprise-approved Salesforce Apex engineering governance rules for product teams.
+version: "1.0.0"
+status: active
+owner: Salesforce Center of Excellence
+rule_root: enterprise/rules/salesforce-apex
+rule_id_prefix: SFAPEX
+domains:
+  - Apex
+applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  - deployment
+  - operations
+release_channel: preview
+minimum_esf_version: "1.0"

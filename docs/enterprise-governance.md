@@ -28,7 +28,7 @@ Platform standards are mandatory. Delivery teams should apply them, not redefine
 
 ### Product Teams
 
-Product Teams own domain-specific standards, language, product boundaries, product events, and product integrations. In the starter structure, RDRA is the sample product under `products/rdra/`.
+Product Teams own domain-specific standards, language, product boundaries, product business rules, product events, and product integrations. In the starter structure, RDRA is the sample product under `products/rdra/`.
 
 Product standards are mandatory for features in that product domain. Product teams own the business meaning of concepts, not the enterprise-wide platform architecture.
 
@@ -51,7 +51,7 @@ Delivery teams should not create competing architecture standards inside feature
 | `enterprise/constitution.md` | Platform Team | Top-level enterprise decision framework | `/specify`, `/plan`, `/tasks`, future validators |
 | `enterprise/principles/` | Platform Team | Security, governance, scalability, compliance, and architecture principles | Feature and architecture review |
 | `enterprise/salesforce/` | Salesforce Platform Team | Salesforce-specific Apex, LWC, Flow, testing, and deployment standards | Salesforce planning and task generation |
-| `products/` | Product Teams | Product-specific standards and domain knowledge | Product feature specs and plans |
+| `products/` | Product Teams | Product-specific standards, business rules, and domain knowledge | Product feature specs and plans |
 | `products/rdra/` | RDRA Product Team | Sample RDRA product governance pack | RDRA feature delivery |
 | `enterprise.yaml` | Platform Team | Machine-readable index for future governance automation | Future context loader and validation engine |
 | `docs/enterprise-governance.md` | Platform Team | Human-readable operating model | All teams |
@@ -95,7 +95,7 @@ flowchart TD
 
     Product[Product Teams] --> Products[products/]
     Products --> RDRA[products/rdra/]
-    RDRA --> ProductDocs[principles, integrations, domain model, events]
+    RDRA --> ProductDocs[principles, domain model, business rules, events, integrations]
 
     Delivery[Delivery Teams] --> Feature[specs/<feature>/]
     Feature --> Spec[spec.md]
@@ -132,7 +132,45 @@ The Platform Team maintains enterprise standards in `enterprise/` and the machin
 
 ### 2. Product Setup
 
-Each Product Team creates a folder under `products/` and documents product principles, integrations, domain model, and business events.
+Each Product Team creates a folder under `products/` and documents product principles, domain model, business rules, integrations, and business events.
+
+## Dynamic Product Context
+
+The active product is selected by `enterprise.yaml`:
+
+```yaml
+product:
+  name: product-team1
+```
+
+or:
+
+```yaml
+product:
+  name: rdra
+```
+
+The Enterprise Context Loader reads `products/<product-name>/` dynamically on each run. Product files include:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+- Future `.md`, `.yaml`, or `.yml` files
+
+If Product Team 1 updates:
+
+```text
+products/product-team1/domain-model.md
+products/product-team1/events.md
+products/product-team1/integrations.md
+products/product-team1/business-rules.yaml
+```
+
+then future `/speckit-specify`, `/speckit-plan`, and `/speckit-implement` runs use the updated content automatically. The loader does not copy or cache product files; it resolves the product from `enterprise.yaml` and reads the selected folder at runtime.
+
+Enterprise rules remain platform-owned under `enterprise/`. Product business rules remain product-owned under `products/<product-name>/business-rules.yaml`.
 
 ### 3. Specification
 
@@ -160,6 +198,7 @@ The AI should inspect:
 
 - `products/rdra/principles.md` for RDRA delivery principles.
 - `products/rdra/domain-model.md` for business concepts and source-of-record expectations.
+- `products/rdra/business-rules.yaml` for product-specific eligibility, validation, and workflow rules.
 - `products/rdra/events.md` for event naming, ownership, payload, idempotency, and consumer expectations.
 - `products/rdra/integrations.md` for upstream and downstream ownership.
 

@@ -1,0 +1,27 @@
+id: SFINT-022
+title: Middleware Must Preserve Correlation IDs
+category: Salesforce Integration
+description: Middleware must preserve or generate correlation IDs across Salesforce, middleware, and downstream systems.
+rationale: Correlation IDs are essential for tracing distributed transactions and resolving incidents.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, integration, operations]
+keywords: [middleware, correlation ID, tracing, observability]
+recommendation: Define correlation ID header or payload field and ensure logs in every system include it.
+references: [Salesforce Integration Patterns, Salesforce Event Monitoring Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Middleware
+required_evidence:
+  - Correlation ID format and propagation path are documented.
+  - Middleware and Salesforce logs include the identifier.
+  - Support runbook describes trace lookup.
+negative_evidence:
+  - Each system logs unrelated identifiers.
+  - Correlation ID is dropped at middleware boundary.
+  - Support must search by timestamp only.
+examples:
+  compliant: Salesforce sends X-Correlation-Id and middleware propagates it to ERP and log analytics.
+  non_compliant: Middleware generates a new ID and discards the Salesforce request ID.

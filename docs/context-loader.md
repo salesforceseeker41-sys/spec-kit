@@ -67,10 +67,19 @@ Documents are loaded in this deterministic order:
 1. `enterprise/constitution.md`
 2. `enterprise/principles/*.md`
 3. `enterprise/salesforce/*.md`
-4. `products/<product-name>/*.md`
+4. `products/<product-name>/`
 5. Feature specification, when explicitly provided
 
 Files inside folders are sorted alphabetically. `enterprise/constitution.md` is always loaded before folder-based enterprise documents.
+
+Product files use a product-specific deterministic order:
+
+1. `principles.md`
+2. `domain-model.md`
+3. `business-rules.yaml`
+4. `events.md`
+5. `integrations.md`
+6. Other `.md`, `.yaml`, or `.yml` files alphabetically
 
 ## Product Resolution
 
@@ -82,6 +91,44 @@ product:
 ```
 
 The loader does not infer product from branch names, feature names, folder names, or user prompts. If `product.name` is missing, the loader emits a warning and skips product loading.
+
+## Dynamic Product Context
+
+Each Product Team owns its folder under `products/`. The active product is selected by `enterprise.yaml`:
+
+```yaml
+product:
+  name: product-team1
+```
+
+or:
+
+```yaml
+product:
+  name: rdra
+```
+
+At runtime, the context loader reads `products/<product-name>/` dynamically. Product context includes:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+- Future `.md`, `.yaml`, or `.yml` files
+
+If Product Team 1 updates:
+
+```text
+products/product-team1/domain-model.md
+products/product-team1/events.md
+products/product-team1/integrations.md
+products/product-team1/business-rules.yaml
+```
+
+then future `/speckit-specify`, `/speckit-plan`, and `/speckit-implement` runs use the updated content automatically because the loader reads the configured product folder on each run.
+
+Enterprise rules remain platform-owned under `enterprise/`. Product rules and business rules remain product-owned under `products/<product-name>/`.
 
 ## Feature Resolution
 

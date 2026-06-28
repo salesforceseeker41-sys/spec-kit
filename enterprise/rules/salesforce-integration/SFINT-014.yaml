@@ -1,0 +1,27 @@
+id: SFINT-014
+title: Platform Event Publishers Must Define Transaction Behavior
+category: Salesforce Integration
+description: Platform Event publishers must document whether events are published before commit, after commit, or through an async pattern and what rollback behavior is expected.
+rationale: Event timing affects downstream consistency, duplicate handling, and compensating actions.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, flow, integration]
+keywords: [Platform Events, publish behavior, transaction, rollback]
+recommendation: Choose publish behavior intentionally and document downstream expectations for uncommitted or rolled-back data.
+references: [Salesforce Platform Events Documentation, Salesforce Apex Developer Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Platform Events
+required_evidence:
+  - Publish timing is documented.
+  - Rollback and consistency behavior are described.
+  - Downstream consumer assumptions are recorded.
+negative_evidence:
+  - Event timing is unknown.
+  - Consumer assumes committed data without proof.
+  - Rollback behavior is not tested.
+examples:
+  compliant: After-commit event publish is used for downstream fulfillment because consumers query committed order data.
+  non_compliant: Event publishes before commit and consumer fails when it queries records not yet committed.

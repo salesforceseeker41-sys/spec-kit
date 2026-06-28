@@ -1,0 +1,24 @@
+id: SFSEC-030
+title: Protect Setup And Metadata Changes
+category: Salesforce Security
+description: Security-sensitive metadata changes must be reviewed, source-controlled, and deployed through approved release paths.
+rationale: Metadata controls can alter authentication, authorization, data exposure, and integration access.
+severity: warning
+default_enabled: true
+applies_to: [plan, metadata, deployment]
+keywords: [metadata security, setup change, source control, deployment, permission metadata]
+recommendation: Route permission, sharing, Connected App, CSP, site, and security settings changes through controlled review and deployment.
+references: [Salesforce Metadata API Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Security-sensitive metadata is identified.
+  - Review and deployment path is documented.
+  - Production change evidence is retained.
+negative_evidence:
+  - Manual setup change is planned without source control.
+  - Permission changes are deployed without security review.
+  - Emergency change is not reconciled.
+examples:
+  compliant: Connected App policy metadata is reviewed in pull request and deployed through CI.
+  non_compliant: Admin manually relaxes CORS and CSP settings in production during testing.

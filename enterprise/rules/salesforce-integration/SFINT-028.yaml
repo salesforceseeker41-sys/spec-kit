@@ -1,0 +1,27 @@
+id: SFINT-028
+title: Idempotency Conflicts Must Be Explicit
+category: Salesforce Integration
+description: Integrations must define behavior when the same idempotency key is received with conflicting payload values.
+rationale: Conflicting retries may indicate caller defects, data tampering, or out-of-order updates.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, integration, operations]
+keywords: [idempotency, conflict, duplicate, payload]
+recommendation: Return or log a deterministic conflict response and route mismatches to remediation.
+references: [Salesforce Integration Patterns, Salesforce Secure Coding Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Idempotency
+required_evidence:
+  - Conflict detection rules are documented.
+  - Conflict response and remediation are defined.
+  - Tests include mismatched duplicate payloads.
+negative_evidence:
+  - Later duplicate silently overwrites earlier request.
+  - Conflicting payload creates a second record.
+  - Support cannot identify the conflicting source.
+examples:
+  compliant: Same OrderId with different total amount creates an integration exception and rejects the update.
+  non_compliant: Duplicate request with different amount updates the existing order without audit.

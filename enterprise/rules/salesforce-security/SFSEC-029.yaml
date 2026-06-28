@@ -1,0 +1,24 @@
+id: SFSEC-029
+title: Separate Duties For Administration And Deployment
+category: Salesforce Security
+description: Administrative, release, integration, and break-glass duties must be separated where required by risk, compliance, or production control policy.
+rationale: Separation of duties reduces fraud, accidental production changes, and unchecked privilege.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, deployment, operations]
+keywords: [separation of duties, admin access, deployment access, break glass, production control]
+recommendation: Define who can build, approve, deploy, administer, and use break-glass access for the feature.
+references: [Salesforce Security Guide, Salesforce DevOps Center Documentation]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Administrative roles are identified.
+  - Deployment approval path is documented.
+  - Break-glass access is controlled and audited.
+negative_evidence:
+  - Same user builds, approves, and deploys sensitive changes without review.
+  - Break-glass credentials are shared.
+  - Production admin access has no audit process.
+examples:
+  compliant: Release manager deploys approved metadata while security admin separately approves permission changes.
+  non_compliant: Developer self-approves and deploys production permission changes.

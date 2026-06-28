@@ -1,0 +1,25 @@
+id: SFTEST-002
+title: Apex Tests Must Cover Trigger And Service Entry Points
+category: Salesforce Testing
+description: Apex tests must cover relevant trigger handlers, service methods, selectors, async jobs, and invocable entry points introduced or changed by the feature.
+rationale: Enterprise Apex behavior is commonly invoked through multiple entry points and must be tested where it is actually called.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, testing]
+keywords: [Apex Tests, trigger handler, service layer, invocable, async]
+recommendation: Map each Apex entry point to one or more test methods that prove expected behavior and side effects.
+references: [Salesforce Apex Testing Best Practices, Salesforce Apex Developer Guide]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Apex Tests
+required_evidence:
+  - Apex entry points are listed in the test plan.
+  - Each changed entry point has direct or scenario-based test coverage.
+negative_evidence:
+  - Service is tested but trigger invocation is not.
+  - Invocable Apex used by Flow has no targeted test.
+examples:
+  compliant: Tests cover Account trigger behavior and direct AccountService behavior for the same business rule.
+  non_compliant: Only a utility method is tested while the trigger path remains untested.

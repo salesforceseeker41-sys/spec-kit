@@ -1,0 +1,24 @@
+id: SFSEC-005
+title: Document Record Sharing Model
+category: Salesforce Security
+description: Every feature that reads or changes Salesforce records must document the applicable org-wide defaults, role hierarchy, sharing rules, teams, territories, and manual sharing assumptions.
+rationale: Record access depends on sharing configuration and can differ across products, users, and business units.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, apex, flow]
+keywords: [sharing, OWD, role hierarchy, sharing rules, record access, territory]
+recommendation: Include a record access section in the design and validate it against the product's data ownership model.
+references: [Salesforce Security Guide, Salesforce Sharing Architecture Documentation]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Target objects and OWD assumptions are listed.
+  - Expected user populations and record visibility are described.
+  - Automation behavior under sharing is explained.
+negative_evidence:
+  - Design states that all users can see all records without proof.
+  - Apex behavior is described without user context.
+  - Sharing rules are deferred until deployment.
+examples:
+  compliant: Plan states Case is private, agents gain access through queues and criteria-based sharing.
+  non_compliant: Feature assumes sales users can view all Opportunities because they use the same app.

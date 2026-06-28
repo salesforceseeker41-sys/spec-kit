@@ -13,3 +13,12 @@ context:
 
 governance:
   matcher: keyword
+
+products:
+  sample-product:
+    documentation:
+      principles: products/sample-product/principles.md
+      domain_model: products/sample-product/domain-model.md
+      business_rules: products/sample-product/business-rules.yaml
+      events: products/sample-product/events.md
+      integrations: products/sample-product/integrations.md

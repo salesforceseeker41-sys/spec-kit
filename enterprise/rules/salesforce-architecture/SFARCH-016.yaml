@@ -1,0 +1,36 @@
+id: SFARCH-016
+title: Repository Pattern Requires Justification
+category: Salesforce Architecture
+description: A repository abstraction over Salesforce data access must be justified by real complexity, testability, or external persistence needs.
+rationale: Unnecessary repositories can obscure platform-native data behavior and add ceremony.
+severity: advisory
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+keywords:
+  - Repository Pattern
+  - Repository
+  - Architecture
+  - plan
+recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact for this rule.
+references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+owner: Enterprise Architecture
+version: "1.0.0"
+rule_pack: salesforce-architecture
+domain: Architecture
+topic: Repository Pattern
+required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+examples:
+  compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+  non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.

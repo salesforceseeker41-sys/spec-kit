@@ -1,0 +1,24 @@
+id: SFSEC-004
+title: Use WITH SECURITY_ENFORCED For Read Queries Where Appropriate
+category: Salesforce Security
+description: Apex SOQL queries that read user-visible data should use `WITH SECURITY_ENFORCED` or an equivalent documented FLS enforcement strategy.
+rationale: Query-time security enforcement prevents unauthorized field reads before data reaches application logic.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex]
+keywords: [WITH SECURITY_ENFORCED, SOQL, field security, FLS, read access]
+recommendation: Use `WITH SECURITY_ENFORCED` for simple read queries and document alternatives when dynamic queries or partial field handling require another pattern.
+references: [Salesforce Apex Developer Guide, Salesforce Secure Coding Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Read queries returning user-visible fields are identified.
+  - Query-time or post-query enforcement is documented.
+  - Exceptions for dynamic query patterns are justified.
+negative_evidence:
+  - SOQL returns restricted fields without enforcement.
+  - Dynamic SOQL is treated as exempt from FLS.
+  - Controller relies only on page layout visibility.
+examples:
+  compliant: SOQL query for Account UI data includes WITH SECURITY_ENFORCED and handles QueryException.
+  non_compliant: Apex queries Salary__c and returns it to LWC without FLS enforcement.

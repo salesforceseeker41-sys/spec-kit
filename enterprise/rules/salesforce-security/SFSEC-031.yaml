@@ -1,0 +1,24 @@
+id: SFSEC-031
+title: Govern CSP Trusted Sites
+category: Salesforce Security
+description: CSP Trusted Sites must be limited to approved domains, required directives, and documented business use cases.
+rationale: Overly broad CSP entries can allow untrusted scripts, frames, images, or connections in Salesforce pages.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, lwc, metadata, deployment]
+keywords: [CSP Trusted Site, Content Security Policy, connect-src, frame-src, script-src]
+recommendation: Add only specific HTTPS origins required by the feature and avoid wildcard or broad domain entries.
+references: [Salesforce CSP Trusted Sites Documentation, Lightning Web Components Developer Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - External domains and CSP directives are listed.
+  - Business justification is documented.
+  - Domain ownership and trust are verified.
+negative_evidence:
+  - Wildcard domains are used without approval.
+  - CSP entry allows all subdomains for convenience.
+  - External script source is trusted without review.
+examples:
+  compliant: CSP allows connect-src to https://api.example.com only for a reviewed integration.
+  non_compliant: CSP Trusted Site allows https://*.example.com for all directives.

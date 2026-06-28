@@ -23,12 +23,31 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Enterprise Governance Context
 
+Before generating output, use the Enterprise Context Loader.
+
+Load product-specific context from `products/<product-name>/`, where `product-name` comes from `enterprise.yaml`:
+
+```yaml
+product:
+  name: rdra
+```
+
+Product files include:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+
+Treat these files as product-specific constraints. The loader reads the configured product folder at runtime, so updates made by a Product Team are picked up on the next `/speckit-plan` run.
+
 Before generating or updating the implementation plan, check for enterprise governance context in the project root and consider it in this precedence order:
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
 3. **Salesforce Standards**: `enterprise/salesforce/*.md`
-4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the active `spec.md`
 
 Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
@@ -82,7 +101,7 @@ Use the governance context to inform Technical Context, Constitution Check, rese
 
 1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. If present, also read enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and applicable `products/<product-id>/*.md`. Load IMPL_PLAN template (already copied).
+2. **Load context**: Read FEATURE_SPEC and `/memory/constitution.md`. If present, also use the Enterprise Context Loader to read enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and the configured product folder `products/<product-name>/` from `enterprise.yaml`, including `principles.md`, `domain-model.md`, `business-rules.yaml`, `events.md`, `integrations.md`, and future `.md`, `.yaml`, or `.yml` files. Load IMPL_PLAN template (already copied).
 
 3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")

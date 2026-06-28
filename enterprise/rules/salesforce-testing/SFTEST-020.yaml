@@ -1,0 +1,25 @@
+id: SFTEST-020
+title: Coverage Must Include Changed Risk Areas
+category: Salesforce Testing
+description: Test coverage review must focus on changed classes, changed Flows, changed integration paths, and high-risk branches rather than only org-wide aggregate coverage.
+rationale: High aggregate coverage can hide untested new or risky behavior.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, flow, integration, testing, deployment]
+keywords: [Code Coverage, changed code, risk areas, branch coverage]
+recommendation: Review coverage and scenario evidence for the changed behavior in each release.
+references: [Salesforce Apex Testing Best Practices, Salesforce Deployment Documentation]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Code Coverage
+required_evidence:
+  - Changed components have targeted tests.
+  - High-risk branches are identified and covered or justified.
+negative_evidence:
+  - Org-wide coverage is high but changed class is untested.
+  - New Flow branch has no validation evidence.
+examples:
+  compliant: PR review identifies changed pricing branch and includes targeted tests for it.
+  non_compliant: Release proceeds because org-wide coverage is 88 percent while new Queueable has no assertions.

@@ -73,6 +73,7 @@ products:
     architecture_owner: "RDRA Architecture Owner"
     documentation:
       principles: "products/rdra/principles.md"
+      business_rules: "products/rdra/business-rules.yaml"
       integrations: "products/rdra/integrations.md"
       domain_model: "products/rdra/domain-model.md"
       events: "products/rdra/events.md"

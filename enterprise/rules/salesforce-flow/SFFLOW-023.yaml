@@ -1,0 +1,38 @@
+id: SFFLOW-023
+title: Fault Paths Must Avoid Recursive Failure
+category: Salesforce Flow
+description: Fault handling must avoid invoking automation that can fail recursively or create repeated retries without limits.
+rationale: Fault recovery can amplify incidents when it writes records or calls services that trigger the same failure.
+severity: warning
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+keywords:
+  - Fault Paths
+  - Fault
+  - Flow
+  - flow
+recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for this rule.
+references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-flow
+domain: Flow
+topic: Fault Paths
+required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+examples:
+  compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation plan.
+  non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback plan.

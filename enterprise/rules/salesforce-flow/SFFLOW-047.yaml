@@ -1,0 +1,36 @@
+id: SFFLOW-047
+title: Flow Exceptions Must Be Documented
+category: Salesforce Flow
+description: Any approved deviation from Flow standards must be documented with risk, owner, compensating control, and expiration.
+rationale: Exceptions need visibility so temporary risk does not become permanent architecture.
+severity: blocking
+default_enabled: true
+applies_to:
+  - specification
+  - plan
+keywords:
+  - Governance
+  - Flow
+  - Flow
+  - plan
+recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for this rule.
+references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+owner: Salesforce Center of Excellence
+version: "1.0.0"
+rule_pack: salesforce-flow
+domain: Flow
+topic: Governance
+required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+examples:
+  compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation plan.
+  non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback plan.

@@ -1,0 +1,27 @@
+id: SFINT-042
+title: Integration Logs Must Be Redacted
+category: Salesforce Integration
+description: Integration logs must redact or omit secrets, tokens, credentials, regulated data, and unnecessary payload content.
+rationale: Logs are widely used for support and must not become a secondary sensitive-data store.
+severity: blocking
+default_enabled: true
+applies_to: [plan, apex, flow, integration, operations]
+keywords: [logging, redaction, sensitive data, payload]
+recommendation: Log identifiers, categories, and safe summaries instead of full payloads or credentials.
+references: [Salesforce Secure Coding Guide, Salesforce Security Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Logging
+required_evidence:
+  - Sensitive log fields are identified.
+  - Redaction or omission rules are documented.
+  - Log access and retention are defined.
+negative_evidence:
+  - Full request and response payloads are logged by default.
+  - Authorization headers are logged.
+  - Regulated data is copied to monitoring tools.
+examples:
+  compliant: Log stores correlation ID and redacted payload summary with sensitive fields masked.
+  non_compliant: Error log stores the complete customer profile and API token.

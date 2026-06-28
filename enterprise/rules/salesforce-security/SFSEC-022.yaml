@@ -1,0 +1,24 @@
+id: SFSEC-022
+title: Prevent Sensitive Data In Logs
+category: Salesforce Security
+description: Apex debug logs, platform events, custom logs, integration logs, and operational telemetry must not expose secrets, tokens, credentials, or regulated data.
+rationale: Logs are broadly accessed for support and can become an unmanaged data exposure channel.
+severity: blocking
+default_enabled: true
+applies_to: [specification, plan, apex, integration, operations]
+keywords: [logging, debug log, sensitive data, token, PII, telemetry]
+recommendation: Redact or omit sensitive values and log stable identifiers, correlation IDs, and error categories instead.
+references: [Salesforce Secure Coding Guide, Salesforce Event Monitoring Documentation, Salesforce Security Guide]
+owner: Enterprise Salesforce Security Architecture
+version: "1.0.0"
+required_evidence:
+  - Logged fields and payloads are described.
+  - Redaction strategy is documented.
+  - Log access and retention are addressed.
+negative_evidence:
+  - Full request or response payload is logged.
+  - Access tokens appear in debug output.
+  - Regulated field values are sent to monitoring tools.
+examples:
+  compliant: Integration logs correlation ID, endpoint alias, status code, and redacted error category.
+  non_compliant: Apex logs full JSON payload including SSN and bearer token.

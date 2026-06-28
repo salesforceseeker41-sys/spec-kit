@@ -1,0 +1,27 @@
+id: SFINT-032
+title: Retry Exhaustion Must Create Recoverable Work
+category: Salesforce Integration
+description: When retries are exhausted, integrations must create recoverable work with context for support or automated remediation.
+rationale: Terminal failures need ownership and enough evidence to recover without rerunning blindly.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, integration, operations]
+keywords: [retry exhaustion, dead letter, remediation, support]
+recommendation: Route exhausted retries to a dead-letter queue, exception object, incident, or support queue with correlation context.
+references: [Salesforce Integration Patterns, Salesforce Event Monitoring Documentation]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: Retry
+required_evidence:
+  - Exhausted retry path is documented.
+  - Support owner and remediation action are assigned.
+  - Failed payload or safe reference is retained.
+negative_evidence:
+  - Failure disappears after max attempts.
+  - Support receives an alert without record context.
+  - Manual recovery requires guessing original payload.
+examples:
+  compliant: Failed messages are dead-lettered with correlation ID, source key, sanitized error, and retry controls.
+  non_compliant: Job stops after final retry and only writes a debug log.

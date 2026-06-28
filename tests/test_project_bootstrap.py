@@ -65,6 +65,7 @@ def test_salesforce_enterprise_profile_creates_bootstrap(tmp_path: Path) -> None
     assert (target / "enterprise" / "salesforce" / "apex.md").exists()
     assert (target / "enterprise" / "rules" / "security" / "SEC-001.yaml").exists()
     assert (target / "products" / "sample-product" / "principles.md").exists()
+    assert (target / "products" / "sample-product" / "business-rules.yaml").exists()
     assert (target / "docs" / "esf-onboarding.md").exists()
     assert (target / "specs" / ".gitkeep").exists()
 
@@ -124,3 +125,4 @@ def test_profile_installer_preserves_existing_files_without_force(
     assert "enterprise.yaml" in result.skipped
     assert (target / "enterprise" / "constitution.md").exists()
     assert (target / "products" / "sample-product" / "principles.md").exists()
+    assert (target / "products" / "sample-product" / "business-rules.yaml").exists()

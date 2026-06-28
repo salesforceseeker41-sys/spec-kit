@@ -1,0 +1,27 @@
+id: SFINT-008
+title: REST Payloads Must Be Minimal
+category: Salesforce Integration
+description: REST integrations must send and receive only fields required by the business contract.
+rationale: Minimal payloads reduce data exposure, coupling, heap usage, and contract churn.
+severity: warning
+default_enabled: true
+applies_to: [specification, plan, apex, integration]
+keywords: [REST, payload, minimal fields, data exposure]
+recommendation: Define field-level payload scope and avoid passing entire sObjects or full upstream records.
+references: [Salesforce REST API Documentation, Salesforce Security Guide]
+owner: Integration Architecture
+version: "1.0.0"
+rule_pack: salesforce-integration
+domain: Integrations
+topic: REST
+required_evidence:
+  - Payload fields are listed and justified.
+  - Sensitive fields are excluded unless approved.
+  - Payload size and heap impact are considered.
+negative_evidence:
+  - Full sObject is serialized to external system.
+  - Payload includes fields the receiver does not use.
+  - Sensitive fields are included for debugging.
+examples:
+  compliant: Order status callback sends order identifier, status, timestamp, and correlation ID.
+  non_compliant: Salesforce sends full Account and Contact records to a status service.

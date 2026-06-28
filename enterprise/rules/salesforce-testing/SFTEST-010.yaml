@@ -1,0 +1,25 @@
+id: SFTEST-010
+title: Integration Tests Must Cover Failure And Retry
+category: Salesforce Testing
+description: Integration tests must cover timeout, throttling, authentication failure, validation failure, malformed response, and retry exhaustion where relevant.
+rationale: Integration reliability depends more on failure handling than ideal success responses.
+severity: warning
+default_enabled: true
+applies_to: [plan, apex, integration, testing]
+keywords: [Integration Tests, retry, timeout, failure]
+recommendation: Mock representative failure responses and assert retry eligibility, terminal state, and support evidence.
+references: [Salesforce Integration Patterns, Salesforce Apex Callouts Documentation]
+owner: Quality Engineering
+version: "1.0.0"
+rule_pack: salesforce-testing
+domain: Testing
+topic: Integration Tests
+required_evidence:
+  - Failure classes are included in test cases.
+  - Retry and terminal failure behavior are asserted.
+negative_evidence:
+  - Integration test covers only HTTP 200.
+  - All failures use the same untested catch block.
+examples:
+  compliant: Tests assert 429 retries with backoff while 400 creates a non-retryable integration error.
+  non_compliant: Mock always returns success and error handling is never executed.
