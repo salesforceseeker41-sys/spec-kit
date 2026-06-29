@@ -1,0 +1,2094 @@
+rules:
+- id: INT-001
+  title: Named Credential Usage
+  category: Integration
+  description: External Salesforce integrations must use Named Credentials or equivalent managed authentication.
+  rationale: Managed credentials reduce secret exposure and centralize endpoint authentication.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - Named Credential
+  - Named Credentials
+  - managed authentication
+  recommendation: Describe the Named Credential, authentication approach, endpoint ownership, and secret rotation expectations.
+  references:
+  - Salesforce Integration Patterns
+  owner: Platform Team
+  version: '1.1'
+  practice:
+    type: salesforce_named_credentials
+    min_confidence: 0.7
+  required_evidence:
+  - uses named credentials
+  - avoids hardcoded endpoints
+  - describes authentication ownership
+  negative_evidence:
+  - hardcoded endpoint
+  - hardcoded secret
+  evidence_terms:
+    uses named credentials:
+    - Named Credential
+    - Named Credentials
+    - External Credential
+    avoids hardcoded endpoints:
+    - no hardcoded endpoint
+    - endpoint configured
+    - environment-specific endpoint
+    describes authentication ownership:
+    - authentication owner
+    - secret rotation
+    - managed authentication
+    hardcoded endpoint:
+    - hardcoded endpoint
+    - endpoint in code
+    hardcoded secret:
+    - hardcoded secret
+    - password in code
+    - token in code
+- id: INT-002
+  title: Integration Reliability
+  category: Integration
+  description: External integrations must describe reliability behavior for callouts and asynchronous recovery.
+  rationale: Integration failures should be observable, retryable where safe, and idempotent to avoid duplicate business effects.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - retry
+  - timeout
+  - idempotency
+  - logging
+  recommendation: Add integration reliability evidence covering timeout handling, retry strategy, idempotency, logging, and
+    error recovery.
+  references:
+  - Salesforce Integration Patterns
+  owner: Platform Team
+  version: '1.1'
+  practice:
+    type: salesforce_integration_reliability
+    min_confidence: 0.7
+  required_evidence:
+  - handles timeouts
+  - defines retry strategy
+  - ensures idempotency
+  - includes logging
+  - describes error recovery
+  negative_evidence:
+  - no retry strategy
+  - no timeout handling
+  evidence_terms:
+    handles timeouts:
+    - timeout handling
+    - callout timeout
+    - timeout strategy
+    defines retry strategy:
+    - retry strategy
+    - retry policy
+    - exponential backoff
+    ensures idempotency:
+    - idempotency
+    - idempotent
+    - idempotency key
+    includes logging:
+    - logging
+    - observability
+    - integration log
+    describes error recovery:
+    - error recovery
+    - dead letter
+    - replay
+    - compensating action
+    no retry strategy:
+    - no retry
+    - no retry strategy
+    no timeout handling:
+    - no timeout
+    - no timeout handling
+- id: SFINT-001
+  title: Use Named Credentials For Authenticated Callouts
+  category: Salesforce Integration
+  description: Authenticated Salesforce callouts must use Named Credentials or External Credentials instead of credentials
+    stored in code, metadata, labels, or settings.
+  rationale: Managed credentials centralize endpoint authentication, reduce secret exposure, and support credential rotation.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  - deployment
+  keywords:
+  - Named Credentials
+  - External Credentials
+  - authentication
+  - callout
+  recommendation: Document the Named Credential, authentication protocol, principal model, endpoint ownership, and rotation
+    owner.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce External Credentials Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Named Credentials
+  required_evidence:
+  - Named Credential or External Credential is identified.
+  - Authentication method and principal model are documented.
+  - Secret rotation and endpoint ownership are assigned.
+  negative_evidence:
+  - Credentials are stored in Apex, Custom Metadata, labels, or custom settings.
+  - Authorization headers are assembled from plain text secrets.
+  - Integration uses a shared human user password.
+  examples:
+    compliant: Apex calls callout:Billing_API and authentication is managed by an External Credential owned by Platform Engineering.
+    non_compliant: Apex reads an API key from Custom Metadata and adds it to the Authorization header.
+- id: SFINT-002
+  title: Separate Environment Endpoints From Code
+  category: Salesforce Integration
+  description: Integration endpoint URLs must be environment-specific configuration managed through Named Credentials or approved
+    deployment configuration, not hard-coded in Apex or Flow.
+  rationale: Hard-coded endpoints cause deployment errors, unsafe production testing, and difficult environment promotion.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - deployment
+  keywords:
+  - Named Credentials
+  - endpoint
+  - environment
+  - configuration
+  recommendation: Use endpoint aliases and document sandbox, UAT, production, and disaster recovery endpoint mapping.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce Metadata API Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Named Credentials
+  required_evidence:
+  - Environment endpoint mapping is documented.
+  - Endpoint values are externalized from code.
+  - Deployment process validates endpoint configuration.
+  negative_evidence:
+  - Apex contains production URL literals.
+  - Sandbox code must be edited before production deployment.
+  - Flow stores endpoint strings in unmanaged variables.
+  examples:
+    compliant: Each org tier configures the same Named Credential alias with the appropriate endpoint.
+    non_compliant: Queueable Apex switches endpoint URLs using an if statement on Organization.Name.
+- id: SFINT-003
+  title: Document Named Credential Principal Scope
+  category: Salesforce Integration
+  description: Named Credentials must document whether they use named principal, per-user, or external principal authentication
+    and why that model is appropriate.
+  rationale: Principal scope determines authorization, auditability, and blast radius for integration access.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - Named Principal
+  - per-user
+  - principal
+  - authorization
+  recommendation: Select the narrowest principal model that satisfies the integration and document user attribution implications.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Named Credentials
+  required_evidence:
+  - Principal model is identified.
+  - Authorization and audit implications are explained.
+  - Permission assignment process is documented.
+  negative_evidence:
+  - Named principal is used for user-specific actions without justification.
+  - Per-user authentication is selected without provisioning process.
+  - Audit ownership is unclear.
+  examples:
+    compliant: A user-facing document service uses per-user credentials so downstream audit records identify the initiating
+      user.
+    non_compliant: A named principal with admin-like downstream access performs all user-initiated updates.
+- id: SFINT-004
+  title: Govern Named Credential Lifecycle
+  category: Salesforce Integration
+  description: Named Credentials and External Credentials must have owners, rotation procedures, deployment handling, and
+    retirement criteria.
+  rationale: Credential metadata is long-lived and can become stale, overprivileged, or orphaned without lifecycle governance.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - deployment
+  - operations
+  keywords:
+  - Named Credentials
+  - lifecycle
+  - rotation
+  - retirement
+  recommendation: Track credential ownership, review cadence, last rotation, dependent integrations, and removal process.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Named Credentials
+  required_evidence:
+  - Credential owner and support team are named.
+  - Rotation and validation procedure is documented.
+  - Retirement criteria and dependency inventory exist.
+  negative_evidence:
+  - Credential has no owner.
+  - Rotation requires emergency code changes.
+  - Deprecated integration credentials remain active.
+  examples:
+    compliant: Integration inventory links Billing_API credential to owner, rotation schedule, and dependent jobs.
+    non_compliant: Old vendor credential remains active after the integration is replaced.
+- id: SFINT-005
+  title: Version REST API Contracts
+  category: Salesforce Integration
+  description: REST integrations must define and version request schemas, response schemas, error schemas, and compatibility
+    expectations.
+  rationale: Versioned contracts prevent breaking changes between Salesforce and upstream or downstream systems.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  keywords:
+  - REST
+  - API contract
+  - versioning
+  - schema
+  recommendation: Publish contract documentation with version, field semantics, required fields, optional fields, and deprecation
+    rules.
+  references:
+  - Salesforce REST API Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: REST
+  required_evidence:
+  - Request and response schemas are documented.
+  - API version and compatibility policy are stated.
+  - Error response structure is defined.
+  negative_evidence:
+  - Payload shape is inferred from sample JSON only.
+  - Breaking field changes are planned without versioning.
+  - Error format differs by failure path.
+  examples:
+    compliant: Customer sync REST contract defines v1 request, response, error schema, and additive change policy.
+    non_compliant: Middleware posts whatever fields are available and Salesforce parses them opportunistically.
+- id: SFINT-006
+  title: REST Endpoints Must Validate Inputs
+  category: Salesforce Integration
+  description: Custom Salesforce REST endpoints must validate method, headers, content type, payload size, required fields,
+    allowed values, and record scope.
+  rationale: REST endpoints are trust boundaries and must not rely on callers to send valid or authorized data.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - testing
+  keywords:
+  - REST
+  - validation
+  - payload
+  - endpoint
+  recommendation: Implement server-side validation and return structured, safe error responses for invalid requests.
+  references:
+  - Salesforce Apex REST Documentation
+  - Salesforce Secure Coding Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: REST
+  required_evidence:
+  - Validation rules are documented.
+  - Invalid request behavior is tested.
+  - Authorization and record ownership checks are included.
+  negative_evidence:
+  - Endpoint deserializes and upserts payload directly.
+  - Content type and payload size are not constrained.
+  - Tests only cover valid requests.
+  examples:
+    compliant: Apex REST validates JSON schema fields, allowed status values, and Account ownership before update.
+    non_compliant: Apex REST accepts arbitrary JSON and performs Database.upsert immediately.
+- id: SFINT-007
+  title: REST Callouts Must Handle Status Codes Explicitly
+  category: Salesforce Integration
+  description: REST callouts must handle success, client error, server error, rate limit, authentication failure, timeout,
+    and malformed response outcomes explicitly.
+  rationale: Treating non-200 responses generically causes bad retries, poor user feedback, and weak operations visibility.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - REST
+  - HTTP status
+  - rate limit
+  - response handling
+  recommendation: Map response families and vendor-specific status codes to retry, fail, escalate, or user-remediation behavior.
+  references:
+  - Salesforce Apex Callouts Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: REST
+  required_evidence:
+  - Expected status codes are listed.
+  - Retryable and non-retryable failures are distinguished.
+  - Authentication and rate-limit responses have defined handling.
+  negative_evidence:
+  - Code checks only for HTTP 200.
+  - All errors are retried.
+  - Response body parsing assumes success schema.
+  examples:
+    compliant: Callout handler treats 429 with backoff, 401 as credential incident, and 400 as non-retryable data error.
+    non_compliant: Integration retries every non-200 response five times.
+- id: SFINT-008
+  title: REST Payloads Must Be Minimal
+  category: Salesforce Integration
+  description: REST integrations must send and receive only fields required by the business contract.
+  rationale: Minimal payloads reduce data exposure, coupling, heap usage, and contract churn.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  keywords:
+  - REST
+  - payload
+  - minimal fields
+  - data exposure
+  recommendation: Define field-level payload scope and avoid passing entire sObjects or full upstream records.
+  references:
+  - Salesforce REST API Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: REST
+  required_evidence:
+  - Payload fields are listed and justified.
+  - Sensitive fields are excluded unless approved.
+  - Payload size and heap impact are considered.
+  negative_evidence:
+  - Full sObject is serialized to external system.
+  - Payload includes fields the receiver does not use.
+  - Sensitive fields are included for debugging.
+  examples:
+    compliant: Order status callback sends order identifier, status, timestamp, and correlation ID.
+    non_compliant: Salesforce sends full Account and Contact records to a status service.
+- id: SFINT-009
+  title: Govern SOAP Contract Changes
+  category: Salesforce Integration
+  description: SOAP integrations must govern WSDL versions, generated stubs, schema changes, and compatibility with consuming
+    or provider systems.
+  rationale: SOAP integrations are tightly bound to contracts and can break when schemas or generated classes drift.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - deployment
+  keywords:
+  - SOAP
+  - WSDL
+  - contract
+  - generated stubs
+  recommendation: Version WSDL artifacts, document regeneration process, and test backward compatibility before deployment.
+  references:
+  - Salesforce SOAP API Documentation
+  - Salesforce Apex Web Services Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: SOAP
+  required_evidence:
+  - WSDL version and source are identified.
+  - Generated class update process is documented.
+  - Compatibility tests are planned.
+  negative_evidence:
+  - Generated stubs are changed without contract review.
+  - WSDL source is unknown.
+  - Breaking schema changes are deployed without consumer coordination.
+  examples:
+    compliant: Payment SOAP WSDL v3 is stored with release notes and regression tests against provider sandbox.
+    non_compliant: Developer regenerates SOAP classes from a vendor URL and deploys them directly.
+- id: SFINT-010
+  title: SOAP Faults Must Be Mapped To Recovery Behavior
+  category: Salesforce Integration
+  description: SOAP integrations must map expected SOAP faults and transport errors to retry, data correction, escalation,
+    or terminal failure behavior.
+  rationale: SOAP faults often carry business-specific failure details that need different recovery actions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - SOAP
+  - fault
+  - recovery
+  - error handling
+  recommendation: Document fault codes, retry eligibility, user remediation, and support escalation paths.
+  references:
+  - Salesforce Apex Web Services Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: SOAP
+  required_evidence:
+  - Known SOAP faults are listed.
+  - Each fault maps to a recovery behavior.
+  - Fault handling is tested.
+  negative_evidence:
+  - SOAP faults are treated as generic exceptions.
+  - All faults are retried.
+  - Fault detail is lost or overexposed.
+  examples:
+    compliant: Validation faults create a remediation task while transient provider faults are retried with backoff.
+    non_compliant: SOAP integration catches all exceptions and marks records processed.
+- id: SFINT-011
+  title: SOAP Payloads Must Be Size-Aware
+  category: Salesforce Integration
+  description: SOAP request and response payload design must account for Salesforce heap, callout, serialization, and timeout
+    constraints.
+  rationale: SOAP payloads can become large and expensive to parse in Apex transactions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  keywords:
+  - SOAP
+  - payload size
+  - heap
+  - timeout
+  recommendation: Limit payload scope, paginate or chunk large data, and validate response size assumptions.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Callouts Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: SOAP
+  required_evidence:
+  - Expected payload size is documented.
+  - Heap and timeout impact is assessed.
+  - Large payload mitigation is defined.
+  negative_evidence:
+  - SOAP response size is unknown.
+  - Integration expects large full-data responses in a synchronous transaction.
+  - Tests use tiny samples only.
+  examples:
+    compliant: SOAP integration requests paged claim summaries and processes details asynchronously.
+    non_compliant: Apex requests full policy history for thousands of records in one callout.
+- id: SFINT-012
+  title: SOAP Security Requirements Must Be Explicit
+  category: Salesforce Integration
+  description: SOAP integrations must document transport security, authentication, certificate use, message signing, and credential
+    ownership.
+  rationale: SOAP integrations often rely on enterprise security controls that must be configured consistently across environments.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - SOAP
+  - TLS
+  - certificate
+  - WS-Security
+  - authentication
+  recommendation: Define the approved security mechanism and manage credentials or certificates through governed configuration.
+  references:
+  - Salesforce Apex Web Services Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: SOAP
+  required_evidence:
+  - Authentication and transport controls are documented.
+  - Certificate or secret ownership is assigned.
+  - Environment-specific setup is defined.
+  negative_evidence:
+  - SOAP credentials are stored in code.
+  - Certificate expiry is not tracked.
+  - Security mechanism differs by environment without approval.
+  examples:
+    compliant: SOAP callout uses mutual TLS with certificate lifecycle tracked by Platform Engineering.
+    non_compliant: SOAP username and password are embedded in generated Apex classes.
+- id: SFINT-013
+  title: Platform Event Schemas Must Be Versioned
+  category: Salesforce Integration
+  description: Platform Event schemas used for integrations must have versioning and compatibility expectations.
+  rationale: Event schemas become contracts for asynchronous consumers and should not change unpredictably.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - metadata
+  keywords:
+  - Platform Events
+  - schema
+  - versioning
+  - contract
+  recommendation: Use additive changes where possible and document event field semantics, deprecation, and consumer migration.
+  references:
+  - Salesforce Platform Events Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Platform Events
+  required_evidence:
+  - Event schema and field semantics are documented.
+  - Versioning or compatibility strategy is stated.
+  - Consumer migration expectations are defined.
+  negative_evidence:
+  - Event fields are repurposed without notice.
+  - Required fields are removed without migration.
+  - Consumers infer schema from examples only.
+  examples:
+    compliant: Order_Status__e adds optional FulfillmentCenter__c and documents consumers can ignore unknown fields.
+    non_compliant: Existing event field changes meaning from status code to display label.
+- id: SFINT-014
+  title: Platform Event Publishers Must Define Transaction Behavior
+  category: Salesforce Integration
+  description: Platform Event publishers must document whether events are published before commit, after commit, or through
+    an async pattern and what rollback behavior is expected.
+  rationale: Event timing affects downstream consistency, duplicate handling, and compensating actions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - Platform Events
+  - publish behavior
+  - transaction
+  - rollback
+  recommendation: Choose publish behavior intentionally and document downstream expectations for uncommitted or rolled-back
+    data.
+  references:
+  - Salesforce Platform Events Documentation
+  - Salesforce Apex Developer Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Platform Events
+  required_evidence:
+  - Publish timing is documented.
+  - Rollback and consistency behavior are described.
+  - Downstream consumer assumptions are recorded.
+  negative_evidence:
+  - Event timing is unknown.
+  - Consumer assumes committed data without proof.
+  - Rollback behavior is not tested.
+  examples:
+    compliant: After-commit event publish is used for downstream fulfillment because consumers query committed order data.
+    non_compliant: Event publishes before commit and consumer fails when it queries records not yet committed.
+- id: SFINT-015
+  title: Platform Event Consumers Must Be Idempotent
+  category: Salesforce Integration
+  description: Platform Event consumers must tolerate duplicate, replayed, delayed, or out-of-order event delivery.
+  rationale: Event-driven systems provide resilient delivery, not exactly-once business processing.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - Platform Events
+  - idempotency
+  - replay
+  - duplicate
+  recommendation: Use business keys, replay IDs, processed-event records, or idempotency tokens to prevent duplicate side
+    effects.
+  references:
+  - Salesforce Platform Events Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Platform Events
+  required_evidence:
+  - Idempotency key or duplicate detection strategy is documented.
+  - Replay behavior is tested.
+  - Out-of-order handling is described.
+  negative_evidence:
+  - Event processing inserts records blindly.
+  - Replay creates duplicate downstream requests.
+  - Consumer assumes events arrive exactly once and in order.
+  examples:
+    compliant: Consumer stores OrderId plus EventType as processed key before calling fulfillment.
+    non_compliant: Subscriber creates a shipment every time an Order_Submitted__e event is received.
+- id: SFINT-016
+  title: Platform Event Failures Must Be Observable
+  category: Salesforce Integration
+  description: Platform Event publishing and subscription failures must be logged, monitored, and recoverable.
+  rationale: Asynchronous failures are easy to miss without explicit observability and recovery ownership.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - Platform Events
+  - monitoring
+  - subscriber failure
+  - recovery
+  recommendation: Define failure logging, replay or dead-letter approach, alert thresholds, and owner response procedure.
+  references:
+  - Salesforce Platform Events Documentation
+  - Salesforce Event Monitoring Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Platform Events
+  required_evidence:
+  - Failure modes are documented.
+  - Monitoring and alerting are assigned.
+  - Replay or remediation procedure exists.
+  negative_evidence:
+  - Subscriber failures rely on manual discovery.
+  - No owner tracks event backlog or failures.
+  - Failed events cannot be replayed or reconstructed.
+  examples:
+    compliant: Failed consumer processing records an error object and alerts the integration support queue.
+    non_compliant: Subscriber catches exceptions and drops failed events.
+- id: SFINT-017
+  title: CDC Channels Must Have Clear Consumers
+  category: Salesforce Integration
+  description: Change Data Capture usage must identify subscribed objects, fields, consumers, business purpose, and support
+    ownership.
+  rationale: CDC can expose broad data-change streams and must be tied to governed consumers.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - CDC
+  - Change Data Capture
+  - consumer
+  - channel
+  recommendation: Maintain a CDC consumer inventory and map each subscription to business capability and owner.
+  references:
+  - Salesforce Change Data Capture Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: CDC
+  required_evidence:
+  - CDC objects and consumers are listed.
+  - Business purpose and owner are documented.
+  - Data exposure review is complete.
+  negative_evidence:
+  - Consumers subscribe to CDC without inventory.
+  - Object streams include data not needed by the consumer.
+  - Support owner is unknown.
+  examples:
+    compliant: AccountChangeEvent subscription is owned by Customer MDM with documented field use and support route.
+    non_compliant: Middleware subscribes to all enabled CDC objects for future use.
+- id: SFINT-018
+  title: CDC Consumers Must Handle Replay And Gaps
+  category: Salesforce Integration
+  description: CDC consumers must define replay ID storage, gap detection, replay window handling, and resynchronization behavior.
+  rationale: CDC delivery can be interrupted, and consumers need a recovery path when replay windows are missed.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - CDC
+  - replay ID
+  - gap detection
+  - resync
+  recommendation: Persist replay checkpoints and define full or partial resync procedures for missed events.
+  references:
+  - Salesforce Change Data Capture Documentation
+  - Salesforce Streaming API Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: CDC
+  required_evidence:
+  - Replay ID storage is documented.
+  - Gap detection and missed-window handling are defined.
+  - Resynchronization process is tested.
+  negative_evidence:
+  - Consumer starts from latest after outage.
+  - Replay IDs are stored only in memory.
+  - No procedure exists for missed retention window.
+  examples:
+    compliant: Consumer persists replay ID per channel and triggers bulk reconciliation if replay fails.
+    non_compliant: Consumer restarts from new events and ignores changes during downtime.
+- id: SFINT-019
+  title: CDC Payloads Must Respect Data Classification
+  category: Salesforce Integration
+  description: CDC-enabled objects and fields must be reviewed for data classification, sensitive data exposure, and downstream
+    retention.
+  rationale: CDC can replicate regulated data outside Salesforce access controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - security
+  keywords:
+  - CDC
+  - data classification
+  - sensitive data
+  - downstream retention
+  recommendation: Enable CDC only for approved objects and ensure consumers protect, retain, and delete replicated data appropriately.
+  references:
+  - Salesforce Change Data Capture Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: CDC
+  required_evidence:
+  - Data classification review is complete.
+  - Sensitive fields and downstream storage are documented.
+  - Consumer retention and access controls are defined.
+  negative_evidence:
+  - CDC is enabled before data classification review.
+  - Downstream systems store sensitive fields indefinitely.
+  - Consumer access is broader than Salesforce access model.
+  examples:
+    compliant: CDC for Case excludes unnecessary regulated fields and downstream retention is documented.
+    non_compliant: Contact CDC feeds full PII changes to an unmanaged analytics store.
+- id: SFINT-020
+  title: CDC Consumers Must Be Idempotent
+  category: Salesforce Integration
+  description: CDC consumers must process create, update, delete, undelete, and gap recovery events idempotently.
+  rationale: CDC events may be replayed and downstream writes must not duplicate or corrupt state.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - CDC
+  - idempotency
+  - replay
+  - change event
+  recommendation: Use record ID, commit number, replay ID, or source-system version to detect already-applied changes.
+  references:
+  - Salesforce Change Data Capture Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: CDC
+  required_evidence:
+  - Idempotency approach is documented.
+  - Delete and undelete behavior is defined.
+  - Replay processing is tested.
+  negative_evidence:
+  - Replay applies duplicate downstream updates.
+  - Delete events are ignored without business decision.
+  - Consumer cannot distinguish old and new changes.
+  examples:
+    compliant: Consumer applies only changes newer than the downstream stored commit timestamp.
+    non_compliant: Every CDC event creates a new downstream customer row.
+- id: SFINT-021
+  title: Middleware Ownership Must Be Defined
+  category: Salesforce Integration
+  description: Middleware integrations must identify platform owner, product owner, support owner, escalation path, and operating
+    hours.
+  rationale: Middleware sits between systems and needs clear accountability during incidents and releases.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - middleware
+  - ownership
+  - support
+  - escalation
+  recommendation: Document the middleware component, ownership model, deployment path, and incident contacts.
+  references:
+  - Salesforce Integration Patterns
+  - Enterprise Governance Constitution
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Middleware
+  required_evidence:
+  - Middleware platform and component are identified.
+  - Ownership and escalation path are documented.
+  - Operating hours and support model are stated.
+  negative_evidence:
+  - Middleware is described as owned by another team without contact.
+  - No support owner exists for failures.
+  - Release coordination is undefined.
+  examples:
+    compliant: MuleSoft API owner, Salesforce owner, and 24x7 incident queue are listed in the plan.
+    non_compliant: Design says integration goes through middleware but names no owner or support route.
+- id: SFINT-022
+  title: Middleware Must Preserve Correlation IDs
+  category: Salesforce Integration
+  description: Middleware must preserve or generate correlation IDs across Salesforce, middleware, and downstream systems.
+  rationale: Correlation IDs are essential for tracing distributed transactions and resolving incidents.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - middleware
+  - correlation ID
+  - tracing
+  - observability
+  recommendation: Define correlation ID header or payload field and ensure logs in every system include it.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Event Monitoring Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Middleware
+  required_evidence:
+  - Correlation ID format and propagation path are documented.
+  - Middleware and Salesforce logs include the identifier.
+  - Support runbook describes trace lookup.
+  negative_evidence:
+  - Each system logs unrelated identifiers.
+  - Correlation ID is dropped at middleware boundary.
+  - Support must search by timestamp only.
+  examples:
+    compliant: Salesforce sends X-Correlation-Id and middleware propagates it to ERP and log analytics.
+    non_compliant: Middleware generates a new ID and discards the Salesforce request ID.
+- id: SFINT-023
+  title: Middleware Transformations Must Be Governed
+  category: Salesforce Integration
+  description: Middleware mapping, enrichment, filtering, and orchestration logic must be documented and owned.
+  rationale: Middleware can hide business rules outside Salesforce and create untraceable behavior changes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - middleware
+  - transformation
+  - mapping
+  - orchestration
+  recommendation: Treat middleware logic as governed implementation with versioned mappings, tests, and release notes.
+  references:
+  - Salesforce Integration Patterns
+  - Enterprise Governance Constitution
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Middleware
+  required_evidence:
+  - Field mappings and transformation rules are documented.
+  - Ownership and change review are defined.
+  - Regression tests cover mappings.
+  negative_evidence:
+  - Middleware applies undocumented business rules.
+  - Mapping changes are made directly in production.
+  - Salesforce and middleware teams disagree on field semantics.
+  examples:
+    compliant: Customer status mapping is versioned in middleware repo and reviewed with Salesforce product owner.
+    non_compliant: Middleware silently changes status values before sending them to Salesforce.
+- id: SFINT-024
+  title: Middleware Must Define Backpressure Behavior
+  category: Salesforce Integration
+  description: Middleware integrations must define behavior when Salesforce or downstream systems throttle, slow down, or
+    become unavailable.
+  rationale: Without backpressure handling, middleware can amplify failures or overload recovering systems.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - middleware
+  - backpressure
+  - throttling
+  - queue
+  recommendation: Define queueing, rate limits, circuit breaking, replay, and operator controls for degraded dependencies.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce API Limits Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Middleware
+  required_evidence:
+  - Throttling and outage behavior are documented.
+  - Queue depth and replay controls are monitored.
+  - Recovery owner and runbook are assigned.
+  negative_evidence:
+  - Middleware retries aggressively during outage.
+  - Queue growth has no alert threshold.
+  - Recovery floods Salesforce after downtime.
+  examples:
+    compliant: Middleware pauses low-priority sync when Salesforce API errors exceed threshold and resumes gradually.
+    non_compliant: Middleware immediately replays a day of backlog with no rate control.
+- id: SFINT-025
+  title: Idempotency Keys Required For Create And Update Integrations
+  category: Salesforce Integration
+  description: Integrations that create or update Salesforce or downstream records must use idempotency keys, external IDs,
+    or equivalent duplicate prevention.
+  rationale: Network retries, event replay, and user resubmission can otherwise duplicate business effects.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  keywords:
+  - idempotency
+  - external ID
+  - duplicate prevention
+  - retry
+  recommendation: Define the business idempotency key and enforce uniqueness at the target boundary.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce External ID Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Idempotency
+  required_evidence:
+  - Idempotency key is identified.
+  - Duplicate detection behavior is documented.
+  - Retry and replay tests prove no duplicate side effects.
+  negative_evidence:
+  - Retried create calls insert duplicate records.
+  - External ID strategy is missing.
+  - Duplicate detection relies on manual cleanup.
+  examples:
+    compliant: Order ingestion upserts by SourceOrderId__c and treats repeated requests as the same business operation.
+    non_compliant: Every inbound order POST inserts a new Order__c record.
+- id: SFINT-026
+  title: Idempotency Must Include External Side Effects
+  category: Salesforce Integration
+  description: Idempotency design must cover downstream callouts, event publishing, notifications, file generation, and other
+    side effects.
+  rationale: Avoiding duplicate Salesforce records is not enough if external actions are duplicated.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - idempotency
+  - side effect
+  - callout
+  - event
+  recommendation: Track side-effect completion state and make each external operation safe to retry.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Callouts Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Idempotency
+  required_evidence:
+  - External side effects are listed.
+  - Duplicate side-effect prevention is documented.
+  - Recovery after partial completion is defined.
+  negative_evidence:
+  - Retry sends duplicate payment, email, or fulfillment request.
+  - Event publish occurs multiple times for one business action.
+  - Side-effect completion state is unknown.
+  examples:
+    compliant: Payment request uses a provider idempotency key and stores provider transaction status.
+    non_compliant: Queueable retry submits a second payment after a timeout.
+- id: SFINT-027
+  title: Idempotency State Must Be Durable
+  category: Salesforce Integration
+  description: Idempotency state must be stored durably when retries or replays can occur across transactions.
+  rationale: In-memory state is lost between asynchronous retries, platform restarts, and middleware replays.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  keywords:
+  - idempotency
+  - durable state
+  - replay
+  - transaction
+  recommendation: Store processed keys or operation state in Salesforce, middleware, or the target system with retention aligned
+    to retry windows.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Developer Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Idempotency
+  required_evidence:
+  - Durable state location is identified.
+  - Retention period matches retry and replay windows.
+  - Cleanup process is documented.
+  negative_evidence:
+  - Static variables are used for duplicate prevention.
+  - Idempotency record retention is shorter than replay window.
+  - Cleanup deletes keys still needed for retries.
+  examples:
+    compliant: Processed external message IDs are stored for 30 days in an integration ledger object.
+    non_compliant: Apex static set prevents duplicates only within the current transaction.
+- id: SFINT-028
+  title: Idempotency Conflicts Must Be Explicit
+  category: Salesforce Integration
+  description: Integrations must define behavior when the same idempotency key is received with conflicting payload values.
+  rationale: Conflicting retries may indicate caller defects, data tampering, or out-of-order updates.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - idempotency
+  - conflict
+  - duplicate
+  - payload
+  recommendation: Return or log a deterministic conflict response and route mismatches to remediation.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Secure Coding Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Idempotency
+  required_evidence:
+  - Conflict detection rules are documented.
+  - Conflict response and remediation are defined.
+  - Tests include mismatched duplicate payloads.
+  negative_evidence:
+  - Later duplicate silently overwrites earlier request.
+  - Conflicting payload creates a second record.
+  - Support cannot identify the conflicting source.
+  examples:
+    compliant: Same OrderId with different total amount creates an integration exception and rejects the update.
+    non_compliant: Duplicate request with different amount updates the existing order without audit.
+- id: SFINT-029
+  title: Retry Policy Must Distinguish Failure Types
+  category: Salesforce Integration
+  description: Retry policies must distinguish transient, throttling, authentication, validation, authorization, and permanent
+    business failures.
+  rationale: Retrying non-retryable failures wastes limits and can worsen incidents.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - retry
+  - transient failure
+  - permanent failure
+  - throttling
+  recommendation: Define retry eligibility, max attempts, backoff, and terminal failure handling for each error class.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Callouts Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Retry
+  required_evidence:
+  - Failure classes are documented.
+  - Retryable and non-retryable errors are separated.
+  - Max attempts and terminal handling are defined.
+  negative_evidence:
+  - All failures are retried.
+  - Validation errors retry until limit exhaustion.
+  - Authentication failures retry without credential incident.
+  examples:
+    compliant: HTTP 503 retries with backoff while HTTP 400 creates a data remediation exception.
+    non_compliant: Integration retries invalid payload errors every five minutes for a day.
+- id: SFINT-030
+  title: Retry Must Use Backoff And Limits
+  category: Salesforce Integration
+  description: Retry behavior must use bounded attempts, backoff, and jitter where appropriate.
+  rationale: Immediate repeated retries can overload Salesforce, middleware, or downstream systems.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - retry
+  - backoff
+  - jitter
+  - max attempts
+  recommendation: Use exponential or policy-based backoff and cap total retry duration.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce API Limits Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Retry
+  required_evidence:
+  - Retry intervals and max attempts are documented.
+  - Backoff strategy avoids thundering herd behavior.
+  - Total retry window is aligned to business need.
+  negative_evidence:
+  - Retry loop runs immediately in the same transaction.
+  - Infinite retries are possible.
+  - All failed records retry at the same instant.
+  examples:
+    compliant: Middleware retries transient ERP errors with exponential backoff and dead-letters after six attempts.
+    non_compliant: Apex catches callout failure and immediately calls the endpoint again in a loop.
+- id: SFINT-031
+  title: Retry Must Not Duplicate Business Effects
+  category: Salesforce Integration
+  description: Retry design must be paired with idempotency controls before retry is enabled for write operations.
+  rationale: Retrying writes without duplicate prevention creates duplicated orders, payments, cases, or notifications.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - testing
+  keywords:
+  - retry
+  - idempotency
+  - duplicate
+  - write operation
+  recommendation: Require idempotency keys or target-side duplicate handling for every retried create or update operation.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce External ID Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Retry
+  required_evidence:
+  - Retried operations are listed.
+  - Duplicate prevention is documented.
+  - Retry tests prove single business outcome.
+  negative_evidence:
+  - Write operation retries without idempotency.
+  - Timeout retry may submit duplicate external transaction.
+  - Tests do not simulate duplicate retry.
+  examples:
+    compliant: Fulfillment retry uses OrderId as provider idempotency key.
+    non_compliant: Queueable retries order submission after timeout and creates duplicate shipment.
+- id: SFINT-032
+  title: Retry Exhaustion Must Create Recoverable Work
+  category: Salesforce Integration
+  description: When retries are exhausted, integrations must create recoverable work with context for support or automated
+    remediation.
+  rationale: Terminal failures need ownership and enough evidence to recover without rerunning blindly.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - retry exhaustion
+  - dead letter
+  - remediation
+  - support
+  recommendation: Route exhausted retries to a dead-letter queue, exception object, incident, or support queue with correlation
+    context.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Event Monitoring Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Retry
+  required_evidence:
+  - Exhausted retry path is documented.
+  - Support owner and remediation action are assigned.
+  - Failed payload or safe reference is retained.
+  negative_evidence:
+  - Failure disappears after max attempts.
+  - Support receives an alert without record context.
+  - Manual recovery requires guessing original payload.
+  examples:
+    compliant: Failed messages are dead-lettered with correlation ID, source key, sanitized error, and retry controls.
+    non_compliant: Job stops after final retry and only writes a debug log.
+- id: SFINT-033
+  title: Callout Timeouts Must Be Explicit
+  category: Salesforce Integration
+  description: Salesforce callouts must define explicit timeout values aligned to user experience, async processing, and downstream
+    service behavior.
+  rationale: Default or excessive timeouts can consume transactions, degrade UX, and create limit failures.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - timeout
+  - callout
+  - latency
+  - Apex
+  recommendation: Set timeout values intentionally and document why they fit the use case.
+  references:
+  - Salesforce Apex Callouts Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Timeout
+  required_evidence:
+  - Timeout values are documented.
+  - User-facing and async use cases are distinguished.
+  - Downstream service SLA is considered.
+  negative_evidence:
+  - Code relies on default timeout without review.
+  - Synchronous UI waits on slow downstream operation.
+  - Timeout exceeds business need.
+  examples:
+    compliant: User-facing tax estimate callout times out quickly and offers retry while batch reconciliation uses longer
+      async timeout.
+    non_compliant: Screen action waits synchronously for a long-running ERP operation.
+- id: SFINT-034
+  title: Timeout Handling Must Be User And Operations Safe
+  category: Salesforce Integration
+  description: Timeout behavior must define user feedback, retry eligibility, idempotency, and operational logging.
+  rationale: Timeout does not prove whether the remote system processed the request, so recovery must be careful.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - timeout
+  - recovery
+  - idempotency
+  - user feedback
+  recommendation: Treat timeout outcomes as unknown state for write operations and reconcile before retrying when needed.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Callouts Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Timeout
+  required_evidence:
+  - Timeout outcome handling is documented.
+  - Unknown completion state is addressed.
+  - User or support message is safe and actionable.
+  negative_evidence:
+  - Timeout is treated as definite failure for write operation.
+  - Retry after timeout can duplicate downstream side effects.
+  - Timeout response exposes internal details.
+  examples:
+    compliant: Payment timeout creates pending reconciliation and checks provider status before resubmission.
+    non_compliant: Payment timeout immediately submits a second payment request.
+- id: SFINT-035
+  title: Long-Running Work Must Be Asynchronous
+  category: Salesforce Integration
+  description: Integration work expected to exceed acceptable synchronous latency must use async Apex, middleware, events,
+    or scheduled processing.
+  rationale: Long-running synchronous operations degrade user experience and increase transaction failure risk.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - timeout
+  - async
+  - long-running
+  - latency
+  recommendation: Move long-running work behind queueable, batch, Platform Event, or middleware orchestration with status
+    tracking.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Timeout
+  required_evidence:
+  - Expected latency is documented.
+  - Async pattern is justified.
+  - User status and completion notification are defined.
+  negative_evidence:
+  - UI transaction waits on long external processing.
+  - Flow blocks user while downstream system completes heavy work.
+  - No status tracking exists after async handoff.
+  examples:
+    compliant: Screen Flow submits request and Queueable handles vendor processing with status updates.
+    non_compliant: Button click synchronously waits for multiple downstream systems to respond.
+- id: SFINT-036
+  title: Timeout Thresholds Must Be Monitored
+  category: Salesforce Integration
+  description: Integration timeout rates and latency thresholds must be monitored for critical integrations.
+  rationale: Rising latency is often an early signal of downstream degradation or capacity issues.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - timeout
+  - latency
+  - monitoring
+  - threshold
+  recommendation: Define latency metrics, timeout thresholds, alert routing, and trend review cadence.
+  references:
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Timeout
+  required_evidence:
+  - Latency and timeout metrics are defined.
+  - Alert thresholds are documented.
+  - Owner response path is assigned.
+  negative_evidence:
+  - Timeouts are visible only in debug logs.
+  - No threshold exists for degradation.
+  - Operations discovers timeout spike from users.
+  examples:
+    compliant: Integration dashboard alerts when timeout rate exceeds two percent for fifteen minutes.
+    non_compliant: Support learns about timeout incidents only from failed business users.
+- id: SFINT-037
+  title: Integration Errors Must Be Classified
+  category: Salesforce Integration
+  description: Integration designs must classify errors into validation, authentication, authorization, throttling, timeout,
+    dependency, data conflict, and unknown categories.
+  rationale: Error classification drives safe retry, user feedback, support routing, and reporting.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - error handling
+  - classification
+  - integration error
+  recommendation: Define error taxonomy and map each category to response behavior and owner.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Secure Coding Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Error Handling
+  required_evidence:
+  - Error categories are listed.
+  - Category-specific handling is documented.
+  - Tests cover representative categories.
+  negative_evidence:
+  - All errors use a generic failed status.
+  - Retry behavior ignores error category.
+  - Support cannot distinguish data defects from system outages.
+  examples:
+    compliant: Integration maps 400 to validation, 401 to credential incident, 429 to throttling, and 503 to dependency outage.
+    non_compliant: All failures become Integration Failed with no reason code.
+- id: SFINT-038
+  title: Integration Errors Must Be Recoverable
+  category: Salesforce Integration
+  description: Integration failures must create enough recoverable state for automated retry, user correction, support remediation,
+    or safe abandonment.
+  rationale: Without recoverable state, failures lead to manual database fixes and data inconsistency.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - operations
+  keywords:
+  - error handling
+  - recovery
+  - remediation
+  - failed message
+  recommendation: Store safe failure context, source key, target key, status, category, and next action.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Developer Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Error Handling
+  required_evidence:
+  - Failed state storage is documented.
+  - Recovery action is assigned.
+  - Sensitive payload handling is addressed.
+  negative_evidence:
+  - Failed payload is lost.
+  - Manual recovery requires rerunning broad data loads.
+  - Failure record lacks source identifier.
+  examples:
+    compliant: Failed invoice sync creates Integration_Error__c with source invoice ID, category, safe message, and replay
+      action.
+    non_compliant: Apex catches exception and only writes System.debug output.
+- id: SFINT-039
+  title: Integration Errors Must Not Expose Sensitive Data
+  category: Salesforce Integration
+  description: Integration error messages returned to users, APIs, logs, or support queues must not expose secrets, tokens,
+    credentials, or regulated data.
+  rationale: Error surfaces are common accidental data leakage paths.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - operations
+  keywords:
+  - error handling
+  - sensitive data
+  - redaction
+  - token
+  recommendation: Separate safe user messages from redacted operational diagnostics.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Error Handling
+  required_evidence:
+  - Error message audiences are identified.
+  - Redaction approach is documented.
+  - Tests or reviews verify sensitive data is omitted.
+  negative_evidence:
+  - Raw downstream response is shown to user.
+  - Token or payload appears in exception message.
+  - Full request body is stored in support case.
+  examples:
+    compliant: User sees safe failure message with reference ID while secure logs store redacted diagnostics.
+    non_compliant: API response returns full downstream stack trace and bearer token header.
+- id: SFINT-040
+  title: Integration Error Ownership Must Be Clear
+  category: Salesforce Integration
+  description: Each integration error class must have an owning team, notification path, severity, and response expectation.
+  rationale: Unowned integration errors linger and create business process disruption.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - error handling
+  - ownership
+  - escalation
+  - support
+  recommendation: Map each error category to Salesforce team, middleware team, vendor, data steward, or business owner.
+  references:
+  - Salesforce Integration Patterns
+  - Enterprise Governance Constitution
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Error Handling
+  required_evidence:
+  - Error ownership matrix is documented.
+  - Notification and escalation path is assigned.
+  - Severity or SLA is stated for critical errors.
+  negative_evidence:
+  - Errors go to a shared mailbox with no owner.
+  - Vendor errors have no escalation path.
+  - Business data corrections are unassigned.
+  examples:
+    compliant: Authentication errors page Platform Engineering, validation errors route to Data Steward queue, and vendor
+      outages notify Integration Support.
+    non_compliant: All integration failures create generic tasks for the product owner.
+- id: SFINT-041
+  title: Integration Logs Must Include Correlation Context
+  category: Salesforce Integration
+  description: Integration logs must include correlation ID, source system, target system, operation, source key, status,
+    and safe error category where applicable.
+  rationale: Distributed integration failures cannot be diagnosed reliably without consistent correlation context.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - operations
+  keywords:
+  - logging
+  - correlation ID
+  - integration log
+  - trace
+  recommendation: Use an enterprise logging model and propagate correlation IDs across Salesforce, middleware, and downstream
+    systems.
+  references:
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Logging
+  required_evidence:
+  - Log fields are documented.
+  - Correlation ID propagation is defined.
+  - Log lookup procedure is included in support runbook.
+  negative_evidence:
+  - Logs contain only timestamps and free text.
+  - Salesforce and middleware logs cannot be joined.
+  - Source business key is missing.
+  examples:
+    compliant: Every order sync log contains correlation ID, source order ID, operation, outcome, duration, and error category.
+    non_compliant: Integration writes a debug line saying callout failed.
+- id: SFINT-042
+  title: Integration Logs Must Be Redacted
+  category: Salesforce Integration
+  description: Integration logs must redact or omit secrets, tokens, credentials, regulated data, and unnecessary payload
+    content.
+  rationale: Logs are widely used for support and must not become a secondary sensitive-data store.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - operations
+  keywords:
+  - logging
+  - redaction
+  - sensitive data
+  - payload
+  recommendation: Log identifiers, categories, and safe summaries instead of full payloads or credentials.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Logging
+  required_evidence:
+  - Sensitive log fields are identified.
+  - Redaction or omission rules are documented.
+  - Log access and retention are defined.
+  negative_evidence:
+  - Full request and response payloads are logged by default.
+  - Authorization headers are logged.
+  - Regulated data is copied to monitoring tools.
+  examples:
+    compliant: Log stores correlation ID and redacted payload summary with sensitive fields masked.
+    non_compliant: Error log stores the complete customer profile and API token.
+- id: SFINT-043
+  title: Integration Log Retention Must Be Defined
+  category: Salesforce Integration
+  description: Integration logs must have retention, archival, access, and deletion policies aligned to business and compliance
+    needs.
+  rationale: Logs need to be available for investigation without retaining sensitive operational data indefinitely.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - logging
+  - retention
+  - archive
+  - deletion
+  recommendation: Define retention periods by log type and align them with incident, audit, and privacy requirements.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Event Monitoring Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Logging
+  required_evidence:
+  - Retention period is documented.
+  - Access model is defined.
+  - Deletion or archival process is assigned.
+  negative_evidence:
+  - Logs are retained forever by default.
+  - Support logs are accessible to broad user groups.
+  - No archival owner exists.
+  examples:
+    compliant: Integration exception records retain safe diagnostics for 180 days and archive summaries for audit.
+    non_compliant: Full payload logs remain indefinitely in a custom object accessible to all admins.
+- id: SFINT-044
+  title: Integration Logging Must Avoid Transaction Failures
+  category: Salesforce Integration
+  description: Logging design must not cause primary business transactions to fail because logging storage, monitoring, or
+    downstream telemetry is unavailable.
+  rationale: Observability should not create avoidable business outages.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - logging
+  - transaction
+  - fallback
+  - telemetry
+  recommendation: Use best-effort or async logging where appropriate and define fallback behavior for logging failures.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Logging
+  required_evidence:
+  - Logging failure behavior is documented.
+  - Critical versus best-effort logging is distinguished.
+  - Tests or review cover telemetry outage.
+  negative_evidence:
+  - Business transaction fails because log insert fails.
+  - Logging performs nonessential callouts synchronously.
+  - No fallback exists when logging object validation changes.
+  examples:
+    compliant: Business update commits and async telemetry failure is routed to platform diagnostics.
+    non_compliant: Order submission rolls back because a noncritical log record could not be inserted.
+- id: SFINT-045
+  title: Critical Integrations Must Have Health Monitoring
+  category: Salesforce Integration
+  description: Critical integrations must define health checks, availability indicators, error rates, latency, backlog, and
+    throughput monitoring.
+  rationale: Integration health must be visible before users report broken business processes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - monitoring
+  - health check
+  - latency
+  - error rate
+  recommendation: Create dashboards and alerts for business and technical health indicators.
+  references:
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Monitoring
+  required_evidence:
+  - Critical health metrics are listed.
+  - Dashboard and alert ownership is documented.
+  - Business impact thresholds are defined.
+  negative_evidence:
+  - Monitoring depends on users opening tickets.
+  - Error counts are not trended.
+  - Backlog or stuck messages are invisible.
+  examples:
+    compliant: Dashboard tracks order sync success rate, latency, backlog, timeout rate, and failed messages.
+    non_compliant: Integration has no monitoring because it writes errors to debug logs.
+- id: SFINT-046
+  title: Monitoring Alerts Must Be Actionable
+  category: Salesforce Integration
+  description: Integration alerts must include enough context, severity, owner, and runbook link for responders to act.
+  rationale: Noisy or vague alerts create fatigue and slow incident response.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - integration
+  - operations
+  keywords:
+  - monitoring
+  - alert
+  - runbook
+  - incident
+  recommendation: Define alert thresholds, suppression rules, routing, and remediation steps.
+  references:
+  - Salesforce Event Monitoring Documentation
+  - Enterprise Governance Constitution
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Monitoring
+  required_evidence:
+  - Alert thresholds and severity are documented.
+  - Alert recipient and escalation are assigned.
+  - Runbook link or remediation steps exist.
+  negative_evidence:
+  - Alerts say failure occurred without affected system or key.
+  - Alerts route to unowned channels.
+  - Alert fires continuously with no suppression.
+  examples:
+    compliant: Alert includes integration name, error category, affected count, correlation sample, dashboard, and runbook.
+    non_compliant: Email alert says API failed with no owner or next step.
+- id: SFINT-047
+  title: Monitoring Must Include Business Impact
+  category: Salesforce Integration
+  description: Integration monitoring must include business impact indicators such as delayed orders, unsynced accounts, failed
+    payments, or stale case updates.
+  rationale: Technical availability alone does not prove business process health.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - monitoring
+  - business impact
+  - SLA
+  - KPI
+  recommendation: Pair technical metrics with business outcome metrics and product owner review.
+  references:
+  - Salesforce Integration Patterns
+  - Enterprise Governance Constitution
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Monitoring
+  required_evidence:
+  - Business impact metric is defined.
+  - Thresholds map to business severity.
+  - Product owner or operations review cadence is assigned.
+  negative_evidence:
+  - Only server uptime is monitored.
+  - Failed business records are not counted.
+  - SLA breach is discovered manually.
+  examples:
+    compliant: Monitoring tracks number and age of orders waiting for ERP acknowledgement.
+    non_compliant: API endpoint returns 200 while thousands of records fail validation unnoticed.
+- id: SFINT-048
+  title: Monitoring Must Cover Release Windows
+  category: Salesforce Integration
+  description: Integration releases must define pre-release baseline, post-release monitoring window, smoke checks, and rollback
+    or mitigation triggers.
+  rationale: Integration defects often appear immediately after deployment or downstream contract change.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - monitoring
+  - release
+  - smoke test
+  - rollback
+  recommendation: Monitor critical dashboards and integration logs during the release window with named owners.
+  references:
+  - Salesforce Deployment Standards
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Monitoring
+  required_evidence:
+  - Pre-release and post-release checks are documented.
+  - Monitoring owner is named.
+  - Rollback or mitigation triggers are defined.
+  negative_evidence:
+  - Release has no integration smoke test.
+  - No one watches error rates after deployment.
+  - Rollback decision criteria are unclear.
+  examples:
+    compliant: Release plan includes ERP sync smoke test, dashboard watch for two hours, and rollback threshold.
+    non_compliant: Integration mapping deploys Friday evening with no post-release monitoring owner.
+- id: SFINT-049
+  title: Integration Security Model Must Be Documented
+  category: Salesforce Integration
+  description: Integrations must document authentication, authorization, data access, sharing context, least privilege, and
+    trust boundaries.
+  rationale: Integration security defects often come from unclear system context and overbroad permissions.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - security
+  - authentication
+  - authorization
+  - least privilege
+  recommendation: Include a security model section for every integration design and review it with Security Architecture when
+    sensitive data or privileged access is involved.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Secure Coding Guide
+  - Salesforce Integration Patterns
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Security
+  required_evidence:
+  - Authentication and authorization are documented.
+  - Data access and least-privilege permissions are defined.
+  - Trust boundaries and sensitive data are identified.
+  negative_evidence:
+  - Integration runs as admin without justification.
+  - Security model is delegated to implementation.
+  - Data access differs from business authorization model.
+  examples:
+    compliant: Integration user has scoped permission set and field access mapped to the approved API contract.
+    non_compliant: Middleware authenticates as System Administrator because it avoids permission errors.
+- id: SFINT-050
+  title: Integration Users Must Be Least Privilege
+  category: Salesforce Integration
+  description: Integration users and principals must receive only the permissions required by the integration contract.
+  rationale: Overprivileged integration identities increase breach impact and bypass business access controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - security
+  - integration user
+  - least privilege
+  - permission set
+  recommendation: Use dedicated permission sets or permission set groups scoped to objects, fields, classes, flows, and API
+    operations.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Permission Sets Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Security
+  required_evidence:
+  - Integration principal is identified.
+  - Required permissions are mapped to operations.
+  - Privileged permissions are justified and reviewed.
+  negative_evidence:
+  - Integration uses System Administrator profile.
+  - View All Data or Modify All Data is granted for convenience.
+  - One integration user is shared by unrelated systems.
+  examples:
+    compliant: ERP integration user has object and field permissions only for order sync objects.
+    non_compliant: Vendor integration uses an admin account shared across multiple products.
+- id: SFINT-051
+  title: Integration Data Must Be Classified
+  category: Salesforce Integration
+  description: Integration payloads must classify sensitive, regulated, confidential, internal, and public data before data
+    leaves Salesforce.
+  rationale: Data classification determines encryption, masking, logging, retention, and downstream access controls.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - security
+  keywords:
+  - security
+  - data classification
+  - sensitive data
+  - payload
+  recommendation: Document payload classification and downstream controls for each integrated system.
+  references:
+  - Salesforce Data Classification Documentation
+  - Salesforce Security Guide
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Security
+  required_evidence:
+  - Payload fields are classified.
+  - Sensitive data handling is documented.
+  - Downstream retention and access are reviewed.
+  negative_evidence:
+  - Payload sends regulated data without classification review.
+  - Downstream storage controls are unknown.
+  - Logs duplicate sensitive payloads.
+  examples:
+    compliant: Customer eligibility integration documents confidential fields and downstream retention controls.
+    non_compliant: Full customer profile is sent to middleware without data classification.
+- id: SFINT-052
+  title: Integration Secrets Must Be Governed
+  category: Salesforce Integration
+  description: Integration secrets, certificates, tokens, and OAuth clients must have governed storage, rotation, revocation,
+    and incident response.
+  rationale: Integration credentials are high-value assets and require lifecycle controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  - operations
+  keywords:
+  - security
+  - secrets
+  - certificate
+  - OAuth
+  - rotation
+  recommendation: Store secrets in approved mechanisms and document owner, expiry, rotation cadence, and compromise response.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce Security Guide
+  - Salesforce OAuth Documentation
+  owner: Integration Architecture
+  version: 1.0.0
+  rule_pack: salesforce-integration
+  domain: Integrations
+  topic: Security
+  required_evidence:
+  - Secret or certificate inventory is documented.
+  - Storage and rotation process are approved.
+  - Revocation and compromise response are defined.
+  negative_evidence:
+  - Secrets are committed to source control.
+  - Certificates expire without owner alerts.
+  - OAuth clients have no revocation process.
+  examples:
+    compliant: OAuth client secret is managed through External Credential with tracked rotation and revocation runbook.
+    non_compliant: Certificate expiry is discovered only after production callouts fail.

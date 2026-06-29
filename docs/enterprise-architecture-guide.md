@@ -53,7 +53,7 @@ flowchart TD
     EA[Enterprise Architecture] --> Constitution[enterprise/constitution.md]
     EA --> Principles[enterprise/principles/]
     CoE[Salesforce CoE] --> Standards[enterprise/salesforce/]
-    Governance[Governance Team] --> Rules[enterprise/rules/]
+    Governance[Governance Team] --> Rules[enterprise/salesforce/<domain>/rules.yaml]
     Platform[Platform Team] --> Packs[enterprise/packs/]
 ```
 
@@ -242,8 +242,9 @@ Context loading order:
 1. `enterprise/constitution.md`
 2. `enterprise/principles/*.md`
 3. `enterprise/salesforce/**/*.md`
-4. `products/<product-name>/`
-5. optional feature specification
+4. `enterprise/salesforce/*/rules.yaml`
+5. `products/<product-name>/`
+6. optional feature specification
 
 Product loading order:
 
@@ -320,10 +321,10 @@ Knowledge Packs group related enterprise standards and rules.
 flowchart TD
     Pack[enterprise/packs/<pack>/pack.yml] --> Metadata[Pack Metadata]
     Pack --> Readme[README.md]
-    Pack --> Rules[enterprise/rules/<pack>/]
-    Rules --> Rule1[Rule YAML]
-    Rules --> Rule2[Rule YAML]
-    Rules --> RuleN[Rule YAML]
+    Pack --> Rules[enterprise/salesforce/<domain>/rules.yaml]
+    Rules --> RuleList[rules list]
+    RuleList --> Rule1[Rule entry]
+    RuleList --> RuleN[Rule entry]
 ```
 
 Current Salesforce packs:
@@ -342,7 +343,7 @@ Current Salesforce packs:
 The Rule Catalog is the machine-readable source of truth.
 
 ```text
-enterprise/rules/**/*.yaml
+enterprise/salesforce/*/rules.yaml
   |
   v
 RuleLoader
@@ -474,7 +475,7 @@ Enterprise context includes:
 enterprise/constitution.md
 enterprise/principles/*.md
 enterprise/salesforce/**/*.md
-enterprise/rules/**/*.yaml
+enterprise/salesforce/*/rules.yaml
 enterprise/packs/**
 ```
 
@@ -652,7 +653,7 @@ Extension point table:
 | Command templates | `templates/commands/` | Active | Change agent instructions. |
 | Enterprise context | `enterprise/` | Active | Add standards. |
 | Product context | `products/` | Active | Add product-specific rules. |
-| Rule catalog | `enterprise/rules/` | Active | Add machine-readable rules. |
+| Rule catalog | `enterprise/salesforce/<domain>/rules.yaml` | Active | Add machine-readable rules. |
 | Knowledge packs | `enterprise/packs/` | Active | Group rules and standards. |
 | Matchers | `src/specify_cli/framework/matchers/` | Active | Add evidence evaluation strategies. |
 | Extensions | `extensions/` | Active | Add hook-driven workflows. |
@@ -699,7 +700,7 @@ flowchart LR
     Source[Knowledge Pack Source] --> Package[Pack Artifact]
     Package --> Catalog[Pack Catalog]
     Catalog --> Install[Install into Repo]
-    Install --> Rules[enterprise/rules/]
+    Install --> Rules[enterprise/salesforce/<domain>/rules.yaml]
     Install --> Docs[docs/]
 ```
 
@@ -711,7 +712,7 @@ version: "1.0.0"
 minimum_esf_version: "1.2.0"
 owner: Salesforce CoE
 rules:
-  root: enterprise/rules/salesforce-health-cloud
+  rule_file: enterprise/salesforce/health-cloud/rules.yaml
 docs:
   - docs/health-cloud.md
 ```

@@ -8,24 +8,14 @@ Sprint 3.5 only defines and loads rules. It does not evaluate rules, perform key
 
 ## Architecture
 
-```text
-enterprise/rules/**/*.yaml
-  |
-  v
-specify_cli.rule_catalog.RuleLoader
-  |
-  v
-RuleCollection
-  |
-  +-- Rule[]
-  +-- warnings
-  +-- errors
-  |
-  v
-RuleCatalog
-  |
-  +-- group_by_category()
-  +-- group_by_applies_to()
+```mermaid
+flowchart TD
+    Domain[enterprise/salesforce/<domain>/rules.yaml] --> Loader[RuleLoader]
+    Legacy[enterprise/rules/<category>/<id>.yaml legacy imports] -. compatibility .-> Loader
+    Loader --> Collection[RuleCollection]
+    Collection --> Catalog[RuleCatalog]
+    Catalog --> Category[group_by_category]
+    Catalog --> Applies[group_by_applies_to]
 ```
 
 The catalog is intentionally separate from the Sprint 3 validator:
@@ -39,25 +29,32 @@ Rule Catalog       Advisory Validator
      +---- Sprint 4 migration path ---->
 ```
 
-## Directory Structure
+## Rule Storage Model
 
-Enterprise-owned rules live under:
+ESF stores Salesforce governance rules as one `rules.yaml` file per Salesforce domain:
 
 ```text
-enterprise/rules/
-  security/
-  governance/
-  scalability/
-  compliance/
-  architecture/
-  apex/
-  integration/
-  lwc/
-  flow/
-  testing/
+enterprise/salesforce/
+|-- security/rules.yaml
+|-- apex/rules.yaml
+|-- architecture/rules.yaml
+|-- flow/rules.yaml
+|-- lwc/rules.yaml
+|-- integration/rules.yaml
+|-- testing/rules.yaml
+|-- governance/rules.yaml
+|-- compliance/rules.yaml
+|-- devops/rules.yaml
+|-- observability/rules.yaml
+|-- deployment/rules.yaml
+|-- performance/rules.yaml
+|-- data/rules.yaml
+`-- monitoring/rules.yaml
 ```
 
-Each rule is stored in one YAML file. File names should use the rule ID, such as `SEC-001.yaml`.
+This replaced the earlier one-rule-per-file repository model. The domain file model reduces repository noise, keeps related rules reviewable together, and makes domain ownership clearer. Legacy single-rule files are still supported by `RuleLoader` for imported projects, but new repository rules must be added to `enterprise/salesforce/<domain>/rules.yaml`.
+
+Each domain file contains a top-level `rules` list. Preserve ordering by appending new rules in ID order when practical. Rule IDs must remain globally unique across all domain files.
 
 ## Rule Schema
 
@@ -82,27 +79,39 @@ Required fields:
 Example:
 
 ```yaml
-id: SEC-001
-title: CRUD/FLS Enforcement
-category: Security
-description: All Apex data access must describe how object and field permissions are enforced.
-rationale: Enterprise security policy requires object and field permission enforcement before data is read or changed.
-severity: advisory
-default_enabled: true
-applies_to:
-  - specification
-  - plan
-  - apex
-keywords:
-  - CRUD
-  - FLS
-  - field-level security
-recommendation: Explicitly describe CRUD/FLS enforcement for each Salesforce object and field touched by the feature.
-references:
-  - Salesforce Secure Coding Guide
-owner: Platform Team
-version: "1.0"
+rules:
+  - id: SFSEC-001
+    title: CRUD/FLS Enforcement
+    category: Salesforce Security
+    description: All Apex data access must describe how object and field permissions are enforced.
+    rationale: Enterprise security policy requires object and field permission enforcement before data is read or changed.
+    severity: advisory
+    default_enabled: true
+    applies_to:
+      - specification
+      - plan
+      - apex
+    keywords:
+      - CRUD
+      - FLS
+      - field-level security
+    recommendation: Explicitly describe CRUD/FLS enforcement for each Salesforce object and field touched by the feature.
+    references:
+      - Salesforce Secure Coding Guide
+    owner: Platform Team
+    version: "1.0"
 ```
+
+## Rule Authoring
+
+To add or update a rule:
+
+1. Open `enterprise/salesforce/<domain>/rules.yaml`.
+2. Add one item to the `rules` list.
+3. Keep the rule ID unique and stable.
+4. Keep the rule near related rules or in ID order.
+5. Include evidence, recommendations, metadata, and references when applicable.
+6. Run `python scripts/load-rules.py --list` and the rule catalog tests.
 
 ## Optional and Future Fields
 
@@ -162,7 +171,7 @@ Breaking edits should create a new rule ID or include a migration note in a futu
 
 ## Ownership
 
-- Platform Team owns `enterprise/rules/`.
+- Platform Team owns `enterprise/salesforce/<domain>/rules.yaml`.
 - Product Teams may add product-specific rule packs in a later sprint.
 - Delivery Teams consume rule output and should not edit enterprise rules.
 

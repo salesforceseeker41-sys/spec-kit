@@ -1,0 +1,109 @@
+rules:
+- id: SCALE-001
+  title: Bulkification
+  category: Scalability
+  description: Salesforce logic must be designed for bulk records rather than single-record execution only.
+  rationale: Enterprise data operations frequently execute through imports, integrations, and batch jobs.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - bulk
+  - bulkification
+  - collection
+  - batch
+  recommendation: Describe expected bulk volume and how the design processes records in collections.
+  references:
+  - Salesforce Apex Best Practices
+  owner: Platform Team
+  version: '1.0'
+- id: SCALE-002
+  title: Governor Limit Awareness
+  category: Scalability
+  description: Designs must identify relevant Salesforce governor limits and mitigation strategies.
+  rationale: Limit-aware design prevents production failures under realistic enterprise workloads.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - governor limit
+  - limits
+  - query limit
+  - CPU
+  recommendation: Identify key limits, expected consumption, and design mitigations.
+  references:
+  - Salesforce Governor Limits
+  owner: Platform Team
+  version: '1.0'
+- id: SCALE-003
+  title: Async Processing Strategy
+  category: Scalability
+  description: Long-running or high-volume work must identify whether asynchronous processing is required.
+  rationale: Async patterns protect user experience and platform limits for heavy operations.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  keywords:
+  - async
+  - asynchronous
+  - queueable
+  - batch
+  - scheduled
+  recommendation: Document whether Queueable, Batch, Scheduled Apex, Platform Events, or Flow async paths are required.
+  references:
+  - Salesforce Asynchronous Apex
+  owner: Platform Team
+  version: '1.0'
+- id: SCALE-004
+  title: Large Data Volume Readiness
+  category: Scalability
+  description: Features that query large objects must address selectivity, indexing, and pagination.
+  rationale: Large data volume behavior can degrade sharply without selective queries and careful UI patterns.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - lwc
+  keywords:
+  - large data volume
+  - LDV
+  - selective query
+  - pagination
+  recommendation: State expected data volume, query selectivity, index needs, and user navigation behavior.
+  references:
+  - Salesforce Large Data Volumes Best Practices
+  owner: Platform Team
+  version: '1.0'
+- id: SCALE-005
+  title: Transaction Boundary Control
+  category: Scalability
+  description: Designs must identify transaction boundaries for multi-step operations.
+  rationale: Clear transaction boundaries reduce partial failure, lock contention, and retry ambiguity.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  keywords:
+  - transaction
+  - lock
+  - retry
+  - partial failure
+  recommendation: Document transaction scope, rollback expectations, record locking risk, and retry behavior.
+  references:
+  - Salesforce Transaction Control
+  owner: Platform Team
+  version: '1.0'

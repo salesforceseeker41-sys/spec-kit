@@ -90,7 +90,7 @@ Sprint 3 advisory validation uses hardcoded heuristic governance topics. That is
 
 ### Decision
 
-Governance rules are represented as YAML files under `enterprise/rules/`. The `RuleLoader` loads rules into structured `Rule` objects and returns a `RuleCollection`. Rule loading does not evaluate rules.
+Governance rules are represented as YAML files under `enterprise/salesforce/<domain>/rules.yaml`. The `RuleLoader` loads rules into structured `Rule` objects and returns a `RuleCollection`. Rule loading does not evaluate rules.
 
 ### Rationale
 

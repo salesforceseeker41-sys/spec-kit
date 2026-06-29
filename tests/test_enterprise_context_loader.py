@@ -218,13 +218,23 @@ def test_salesforce_context_loads_nested_runtime_documents(tmp_path: Path) -> No
     _write_config(tmp_path)
     _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
     _write(tmp_path / "enterprise/salesforce/apex.md", "# Apex\n")
+    _write(
+        tmp_path / "enterprise/salesforce/apex/rules.yaml",
+        "rules:\n  - id: SFAPEX-001\n    title: Apex Rule\n",
+    )
     _write(tmp_path / "enterprise/salesforce/security/sharing.md", "# Sharing\n")
+    _write(
+        tmp_path / "enterprise/salesforce/security/rules.yaml",
+        "rules:\n  - id: SFSEC-001\n    title: Security Rule\n",
+    )
 
     bundle = ContextLoader(tmp_path).load()
 
     assert bundle.list_loaded_paths() == [
         "enterprise/constitution.md",
         "enterprise/salesforce/apex.md",
+        "enterprise/salesforce/apex/rules.yaml",
+        "enterprise/salesforce/security/rules.yaml",
         "enterprise/salesforce/security/sharing.md",
     ]
 

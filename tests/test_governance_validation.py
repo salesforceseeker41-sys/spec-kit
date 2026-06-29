@@ -44,70 +44,72 @@ def _write_minimum_context(root: Path) -> None:
     _write(root / "enterprise/salesforce/testing.md", "# Testing\n")
     _write(root / "products/rdra/principles.md", "# RDRA Principles\n")
     _write(
-        root / "enterprise/rules/security/SEC-COVERAGE.yaml",
+        root / "enterprise/salesforce/security/rules.yaml",
         """
-id: SEC-COVERAGE
-title: CRUD/FLS Enforcement
-category: security
-description: Security coverage must describe CRUD/FLS enforcement.
-rationale: Enterprise security policy requires explicit permission enforcement.
-severity: advisory
-default_enabled: true
-applies_to:
-  - specification
-  - plan
-  - tasks
-keywords:
-  - CRUD/FLS
-  - CRUD
-  - FLS
-recommendation: Add explicit security coverage for CRUD/FLS and sharing.
-references:
-  - Salesforce Secure Coding Guide
-owner: Platform Team
-version: "1.0"
+rules:
+  - id: SEC-COVERAGE
+    title: CRUD/FLS Enforcement
+    category: security
+    description: Security coverage must describe CRUD/FLS enforcement.
+    rationale: Enterprise security policy requires explicit permission enforcement.
+    severity: advisory
+    default_enabled: true
+    applies_to:
+      - specification
+      - plan
+      - tasks
+    keywords:
+      - CRUD/FLS
+      - CRUD
+      - FLS
+    recommendation: Add explicit security coverage for CRUD/FLS and sharing.
+    references:
+      - Salesforce Secure Coding Guide
+    owner: Platform Team
+    version: "1.0"
 """.lstrip(),
     )
 
 
 def _write_practice_rule(root: Path) -> None:
     _write(
-        root / "enterprise/rules/apex/APEX-PRACTICE.yaml",
+        root / "enterprise/salesforce/apex/rules.yaml",
         """
-id: APEX-PRACTICE
-title: Apex Bulkification
-category: Apex
-description: Apex plans must show bulk-safe design evidence.
-rationale: Bulk-safe design protects governor limits.
-severity: advisory
-default_enabled: true
-applies_to:
-  - plan
-keywords:
-  - bulkification
-recommendation: Add explicit bulkification evidence.
-references:
-  - Salesforce Apex Best Practices
-owner: Platform Team
-version: "1.1"
-practice:
-  type: salesforce_apex_bulkification
-  min_confidence: 0.7
-required_evidence:
-  - processes records in collections
-  - avoids SOQL inside loops
-  - avoids DML inside loops
-negative_evidence:
-  - DML inside loop
-evidence_terms:
-  processes records in collections:
-    - collections
-  avoids SOQL inside loops:
-    - query outside loop
-  avoids DML inside loops:
-    - DML outside loop
-  DML inside loop:
-    - DML inside loop
+rules:
+  - id: APEX-PRACTICE
+    title: Apex Bulkification
+    category: Apex
+    description: Apex plans must show bulk-safe design evidence.
+    rationale: Bulk-safe design protects governor limits.
+    severity: advisory
+    default_enabled: true
+    applies_to:
+      - plan
+    keywords:
+      - bulkification
+    recommendation: Add explicit bulkification evidence.
+    references:
+      - Salesforce Apex Best Practices
+    owner: Platform Team
+    version: "1.1"
+    practice:
+      type: salesforce_apex_bulkification
+      min_confidence: 0.7
+    required_evidence:
+      - processes records in collections
+      - avoids SOQL inside loops
+      - avoids DML inside loops
+    negative_evidence:
+      - DML inside loop
+    evidence_terms:
+      processes records in collections:
+        - collections
+      avoids SOQL inside loops:
+        - query outside loop
+      avoids DML inside loops:
+        - DML outside loop
+      DML inside loop:
+        - DML inside loop
 """.lstrip(),
     )
 

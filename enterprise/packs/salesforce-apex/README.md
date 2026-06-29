@@ -13,7 +13,7 @@ This pack covers trigger frameworks, bulkification, governor limits, collections
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-apex/
+enterprise/salesforce/apex/rules.yaml/
 ```
 
 Rule IDs use the `SFAPEX-` prefix.

@@ -1,0 +1,138 @@
+rules:
+- id: LWC-001
+  title: Accessible Component Behavior
+  category: LWC
+  description: Lightning Web Components must address accessibility for interactive behavior.
+  rationale: Enterprise UI must be usable with keyboard navigation and assistive technology.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  keywords:
+  - accessibility
+  - keyboard
+  - screen reader
+  - ARIA
+  recommendation: Document keyboard behavior, labels, focus management, and assistive technology expectations.
+  references:
+  - Salesforce Lightning Design System Accessibility
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_lwc_client_security
+    min_confidence: 0.7
+  required_evidence:
+  - avoids trusting client input
+  - uses server-side authorization
+  - handles errors
+  - avoids exposing sensitive data
+  negative_evidence:
+  - client-side only authorization
+  - sensitive data in browser storage
+  evidence_terms:
+    avoids trusting client input:
+    - validate server-side
+    - server-side validation
+    - do not trust client input
+    uses server-side authorization:
+    - server-side authorization
+    - Apex permission check
+    - CRUD/FLS
+    handles errors:
+    - error handling
+    - user friendly error
+    - toast error
+    avoids exposing sensitive data:
+    - sensitive data
+    - PII
+    - avoid browser storage
+    client-side only authorization:
+    - client-side only authorization
+    - hide button only
+    sensitive data in browser storage:
+    - localStorage PII
+    - sessionStorage PII
+- id: LWC-002
+  title: Client-Side Data Exposure
+  category: LWC
+  description: LWC designs must avoid exposing sensitive fields or unauthorized records in client state.
+  rationale: Browser-visible state can leak data through debugging, caching, or unintended rendering.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  keywords:
+  - client state
+  - sensitive data
+  - cache
+  - field access
+  recommendation: Describe which data is sent to the browser and how field and record access are controlled.
+  references:
+  - Salesforce LWC Security Guide
+  owner: Platform Team
+  version: '1.0'
+- id: LWC-003
+  title: LDS and Wire Usage
+  category: LWC
+  description: LWC data access should prefer Lightning Data Service or wire adapters when appropriate.
+  rationale: Platform data access primitives improve cache behavior, security, and maintainability.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - lwc
+  keywords:
+  - Lightning Data Service
+  - LDS
+  - wire
+  - cache
+  recommendation: Identify whether LDS, wire adapters, or imperative Apex is appropriate and why.
+  references:
+  - Salesforce LWC Data Access
+  owner: Platform Team
+  version: '1.0'
+- id: LWC-004
+  title: User Feedback States
+  category: LWC
+  description: UI plans must describe loading, empty, success, and error states.
+  rationale: Complete state handling improves usability and supportability.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  keywords:
+  - loading
+  - empty state
+  - toast
+  - error state
+  recommendation: Define user feedback for each async action and data state.
+  references:
+  - Salesforce Lightning Design System
+  owner: Platform Team
+  version: '1.0'
+- id: LWC-005
+  title: Component Boundary Clarity
+  category: LWC
+  description: LWC plans must identify component boundaries and parent-child data flow.
+  rationale: Clear component boundaries reduce coupling and improve reuse across applications.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - lwc
+  keywords:
+  - component
+  - parent
+  - child
+  - event
+  recommendation: Document component responsibilities, public APIs, events, and ownership of data fetching.
+  references:
+  - Salesforce LWC Component Communication
+  owner: Platform Team
+  version: '1.0'

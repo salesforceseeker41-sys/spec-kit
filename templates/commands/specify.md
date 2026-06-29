@@ -43,7 +43,7 @@ Before generating or updating the specification, check for enterprise governance
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
-3. **Salesforce Standards**: `enterprise/salesforce/**/*.md`
+3. **Enterprise Salesforce Knowledge Pack**: `enterprise/salesforce/**/*.md` and `enterprise/salesforce/*/rules.yaml`
 4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the current feature request and resulting `spec.md`
 

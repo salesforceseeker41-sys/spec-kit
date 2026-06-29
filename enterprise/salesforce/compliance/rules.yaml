@@ -1,0 +1,103 @@
+rules:
+- id: COMP-001
+  title: Audit Trail Coverage
+  category: Compliance
+  description: Compliance-relevant changes must define what audit evidence is captured.
+  rationale: Enterprise applications must support audit and investigation needs.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - audit
+  - audit trail
+  - evidence
+  - history
+  recommendation: Identify auditable events, fields, actors, timestamps, and evidence retention locations.
+  references:
+  - Salesforce Field Audit Trail
+  owner: Platform Team
+  version: '1.0'
+- id: COMP-002
+  title: Data Retention Expectations
+  category: Compliance
+  description: Features that create or transform data must state retention and archival expectations.
+  rationale: Data retention must align with enterprise policy and legal requirements.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - retention
+  - archival
+  - purge
+  - data lifecycle
+  recommendation: Document retention period, archival approach, deletion behavior, and business owner.
+  references:
+  - Enterprise Data Retention Policy
+  owner: Platform Team
+  version: '1.0'
+- id: COMP-003
+  title: Compliance Impact Assessment
+  category: Compliance
+  description: Feature specifications must identify whether regulatory, privacy, or contractual obligations apply.
+  rationale: Early impact identification prevents late rework and missed control obligations.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - compliance
+  - privacy
+  - regulatory
+  - impact
+  recommendation: State applicable compliance regimes or explicitly document that no special compliance impact is known.
+  references:
+  - Enterprise Compliance Intake Checklist
+  owner: Platform Team
+  version: '1.0'
+- id: COMP-004
+  title: Consent and Purpose Limitation
+  category: Compliance
+  description: Features using personal data must respect consent, purpose, and minimization expectations.
+  rationale: Personal data processing requires clear purpose and least-data handling.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  keywords:
+  - consent
+  - purpose
+  - minimization
+  - personal data
+  recommendation: Describe why personal data is needed, how consent is respected, and how unnecessary data is avoided.
+  references:
+  - Enterprise Privacy Principles
+  owner: Platform Team
+  version: '1.0'
+- id: COMP-005
+  title: Reporting Evidence
+  category: Compliance
+  description: Compliance-sensitive features must identify reports, dashboards, or exports used as evidence.
+  rationale: Auditors and business owners need reliable evidence sources for control operation.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - report
+  - dashboard
+  - evidence
+  - export
+  recommendation: Identify authoritative evidence outputs and their ownership, refresh cadence, and access model.
+  references:
+  - Salesforce Reports and Dashboards Documentation
+  owner: Platform Team
+  version: '1.0'

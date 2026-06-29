@@ -4,7 +4,7 @@ description: Enterprise-approved Salesforce Apex engineering governance rules fo
 version: "1.0.0"
 status: active
 owner: Salesforce Center of Excellence
-rule_root: enterprise/rules/salesforce-apex
+rule_file: enterprise/salesforce/apex/rules.yaml
 rule_id_prefix: SFAPEX
 domains:
   - Apex

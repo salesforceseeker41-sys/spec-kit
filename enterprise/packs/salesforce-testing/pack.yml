@@ -4,7 +4,7 @@ description: Enterprise-approved Salesforce testing governance rules for product
 version: "1.0.0"
 status: active
 owner: Quality Engineering
-rule_root: enterprise/rules/salesforce-testing
+rule_file: enterprise/salesforce/testing/rules.yaml
 rule_id_prefix: SFTEST
 domains:
   - Testing

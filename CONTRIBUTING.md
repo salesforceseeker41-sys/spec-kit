@@ -64,7 +64,7 @@ The Enterprise Spec Framework (ESF) is an additive governance layer on top of Sp
 | Path | Ownership | Contribution guidance |
 | --- | --- | --- |
 | `enterprise/` | Platform Team | Enterprise constitution, principles, Salesforce standards, and rule catalog. |
-| `enterprise/rules/` | Platform Team | Machine-readable enterprise rules. Rules are data and must not require Python changes to edit policy. |
+| `enterprise/salesforce/<domain>/rules.yaml` | Platform Team | Machine-readable enterprise rules. Rules are data and must not require Python changes to edit policy. |
 | `products/` | Product Teams | Product-domain standards, integrations, domain models, events, and future product rule packs. |
 | `docs/enterprise-governance.md` | Platform Team | Operating model and ownership documentation. |
 | `docs/context-loader.md` | Platform Team | Context Loader documentation. |
@@ -151,9 +151,10 @@ When adding or changing architecture, update the relevant document:
 
 ### How to add Enterprise Rules
 
-1. Add one YAML file per rule under `enterprise/rules/<category>/`.
-1. Use the rule ID as the filename, for example `SEC-006.yaml`.
+1. Open the domain file under `enterprise/salesforce/<domain>/rules.yaml`.
+1. Add a new item to the top-level `rules` list.
 1. Include every required field documented in `docs/rule-catalog.md`.
+1. Keep the rule ID unique and stable.
 1. Set `owner: Platform Team`.
 1. Use `severity: advisory` unless an accepted ADR defines another policy.
 1. Run the rule catalog tests.
@@ -165,7 +166,7 @@ Enterprise rules are platform-owned. Delivery teams should not edit them inside 
 Product rule packs are planned but not implemented yet. Until the structure is formalized:
 
 1. Document proposed product-specific governance in `products/<product-id>/`.
-1. Avoid adding product rules under `enterprise/rules/`.
+1. Avoid adding product rules under `enterprise/salesforce/<domain>/rules.yaml`.
 1. Propose the product rule pack structure in an ADR before implementation.
 1. Preserve enterprise-rule precedence.
 

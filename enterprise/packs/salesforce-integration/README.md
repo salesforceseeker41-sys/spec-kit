@@ -18,7 +18,7 @@ monitoring, and security.
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-integration/
+enterprise/salesforce/integration/rules.yaml/
 ```
 
 Rule IDs use the `SFINT-` prefix.

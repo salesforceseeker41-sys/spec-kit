@@ -103,7 +103,7 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) st
 
 #### Added
 
-- Enterprise Rule Catalog under `enterprise/rules/`.
+- Enterprise Rule Catalog under `enterprise/salesforce/<domain>/rules.yaml`.
 - YAML rule schema for enterprise-owned governance rules.
 - Sample rule packs for security, governance, scalability, compliance, architecture, Apex, LWC, Flow, and testing.
 - Rule model, catalog, collection, and loader abstractions.

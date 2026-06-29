@@ -121,7 +121,7 @@ Load detailed governance from these runtime sources:
 
 - Enterprise governance constitution: `enterprise/constitution.md`
 - Enterprise Salesforce standards: `enterprise/salesforce/**`
-- Enterprise rule packs: `enterprise/rule-packs/**`
+- Enterprise Salesforce domain rules: `enterprise/salesforce/*/rules.yaml`
 - Enterprise pack metadata: `enterprise/packs/**`
 - Product governance: `products/{product_name}/**`
 - Product selector and loader configuration: `enterprise.yaml`

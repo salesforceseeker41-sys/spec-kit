@@ -23,6 +23,8 @@ def test_governed_prompts_describe_dynamic_product_context() -> None:
         assert "business-rules.yaml" in content
         assert "Do not rely only on `.specify/memory/constitution.md`" in content
         assert "enterprise/salesforce/**/*.md" in content
+        assert "enterprise/salesforce/*/rules.yaml" in content
+        assert "Enterprise Salesforce Knowledge Pack" in content
 
 
 def test_prompts_explain_runtime_product_loading() -> None:

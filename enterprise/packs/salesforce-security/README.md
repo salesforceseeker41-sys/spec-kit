@@ -27,7 +27,7 @@ This pack covers:
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-security/
+enterprise/salesforce/security/rules.yaml/
 ```
 
 Rule IDs use the `SFSEC-` prefix.

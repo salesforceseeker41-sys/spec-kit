@@ -1,0 +1,138 @@
+rules:
+- id: GOV-001
+  title: Trigger Handler Pattern
+  category: Governance
+  description: Trigger-based automation must use the enterprise trigger handler pattern.
+  rationale: A standard trigger pattern reduces recursion defects and keeps cross-object automation maintainable.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - trigger handler
+  - trigger framework
+  - recursion
+  recommendation: Identify the trigger handler class, execution context, and recursion controls.
+  references:
+  - Salesforce Apex Enterprise Patterns
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_trigger_handler
+    min_confidence: 0.7
+  required_evidence:
+  - uses trigger handler pattern
+  - separates trigger and business logic
+  - controls recursion
+  - supports bulk execution
+  negative_evidence:
+  - business logic directly in trigger
+  - unguarded recursion
+  evidence_terms:
+    uses trigger handler pattern:
+    - trigger handler
+    - trigger framework
+    - handler class
+    separates trigger and business logic:
+    - service class
+    - service layer
+    - separation of concerns
+    controls recursion:
+    - recursion guard
+    - recursion control
+    - prevent recursion
+    supports bulk execution:
+    - bulk-safe
+    - bulk execution
+    - trigger.new
+    business logic directly in trigger:
+    - logic in trigger
+    - business logic in trigger
+    unguarded recursion:
+    - recursive update
+    - no recursion guard
+- id: GOV-002
+  title: No SOQL or DML in Loops
+  category: Governance
+  description: Apex designs must avoid SOQL and DML operations inside loops.
+  rationale: Loop-based database operations cause governor limit failures at enterprise data volumes.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - SOQL
+  - DML
+  - loop
+  - governor limits
+  recommendation: Describe collection-based query and persistence patterns for bulk execution.
+  references:
+  - Salesforce Apex Best Practices
+  owner: Platform Team
+  version: '1.0'
+- id: GOV-003
+  title: Error Handling Strategy
+  category: Governance
+  description: Features must describe expected error handling behavior for user, system, and integration failures.
+  rationale: Consistent error handling improves supportability and reduces silent data quality issues.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - error handling
+  - exception
+  - failure
+  - recovery
+  recommendation: Define user-visible errors, retryable failures, fallback behavior, and escalation paths.
+  references:
+  - Salesforce Apex Exception Statements
+  owner: Platform Team
+  version: '1.0'
+- id: GOV-004
+  title: Observability and Logging
+  category: Governance
+  description: Important business and technical events must have an observability and logging plan.
+  rationale: Enterprise support teams need traceable evidence for failures, transactions, and operational behavior.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - logging
+  - observability
+  - telemetry
+  - monitoring
+  recommendation: Document what is logged, where it is stored, retention expectations, and support ownership.
+  references:
+  - Salesforce Event Monitoring
+  owner: Platform Team
+  version: '1.0'
+- id: GOV-005
+  title: Exception Documentation
+  category: Governance
+  description: Deviations from enterprise standards must be captured as explicit exceptions.
+  rationale: Architecture exceptions need visibility so they can be approved, remediated, or retired.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - exception
+  - deviation
+  - waiver
+  - risk
+  recommendation: Record the standard being bypassed, reason, owner, risk, and expected remediation date.
+  references:
+  - Enterprise Governance Constitution
+  owner: Platform Team
+  version: '1.0'

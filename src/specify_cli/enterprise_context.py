@@ -388,12 +388,16 @@ class ContextLoader:
         if not folder.is_dir():
             warnings.append(f"Context folder was not found: {folder.as_posix()}")
             return []
-        paths = folder.rglob("*.md") if recursive else folder.glob("*.md")
+        paths = list(folder.rglob("*.md") if recursive else folder.glob("*.md"))
+        if recursive and layer == "salesforce":
+            paths.extend(folder.rglob("rules.yaml"))
         return [
             self._load_context_document(
                 path, layer=layer, category=category, required=False
             )
-            for path in sorted(paths, key=lambda item: item.relative_to(folder).as_posix())
+            for path in sorted(
+                set(paths), key=lambda item: item.relative_to(folder).as_posix()
+            )
         ]
 
     def _resolve_feature_path(

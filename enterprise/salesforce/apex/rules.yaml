@@ -1,0 +1,4064 @@
+rules:
+- id: APEX-001
+  title: Apex Service Layer
+  category: Apex
+  description: Complex Apex behavior should be organized behind service classes with clear responsibilities.
+  rationale: A service layer improves reuse, testability, and separation from triggers or controllers.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - service class
+  - service layer
+  - separation of concerns
+  recommendation: Identify service classes and responsibilities for business logic.
+  references:
+  - Salesforce Apex Enterprise Patterns
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_apex_bulkification
+    min_confidence: 0.7
+  required_evidence:
+  - processes records in collections
+  - avoids SOQL inside loops
+  - avoids DML inside loops
+  - uses maps or sets for lookups
+  - includes bulk test scenarios
+  negative_evidence:
+  - one record at a time
+  - SOQL inside loop
+  - DML inside loop
+  - future method from trigger
+  evidence_terms:
+    processes records in collections:
+    - bulk records
+    - collections
+    - List<
+    - Set<
+    - process all records
+    - bulk-safe
+    avoids SOQL inside loops:
+    - query outside loop
+    - no SOQL in loop
+    - no SOQL inside loop
+    - avoid SOQL inside loops
+    avoids DML inside loops:
+    - DML outside loop
+    - no DML in loop
+    - no DML inside loop
+    - avoid DML inside loops
+    - bulk DML
+    uses maps or sets for lookups:
+    - Map<
+    - Set<
+    - maps for lookups
+    - sets for deduplication
+    - key lookup
+    includes bulk test scenarios:
+    - bulk test
+    - bulk tests
+    - 200 records
+    - multiple records
+    one record at a time:
+    - one record at a time
+    - single record only
+    SOQL inside loop:
+    - SOQL inside loop
+    - query inside loop
+    DML inside loop:
+    - DML inside loop
+    - insert inside loop
+    - update inside loop
+    future method from trigger:
+    - future method from trigger
+    - '@future from trigger'
+- id: APEX-002
+  title: Selector Query Encapsulation
+  category: Apex
+  description: Reusable query logic should be encapsulated rather than duplicated across Apex classes.
+  rationale: Query encapsulation improves consistency, field access review, and limit management.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - selector
+  - query
+  - SOQL
+  - reuse
+  recommendation: Document selector or repository classes for repeated object queries.
+  references:
+  - Salesforce Apex Enterprise Patterns
+  owner: Platform Team
+  version: '1.0'
+- id: APEX-003
+  title: Apex Test Data Isolation
+  category: Apex
+  description: Apex tests must create isolated test data and avoid relying on org data.
+  rationale: Isolated tests remain stable across sandboxes, packages, and production deployments.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - apex
+  - testing
+  keywords:
+  - test data
+  - SeeAllData
+  - factory
+  - isolation
+  recommendation: Use test data factories and avoid SeeAllData unless a documented exception exists.
+  references:
+  - Salesforce Apex Testing Best Practices
+  owner: Platform Team
+  version: '1.0'
+- id: APEX-004
+  title: Apex Integration Callout Isolation
+  category: Apex
+  description: Apex callouts must be isolated behind integration services and tested with mocks.
+  rationale: Isolating callouts improves retry behavior, testability, and credential management.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - callout
+  - mock
+  - integration service
+  - HttpCalloutMock
+  recommendation: Identify callout services, mock strategy, timeout behavior, and retry ownership.
+  references:
+  - Salesforce Apex Callouts
+  owner: Platform Team
+  version: '1.0'
+- id: APEX-005
+  title: Apex Limit-Safe Collections
+  category: Apex
+  description: Apex implementation plans must use maps, sets, and lists to avoid repeated work.
+  rationale: Collection-first design supports bulk execution and reduces limit consumption.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - map
+  - set
+  - list
+  - collection
+  recommendation: Describe collection usage for lookups, deduplication, and batched persistence.
+  references:
+  - Salesforce Apex Developer Guide
+  owner: Platform Team
+  version: '1.0'
+- id: SFAPEX-001
+  title: One Trigger Per Object
+  category: Salesforce Apex
+  description: Each sObject must have at most one Apex trigger that delegates to an enterprise trigger framework.
+  rationale: Multiple triggers create unpredictable execution order and make behavior hard to test, govern, and operate.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - One
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-002
+  title: Route Trigger Logic Through Handlers
+  category: Salesforce Apex
+  description: Triggers must route work to handler classes instead of containing business logic inline.
+  rationale: Handler classes make trigger behavior testable, reusable, and easier to control across contexts.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - Route
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-003
+  title: Separate Trigger Context Methods
+  category: Salesforce Apex
+  description: Trigger handlers must separate before insert, before update, after insert, after update, before delete, after
+    delete, and undelete behavior.
+  rationale: Context separation prevents accidental DML timing issues and keeps record mutation rules clear.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - Separate
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-004
+  title: Prevent Recursive Trigger Execution
+  category: Salesforce Apex
+  description: Trigger frameworks must include a recursion control strategy for re-entrant updates and cross-object automation.
+  rationale: Recursive execution can exceed governor limits, duplicate work, and corrupt data.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - Prevent
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-005
+  title: Centralize Trigger Bypass Controls
+  category: Salesforce Apex
+  description: Trigger bypasses must be centrally controlled, audited, and limited to approved data loads or system operations.
+  rationale: Uncontrolled bypasses allow product teams or jobs to skip required business and security rules.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - Centralize
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-006
+  title: Avoid Trigger Ordering Dependencies
+  category: Salesforce Apex
+  description: Designs must not depend on undocumented ordering between triggers, flows, processes, and managed package automation.
+  rationale: Salesforce automation ordering can change as metadata evolves and creates fragile behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Trigger Framework
+  - Avoid
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-007
+  title: Document Automation Interaction
+  category: Salesforce Apex
+  description: Apex trigger designs must document relevant Flow, validation rule, duplicate rule, and managed package interactions.
+  rationale: Enterprise orgs usually have layered automation, and unmanaged interactions cause production regressions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Trigger Framework
+  - Document
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-008
+  title: Keep Trigger Entry Points Thin
+  category: Salesforce Apex
+  description: Trigger entry points must contain orchestration only and delegate validation, domain behavior, service calls,
+    and persistence.
+  rationale: Thin entry points keep governor usage visible and prevent business logic from becoming untestable.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Framework
+  - Keep
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Trigger Framework
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-009
+  title: Process Records As Collections
+  category: Salesforce Apex
+  description: Apex logic must process all trigger and service inputs as collections, even when callers pass one record.
+  rationale: Salesforce can invoke code with many records in one transaction, and single-record logic fails at scale.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - Process
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-010
+  title: No SOQL Inside Loops
+  category: Salesforce Apex
+  description: Apex must not execute SOQL inside loops over records, fields, payloads, or child collections.
+  rationale: SOQL inside loops quickly exceeds governor limits and creates nonlinear performance behavior.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - false
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-011
+  title: No DML Inside Loops
+  category: Salesforce Apex
+  description: Apex must not execute DML inside loops over records, fields, payloads, or child collections.
+  rationale: DML inside loops exceeds limits and creates partial-write behavior that is hard to recover.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - false
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-012
+  title: Aggregate DML By Operation
+  category: Salesforce Apex
+  description: Apex must aggregate inserts, updates, upserts, deletes, and undeletes into collection-level DML operations.
+  rationale: Collection-level DML reduces limit usage and makes partial success handling explicit.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - Aggregate
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-013
+  title: Bulkify Cross-Object Updates
+  category: Salesforce Apex
+  description: Cross-object updates must collect related records and update them in batches, not one parent or child at a
+    time.
+  rationale: Cross-object loops are a common source of limit failures in enterprise data volumes.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - Bulkify
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-014
+  title: Bulkify Callout Preparation
+  category: Salesforce Apex
+  description: Apex must aggregate callout payload preparation and avoid per-record callout design unless explicitly approved.
+  rationale: Per-record callouts do not scale and often exceed callout count or timeout limits.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Bulkification
+  - Bulkify
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Bulkification
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-015
+  title: Document Relevant Governor Limits
+  category: Salesforce Apex
+  description: Apex designs must identify the governor limits most likely to constrain the feature.
+  rationale: Explicit limit analysis forces scalable design before implementation.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governor Limits
+  - Document
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-016
+  title: Use Limits Methods For Guardrails
+  category: Salesforce Apex
+  description: Long-running or variable-volume Apex must use Limits methods where guardrails or graceful deferral are needed.
+  rationale: Runtime limit awareness helps prevent hard transaction failures and supports safe async handoff.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Governor Limits
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-017
+  title: Do Not Rely On Current Data Volume
+  category: Salesforce Apex
+  description: Apex designs must account for expected enterprise-scale volume, not only current org data size.
+  rationale: Current record counts often understate future transaction and migration volume.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governor Limits
+  - Do
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-018
+  title: Define Limit Failure Behavior
+  category: Salesforce Apex
+  description: Apex plans must describe what happens when work approaches SOQL, DML, CPU, heap, callout, or queueable limits.
+  rationale: Users and operations need predictable failure, retry, or deferral behavior under load.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governor Limits
+  - Define
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-019
+  title: Avoid Excessive CPU Consumption
+  category: Salesforce Apex
+  description: Apex must avoid nested loops, repeated describes, expensive regex, and repeated serialization patterns that
+    risk CPU limits.
+  rationale: CPU limits are shared across automation and can fail otherwise valid transactions.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Governor Limits
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-020
+  title: Control Heap Growth
+  category: Salesforce Apex
+  description: Apex processing large payloads or records must avoid unbounded heap growth and unnecessary object retention.
+  rationale: Heap failures are common in large integrations, document generation, and data processing.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Governor Limits
+  - Control
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Governor Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-021
+  title: Use Sets For Unique Identifiers
+  category: Salesforce Apex
+  description: Apex must use Set<Id> or typed sets to collect unique identifiers for queries and joins.
+  rationale: Sets prevent duplicate work and support efficient bulk lookup patterns.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Collections
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Collections
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-022
+  title: Use Lists For Ordered DML
+  category: Salesforce Apex
+  description: Apex must use typed lists for DML collections and preserve deterministic ordering only when business logic
+    requires it.
+  rationale: Typed lists make persistence intent clear and avoid accidental unordered assumptions.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Collections
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Collections
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-023
+  title: Avoid Nested Loop Joins
+  category: Salesforce Apex
+  description: Apex must avoid nested loop joins over record collections when a map-based lookup is practical.
+  rationale: Nested joins create avoidable CPU growth as data volumes increase.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Collections
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Collections
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-024
+  title: Handle Empty Collections Explicitly
+  category: Salesforce Apex
+  description: Apex services and selectors must handle null and empty collections without unnecessary queries or DML.
+  rationale: Empty input handling prevents wasted limits and null-pointer defects.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Collections
+  - Handle
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Collections
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-025
+  title: Do Not Mutate Collections While Iterating
+  category: Salesforce Apex
+  description: Apex must not mutate a collection in unsafe ways while iterating over it.
+  rationale: Unsafe mutation causes runtime exceptions and inconsistent behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Collections
+  - Do
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Collections
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-026
+  title: Use Maps For Parent And Child Lookups
+  category: Salesforce Apex
+  description: Apex must use Map<Id, sObject> or keyed maps for parent, child, and aggregate lookup logic.
+  rationale: Maps make joins deterministic and reduce CPU consumed by repeated searches.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maps
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Maps
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-027
+  title: Key Maps With Stable Identifiers
+  category: Salesforce Apex
+  description: Map keys must use stable identifiers such as record Ids, external IDs, or canonical composite keys.
+  rationale: Unstable keys create missed matches, duplicate work, and data integrity defects.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maps
+  - Key
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Maps
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-028
+  title: Avoid Case-Sensitive Key Surprises
+  category: Salesforce Apex
+  description: String-keyed maps must normalize case and whitespace when keys come from users or external systems.
+  rationale: External and user-provided strings often vary in casing and formatting.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maps
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Maps
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-029
+  title: Check Map Contains Before Access
+  category: Salesforce Apex
+  description: Apex must handle missing map keys intentionally instead of assuming all relationships or lookups exist.
+  rationale: Enterprise data often contains gaps, stale references, or partial migration records.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maps
+  - Check
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Maps
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-030
+  title: Do Not Store Oversized Payloads In Maps
+  category: Salesforce Apex
+  description: Apex must avoid retaining large serialized payloads or blobs in maps across long processing paths.
+  rationale: Large map values increase heap pressure and transaction failure risk.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maps
+  - Do
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Maps
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-031
+  title: Use Selector Classes For SOQL
+  category: Salesforce Apex
+  description: Complex or reused SOQL must live in selector classes rather than being scattered across services, triggers,
+    and controllers.
+  rationale: Selectors centralize query shape, security enforcement, and performance tuning.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-032
+  title: Selectors Must Enforce Security
+  category: Salesforce Apex
+  description: Selectors returning user-visible data must document and enforce CRUD/FLS or delegate to an approved enforcement
+    layer.
+  rationale: Centralized querying without security enforcement centralizes data exposure risk.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Selectors
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-033
+  title: Selectors Must Be Bulk-Oriented
+  category: Salesforce Apex
+  description: Selectors must accept collections of IDs or criteria and return collection or map results.
+  rationale: Bulk-oriented selectors prevent per-record query patterns.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Selectors
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-034
+  title: Selectors Must Avoid Overfetching
+  category: Salesforce Apex
+  description: Selectors must query only fields required by the caller or approved read model.
+  rationale: Overfetching increases heap usage and can expose fields unnecessarily.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Selectors
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-035
+  title: Selectors Must Use Selective Filters
+  category: Salesforce Apex
+  description: Selectors for large objects must use indexed or selective filters and document high-volume query strategy.
+  rationale: Non-selective queries fail or perform poorly at enterprise data volumes.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Selectors
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-036
+  title: Dynamic SOQL Requires Allowlists
+  category: Salesforce Apex
+  description: Dynamic selector queries must allowlist object names, fields, sort fields, and directions.
+  rationale: Dynamic query construction is a security and reliability risk without constraints.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selectors
+  - Dynamic
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Selectors
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-037
+  title: Service Classes Own Use Cases
+  category: Salesforce Apex
+  description: Apex service classes must represent business use cases or application operations, not generic utility buckets.
+  rationale: Use-case services keep behavior discoverable and support product ownership.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Service
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-038
+  title: Services Must Be Transaction-Aware
+  category: Salesforce Apex
+  description: Service methods must document whether they perform DML, callouts, async enqueueing, or publish events.
+  rationale: Transaction side effects matter for orchestration, testing, and rollback behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Services
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-039
+  title: Separate Orchestration From Persistence
+  category: Salesforce Apex
+  description: Service orchestration must not hide unrelated persistence concerns inside broad methods.
+  rationale: Clear persistence boundaries reduce side effects and make rollback behavior understandable.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Separate
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-040
+  title: Avoid Static Utility Sprawl
+  category: Salesforce Apex
+  description: Shared Apex logic must not accumulate in unrelated static utility classes when domain, selector, or service
+    placement is clearer.
+  rationale: Utility sprawl hides ownership and encourages unsafe reuse.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-041
+  title: Service APIs Must Be Idempotent When Retried
+  category: Salesforce Apex
+  description: Services invoked by async jobs, events, or integrations must define idempotency behavior.
+  rationale: Retries are normal in distributed processing and must not duplicate business effects.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Service
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-042
+  title: Service Methods Must Validate Inputs
+  category: Salesforce Apex
+  description: Public service methods must validate required inputs, ownership, and state transitions.
+  rationale: Defensive validation prevents invalid calls from controllers, flows, jobs, and tests.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Service
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Service Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-043
+  title: Domain Classes Own Object Behavior
+  category: Salesforce Apex
+  description: Object-specific business rules must be placed in domain classes when the behavior belongs to an sObject lifecycle.
+  rationale: Domain placement makes object behavior explicit and reusable across entry points.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Domain Layer
+  - Domain
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Domain Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-044
+  title: Keep Domain Logic Bulk-Safe
+  category: Salesforce Apex
+  description: Domain methods must accept and process collections rather than individual records only.
+  rationale: Domain logic often runs from triggers and must scale with trigger batch size.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Domain Layer
+  - Keep
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Domain Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-045
+  title: Avoid Cross-Domain Coupling
+  category: Salesforce Apex
+  description: Domain classes must not directly perform broad orchestration across unrelated business domains.
+  rationale: Tight domain coupling creates fragile dependencies and transaction bloat.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Domain Layer
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Domain Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-046
+  title: Use Domain Validation Consistently
+  category: Salesforce Apex
+  description: Business validations implemented in Apex domains must be consistent with validation rules and Flow behavior.
+  rationale: Conflicting validation layers create inconsistent user and API outcomes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Domain Layer
+  - Use
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Domain Layer
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-047
+  title: Choose Async Pattern Explicitly
+  category: Salesforce Apex
+  description: Designs must justify whether work uses Queueable, Batch, Future, Scheduled Apex, Platform Events, or synchronous
+    processing.
+  rationale: Async mechanisms have different limits, ordering, retry, and monitoring behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Async
+  - Choose
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Async
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-048
+  title: Do Not Use Future By Default
+  category: Salesforce Apex
+  description: Future methods must not be the default async pattern when Queueable or Platform Events provide better control.
+  rationale: Future methods have limited chaining, monitoring, and payload capabilities.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Async
+  - Do
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Async
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-049
+  title: Use Queueable For Stateful Async Work
+  category: Salesforce Apex
+  description: Queueable Apex should be used for async work that needs complex payloads, job IDs, chaining, or better observability.
+  rationale: Queueable Apex is usually more governable than Future methods for enterprise use cases.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Queueable
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Queueable
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-050
+  title: Limit Queueable Chaining
+  category: Salesforce Apex
+  description: Queueable chaining must have explicit depth, stop conditions, and failure handling.
+  rationale: Unbounded chaining can create runaway processing and operational incidents.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Queueable
+  - Limit
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Queueable
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-051
+  title: Queueable Jobs Must Be Idempotent
+  category: Salesforce Apex
+  description: Queueable jobs must tolerate retries and duplicate enqueue attempts.
+  rationale: Async retry or manual replay can otherwise duplicate updates or external calls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Queueable
+  - Queueable
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Queueable
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-052
+  title: Queueable Jobs Must Log Correlation IDs
+  category: Salesforce Apex
+  description: Queueable work must carry correlation identifiers from the initiating transaction where practical.
+  rationale: Correlation IDs allow support teams to trace async work across transaction boundaries.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Queueable
+  - Queueable
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Queueable
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-053
+  title: Use Batch Apex For Large Data Volumes
+  category: Salesforce Apex
+  description: Batch Apex must be used for planned processing that exceeds synchronous or Queueable transaction scale.
+  rationale: Batch scope boundaries provide limit reset and operational monitoring for large jobs.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Batch
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Batch
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-054
+  title: Batch Scope Size Must Be Justified
+  category: Salesforce Apex
+  description: Batch Apex scope size must be selected based on query cost, DML cost, callouts, heap, and CPU behavior.
+  rationale: Default or arbitrary scope sizes can cause failures or inefficient processing.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Batch
+  - Batch
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Batch
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-055
+  title: Batch Apex Must Handle Partial Failures
+  category: Salesforce Apex
+  description: Batch jobs must record failed records, reasons, and recovery instructions.
+  rationale: Large jobs rarely succeed perfectly, and operations needs record-level recovery evidence.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Batch
+  - Batch
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Batch
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-056
+  title: Batch Start Queries Must Be Selective
+  category: Salesforce Apex
+  description: Batch start queries over large objects must use selective criteria or approved query locator strategy.
+  rationale: Non-selective batch queries can fail before processing begins.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Batch
+  - Batch
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Batch
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-057
+  title: Batch Finish Must Report Outcome
+  category: Salesforce Apex
+  description: Batch finish methods must publish or record job outcome, counts, and failure summary for critical jobs.
+  rationale: Operators need completion evidence and exception visibility.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Batch
+  - Batch
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Batch
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-058
+  title: Future Methods Require Justification
+  category: Salesforce Apex
+  description: New Future methods must document why Future is preferred over Queueable, Batch, or Platform Events.
+  rationale: Future methods are harder to monitor and extend in enterprise operations.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Future
+  - Future
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Future
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-059
+  title: Future Methods Must Use Primitive Payloads Safely
+  category: Salesforce Apex
+  description: Future methods must pass only required primitive data and re-query records with security and state checks.
+  rationale: Future payload restrictions can lead to stale assumptions and missing authorization checks.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Future
+  - Future
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Future
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-060
+  title: Platform Event Publishing Must Be Transaction-Aware
+  category: Salesforce Apex
+  description: Apex publishing Platform Events must document publish timing and rollback expectations.
+  rationale: Event publication behavior affects downstream consistency and compensating actions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Platform Events
+  - Platform
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Platform Events
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-061
+  title: Platform Event Consumers Must Be Idempotent
+  category: Salesforce Apex
+  description: Apex Platform Event subscribers must handle duplicate or replayed events safely.
+  rationale: Event replay and retry can deliver the same business event more than once.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Platform Events
+  - Platform
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Platform Events
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-062
+  title: Platform Event Payloads Must Be Minimal
+  category: Salesforce Apex
+  description: Apex must publish minimal event payloads and avoid unnecessary sensitive or large fields.
+  rationale: Minimal payloads reduce exposure, heap use, and schema coupling.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Platform Events
+  - Platform
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Platform Events
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-063
+  title: Platform Event Errors Must Be Recoverable
+  category: Salesforce Apex
+  description: Platform Event subscriber failures must have retry, dead-letter, or operational recovery design.
+  rationale: Subscriber failures can silently block or delay downstream business processes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Platform Events
+  - Platform
+  - Apex
+  - operations
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Platform Events
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-064
+  title: Do Not Swallow Exceptions
+  category: Salesforce Apex
+  description: Apex must not catch exceptions and continue silently without logging, compensating action, or user feedback.
+  rationale: Swallowed errors hide data corruption and operational failures.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Error Handling
+  - Do
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Error Handling
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-065
+  title: Use Typed Exceptions For Business Errors
+  category: Salesforce Apex
+  description: Apex should use typed exceptions or structured error results for expected business failures.
+  rationale: Typed errors improve user handling, tests, and operational triage.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Error Handling
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Error Handling
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-066
+  title: Preserve Root Cause Context
+  category: Salesforce Apex
+  description: Exception handling must preserve root cause context while avoiding sensitive data exposure.
+  rationale: Useful context is needed for support, but raw internals can leak information.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Error Handling
+  - Preserve
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Error Handling
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-067
+  title: Define Partial Success Behavior
+  category: Salesforce Apex
+  description: DML and integration designs must define whether partial success is allowed and how failures are reported.
+  rationale: Partial writes can create inconsistent state unless explicitly governed.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Error Handling
+  - Define
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Error Handling
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-068
+  title: Use Enterprise Logging Abstraction
+  category: Salesforce Apex
+  description: Apex logging must use the approved enterprise logging abstraction or documented equivalent.
+  rationale: Central logging gives consistent severity, correlation, retention, and privacy controls.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Logging
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Logging
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-069
+  title: Log Operationally Useful Events
+  category: Salesforce Apex
+  description: Critical Apex processes must log start, completion, failure, counts, and correlation identifiers.
+  rationale: Operationally useful logs reduce time to diagnose production incidents.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Logging
+  - Log
+  - Apex
+  - operations
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Logging
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-070
+  title: Avoid Excessive Debug Logging
+  category: Salesforce Apex
+  description: Apex must not rely on high-volume debug statements for normal operation.
+  rationale: Excessive logging increases noise, cost, and risk of sensitive data exposure.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Logging
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Logging
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-071
+  title: Redact Sensitive Log Values
+  category: Salesforce Apex
+  description: Apex logs must redact credentials, tokens, regulated data, and unnecessary payload details.
+  rationale: Logs are support artifacts and must not become a secondary data leak.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Logging
+  - Redact
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Logging
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-072
+  title: Use Dependency Injection For External Boundaries
+  category: Salesforce Apex
+  description: Apex that calls selectors, integrations, clocks, ID generators, or logging should use dependency injection
+    or factories where it improves testability.
+  rationale: Injectable boundaries make tests deterministic and reduce brittle mocking patterns.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Dependency Injection
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Dependency Injection
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-073
+  title: Avoid Service Locator Abuse
+  category: Salesforce Apex
+  description: Dependency lookup must not hide dependencies or create global mutable state that makes tests order-dependent.
+  rationale: Hidden dependencies reduce maintainability and can create nondeterministic tests.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Dependency Injection
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Dependency Injection
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-074
+  title: Mock Callouts Through Approved Boundaries
+  category: Salesforce Apex
+  description: External callouts must be mockable through HttpCalloutMock, injected clients, or approved test seams.
+  rationale: Callout mocking is required for reliable unit tests and deployment validation.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Dependency Injection
+  - Mock
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Dependency Injection
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-075
+  title: Unit Tests Must Assert Behavior
+  category: Salesforce Apex
+  description: Apex tests must assert business outcomes, security behavior, and side effects rather than only covering lines.
+  rationale: Coverage without assertions does not prove correctness.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Unit Testing
+  - Unit
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Unit Testing
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-076
+  title: Tests Must Cover Bulk Scenarios
+  category: Salesforce Apex
+  description: Apex tests for trigger, domain, service, and async behavior must include bulk input scenarios.
+  rationale: Bulk tests catch governor and collection defects before production.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Unit Testing
+  - Tests
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Unit Testing
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-077
+  title: Tests Must Cover Negative Paths
+  category: Salesforce Apex
+  description: Apex tests must cover validation failures, permission failures, missing data, and downstream errors where relevant.
+  rationale: Negative tests prove defensive behavior and recovery paths.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Unit Testing
+  - Tests
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Unit Testing
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-078
+  title: Tests Must Not Depend On Org Data
+  category: Salesforce Apex
+  description: Apex tests must create or load their own data and use SeeAllData=false except for approved platform metadata
+    cases.
+  rationale: Org-data-dependent tests are brittle and fail across environments.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Unit Testing
+  - Tests
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Unit Testing
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-079
+  title: Async Tests Must Use Test Start And Stop
+  category: Salesforce Apex
+  description: Tests for async Apex must use Test.startTest and Test.stopTest to execute queued work deterministically.
+  rationale: Async behavior must be verified during tests rather than assumed.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Unit Testing
+  - Async
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Unit Testing
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-080
+  title: Use Test Data Factories For Shared Setup
+  category: Salesforce Apex
+  description: Repeated Apex test setup must use approved test data factory patterns.
+  rationale: Factories reduce duplication and make required data relationships clear.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Test Data Factory
+  - Use
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Test Data Factory
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-081
+  title: Test Factories Must Create Valid Minimal Data
+  category: Salesforce Apex
+  description: Test data factories must create only required fields and relationships unless a scenario needs more.
+  rationale: Minimal data keeps tests focused and reduces maintenance when schema changes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Test Data Factory
+  - Test
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Test Data Factory
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-082
+  title: Test Data Must Represent Security Personas
+  category: Salesforce Apex
+  description: Security-sensitive tests must create users and permission assignments that represent real personas.
+  rationale: Persona-based data catches access defects that admin-only tests miss.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Test Data Factory
+  - Test
+  - Apex
+  - testing
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Test Data Factory
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-083
+  title: Query Only Required Fields
+  category: Salesforce Apex
+  description: Apex SOQL must select only fields required by the use case or read model.
+  rationale: Narrow queries reduce heap, improve performance, and reduce accidental data exposure.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - SOQL
+  - Query
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: SOQL
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-084
+  title: Avoid Unbounded Queries
+  category: Salesforce Apex
+  description: Apex queries must include selective filters or justified limits when querying potentially large objects.
+  rationale: Unbounded queries can fail with too many rows or poor selectivity.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - SOQL
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: SOQL
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-085
+  title: Use Relationship Queries Deliberately
+  category: Salesforce Apex
+  description: Parent-child and child-parent relationship queries must consider row counts, heap, and sharing implications.
+  rationale: Relationship queries can unexpectedly load large graphs.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - SOQL
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: SOQL
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-086
+  title: Avoid Querying Inside Accessors
+  category: Salesforce Apex
+  description: Apex properties, getters, and lightweight methods must not hide SOQL queries.
+  rationale: Hidden queries make limit consumption unpredictable.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - SOQL
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: SOQL
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-087
+  title: Review Aggregate Query Limits
+  category: Salesforce Apex
+  description: Aggregate SOQL must document grouping cardinality and result-size expectations.
+  rationale: High-cardinality aggregates can exceed limits or perform poorly.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - SOQL
+  - Review
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: SOQL
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-088
+  title: Use Database Methods For Partial Success
+  category: Salesforce Apex
+  description: Apex requiring partial success must use Database methods with allOrNone=false and process SaveResult values.
+  rationale: Partial success without SaveResult handling hides failed records.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - DML
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: DML
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-089
+  title: Use All-Or-None For Atomic Transactions
+  category: Salesforce Apex
+  description: Apex requiring atomic business behavior must use all-or-none DML or explicit rollback strategy.
+  rationale: Atomicity must be intentional so data does not land in inconsistent states.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - DML
+  - Use
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: DML
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-090
+  title: Avoid Mixed DML In User Transactions
+  category: Salesforce Apex
+  description: Apex must avoid mixed setup and non-setup DML in one transaction or split work safely.
+  rationale: Mixed DML causes runtime failures and often needs async separation.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - DML
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: DML
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-091
+  title: Do Not Update Unchanged Records
+  category: Salesforce Apex
+  description: Apex should avoid DML for records whose persisted values have not changed.
+  rationale: Unnecessary DML consumes limits, fires automation, and creates audit noise.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - DML
+  - Do
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: DML
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-092
+  title: Handle Duplicate And Validation Failures
+  category: Salesforce Apex
+  description: Apex DML handling must account for validation rules, duplicate rules, required fields, and managed package
+    constraints.
+  rationale: Enterprise metadata changes can make previously valid DML fail.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - DML
+  - Handle
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: DML
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-093
+  title: Use Caching For Stable Reference Data
+  category: Salesforce Apex
+  description: Apex may use platform cache, custom metadata, or request-scoped caching for stable reference data.
+  rationale: Caching reduces repeated queries and CPU when data changes infrequently.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Performance
+  - Use
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Performance
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-094
+  title: Cache Invalidation Must Be Defined
+  category: Salesforce Apex
+  description: Cached Apex data must have an invalidation, TTL, or deployment refresh strategy.
+  rationale: Stale cache can produce incorrect business decisions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Performance
+  - Cache
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Performance
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-095
+  title: Avoid Repeated Describe Calls
+  category: Salesforce Apex
+  description: Apex must cache describe results within a transaction when repeated metadata checks are needed.
+  rationale: Describe calls consume CPU and can slow high-volume transactions.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Performance
+  - Avoid
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Performance
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-096
+  title: Use Custom Metadata For Deployable Configuration
+  category: Salesforce Apex
+  description: Deployable, environment-independent configuration should use Custom Metadata Types when appropriate.
+  rationale: Custom Metadata supports source-driven releases and safer configuration promotion.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  keywords:
+  - Metadata
+  - Use
+  - Apex
+  - metadata
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Metadata
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-097
+  title: Do Not Store Runtime Secrets In Metadata
+  category: Salesforce Apex
+  description: Apex configuration metadata must not contain runtime secrets, tokens, or passwords.
+  rationale: Metadata is often visible to admins and source control systems.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  keywords:
+  - Metadata
+  - Do
+  - Apex
+  - metadata
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Metadata
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-098
+  title: Separate Environment Configuration
+  category: Salesforce Apex
+  description: Environment-specific Apex configuration must be isolated from code and documented for each org tier.
+  rationale: Hard-coded environment behavior causes deployment errors and production incidents.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Configuration
+  - Separate
+  - Apex
+  - deployment
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Configuration
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-099
+  title: Validate Required Configuration At Startup
+  category: Salesforce Apex
+  description: Critical Apex processes must fail clearly when required configuration is missing or invalid.
+  rationale: Clear configuration validation prevents silent misrouting or partial processing.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Configuration
+  - Validate
+  - Apex
+  - apex
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Configuration
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-100
+  title: Configuration Changes Require Ownership
+  category: Salesforce Apex
+  description: Apex configuration records must have an owner, change process, and rollback plan.
+  rationale: Configuration can change behavior as much as code and needs governance.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Configuration
+  - Configuration
+  - Apex
+  - operations
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Configuration
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.
+- id: SFAPEX-101
+  title: Limit-Aware Designs Must Include Load Scenarios
+  category: Salesforce Apex
+  description: Apex plans for high-volume features must include representative load scenarios and expected transaction sizes.
+  rationale: Limit safety cannot be proven without concrete volume assumptions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Limits
+  - Limit-Aware
+  - Apex
+  - plan
+  recommendation: Document the Apex design decision, implementation pattern, test evidence, and operational impact for this
+    rule.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Secure Coding Guide
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-apex
+  domain: Apex
+  topic: Limits
+  required_evidence:
+  - Apex design or implementation identifies the relevant pattern.
+  - Tests or review notes prove the expected behavior.
+  - Limit, security, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on single-record assumptions or undocumented behavior.
+  - Implementation hides side effects or limit consumption.
+  - Tests cover only the happy path or only line coverage.
+  examples:
+    compliant: The design uses a bulk-safe Apex pattern with explicit tests and documented ownership.
+    non_compliant: The implementation works for one record in manual testing but has no bulk, limit, or failure evidence.

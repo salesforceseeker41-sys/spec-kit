@@ -13,7 +13,7 @@ This pack covers layered architecture, trigger handlers, service layer, domain l
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-architecture/
+enterprise/salesforce/architecture/rules.yaml/
 ```
 
 Rule IDs use the `SFARCH-` prefix.

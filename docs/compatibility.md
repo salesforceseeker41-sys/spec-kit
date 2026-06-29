@@ -48,7 +48,7 @@ Windows test note: some upstream Spec Kit tests exercise symlink behavior or age
 | --- | --- | --- |
 | Enterprise governance docs | Supported | Stored under `enterprise/`. |
 | Salesforce standards | Supported | Stored under `enterprise/salesforce/`. |
-| Enterprise rule packs | Supported | Stored under `enterprise/rules/`. |
+| Enterprise rule packs | Supported | Stored under `enterprise/salesforce/<domain>/rules.yaml`. |
 | Product standards | Supported | Stored under `products/<product-name>/`, selected by `enterprise.yaml`. |
 | Product rule packs | Planned | Precedence and conflict handling are future work. |
 | Knowledge Packs | Planned | Packaging and upgrade workflows are future work. |

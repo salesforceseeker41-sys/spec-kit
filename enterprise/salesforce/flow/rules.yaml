@@ -1,0 +1,2096 @@
+rules:
+- id: FLOW-001
+  title: Flow Ownership and Type
+  category: Flow
+  description: Feature plans must identify flow type, owner, and invocation path for declarative automation.
+  rationale: Flow ownership prevents unmanaged automation sprawl and unclear support paths.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  keywords:
+  - flow
+  - record-triggered flow
+  - screen flow
+  - owner
+  recommendation: Document flow type, entry condition, owner, and support responsibility.
+  references:
+  - Salesforce Flow Best Practices
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_flow_maintainability
+    min_confidence: 0.7
+  required_evidence:
+  - explains flow ownership
+  - avoids excessive automation overlap
+  - handles errors
+  - includes flow tests
+  negative_evidence:
+  - duplicate automation
+  - no fault path
+  evidence_terms:
+    explains flow ownership:
+    - flow owner
+    - automation owner
+    - flow responsibility
+    avoids excessive automation overlap:
+    - automation overlap
+    - single automation path
+    - avoids duplicate automation
+    handles errors:
+    - fault path
+    - error handling
+    - fault connector
+    includes flow tests:
+    - flow test
+    - flow tests
+    - test scenario
+    duplicate automation:
+    - duplicate automation
+    - multiple flows on same object
+    no fault path:
+    - no fault path
+    - missing fault path
+- id: FLOW-002
+  title: Flow Entry Criteria
+  category: Flow
+  description: Record-triggered flows must have explicit entry criteria and recursion considerations.
+  rationale: Precise entry criteria reduces unintended automation and performance issues.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - flow
+  keywords:
+  - entry criteria
+  - recursion
+  - trigger
+  - flow
+  recommendation: Define trigger conditions, recursion risk, and how repeated updates are avoided.
+  references:
+  - Salesforce Record-Triggered Flow Guidance
+  owner: Platform Team
+  version: '1.0'
+- id: FLOW-003
+  title: Flow Fault Paths
+  category: Flow
+  description: Flows must define fault handling for data operations, callouts, and subflow failures.
+  rationale: Unhandled flow faults create poor user experiences and difficult support cases.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - flow
+  - testing
+  keywords:
+  - fault path
+  - error handling
+  - flow error
+  - exception
+  recommendation: Document fault paths, user messaging, logging, and escalation behavior.
+  references:
+  - Salesforce Flow Error Handling
+  owner: Platform Team
+  version: '1.0'
+- id: FLOW-004
+  title: Flow Bulk Behavior
+  category: Flow
+  description: Flow automation must account for bulk updates and high-volume data changes.
+  rationale: Flows can hit limits or create contention when bulk behavior is not considered.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - flow
+  - testing
+  keywords:
+  - bulk
+  - collection
+  - governor limits
+  - flow
+  recommendation: Describe expected bulk scenarios and how the flow avoids per-record expensive work.
+  references:
+  - Salesforce Flow Limits
+  owner: Platform Team
+  version: '1.0'
+- id: FLOW-005
+  title: Flow and Apex Boundary
+  category: Flow
+  description: Designs must explain when logic belongs in Flow versus Apex.
+  rationale: Clear ownership avoids fragmented business logic and untestable automation.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - apex
+  keywords:
+  - flow
+  - apex
+  - boundary
+  - invocable
+  recommendation: Document why the selected automation tool is appropriate and where handoff boundaries exist.
+  references:
+  - Enterprise Automation Strategy
+  owner: Platform Team
+  version: '1.0'
+- id: SFFLOW-001
+  title: Screen Flow Must Have A Business Process Owner
+  category: Salesforce Flow
+  description: Every Screen Flow must identify the business process owner, support owner, target user population, and expected
+    usage context.
+  rationale: Screen Flows encode business process behavior and need clear ownership for change, support, and defect triage.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Screen Flow
+  - Screen
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Screen Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-002
+  title: Screen Flow Must Validate User Input
+  category: Salesforce Flow
+  description: Screen Flows must validate required fields, formats, ranges, and record ownership before committing data.
+  rationale: Client-side or screen-level guidance is not enough to prevent invalid or unauthorized data changes.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Screen Flow
+  - Screen
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Screen Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-003
+  title: Screen Flow Must Handle Cancel And Resume Paths
+  category: Salesforce Flow
+  description: Screen Flows must define what happens when users cancel, pause, resume, navigate backward, or abandon the flow.
+  rationale: Unclear navigation behavior causes duplicate records, partial work, and user confusion.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Screen Flow
+  - Screen
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Screen Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-004
+  title: Screen Flow Must Meet Accessibility Standards
+  category: Salesforce Flow
+  description: Screen Flows must use accessible labels, help text, component ordering, and error messaging for supported user
+    groups.
+  rationale: Enterprise user experiences must be usable by assistive technology and keyboard navigation.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Screen Flow
+  - Screen
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Screen Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-005
+  title: Record-Triggered Flow Must Define Trigger Timing
+  category: Salesforce Flow
+  description: Record-triggered flows must explicitly justify before-save, after-save, before-delete, or asynchronous path
+    timing.
+  rationale: Trigger timing determines data mutation safety, order of execution, performance, and side effects.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Record Triggered Flow
+  - Record-Triggered
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Record Triggered Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-006
+  title: Record-Triggered Flow Must Use Selective Entry Criteria
+  category: Salesforce Flow
+  description: Record-triggered flows must have selective entry conditions and avoid running for every record change without
+    justification.
+  rationale: Broad entry criteria waste CPU, create automation collisions, and increase production risk.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Record Triggered Flow
+  - Record-Triggered
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Record Triggered Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-007
+  title: Record-Triggered Flow Must Be Bulk-Safe
+  category: Salesforce Flow
+  description: Record-triggered flows must be designed for bulk record updates, imports, integrations, and data loads.
+  rationale: Salesforce automation can run on many records in one transaction and must not assume one-record UI edits.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Record Triggered Flow
+  - Record-Triggered
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Record Triggered Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-008
+  title: Record-Triggered Flow Must Avoid Automation Overlap
+  category: Salesforce Flow
+  description: Record-triggered flows must document related triggers, flows, validation rules, duplicate rules, and managed
+    package automation on the same object.
+  rationale: Overlapping automation creates hidden order-of-execution behavior and hard-to-debug defects.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Record Triggered Flow
+  - Record-Triggered
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Record Triggered Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-009
+  title: Scheduled Flow Must Define Schedule Ownership
+  category: Salesforce Flow
+  description: Scheduled flows must define frequency, timezone, owner, business purpose, and operational support path.
+  rationale: Scheduled automation runs without a user present and needs explicit accountability.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Scheduled Flow
+  - Scheduled
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Scheduled Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-010
+  title: Scheduled Flow Must Use Bounded Query Criteria
+  category: Salesforce Flow
+  description: Scheduled flows must use bounded and selective criteria to limit records processed per run.
+  rationale: Unbounded scheduled flows can exceed limits or degrade org performance.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Scheduled Flow
+  - Scheduled
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Scheduled Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-011
+  title: Scheduled Flow Must Handle Missed Or Overlapping Runs
+  category: Salesforce Flow
+  description: Scheduled flows must define behavior for missed, delayed, long-running, or overlapping executions.
+  rationale: Operational reliability requires predictable handling when schedules drift or processing exceeds the run window.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Scheduled Flow
+  - Scheduled
+  - Flow
+  - operations
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Scheduled Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-012
+  title: Scheduled Flow Must Report Processing Outcome
+  category: Salesforce Flow
+  description: Critical scheduled flows must record counts, failures, completion status, and owner notification.
+  rationale: Support teams need evidence that unattended automation completed successfully or requires action.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Scheduled Flow
+  - Scheduled
+  - Flow
+  - operations
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Scheduled Flow
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-013
+  title: Flow Errors Must Produce Actionable Messages
+  category: Salesforce Flow
+  description: Flow error handling must provide safe, actionable user or support messages without exposing sensitive internals.
+  rationale: Generic or raw platform errors slow support and may leak implementation details.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Error Handling
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Error Handling
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-014
+  title: Flow Error Handling Must Define Recovery
+  category: Salesforce Flow
+  description: Flow designs must state whether failed work is retried, corrected manually, reversed, or escalated.
+  rationale: Declarative automation failures need a recoverable operating model.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Error Handling
+  - Flow
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Error Handling
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-015
+  title: Flow Must Not Swallow Failures Silently
+  category: Salesforce Flow
+  description: Flows must not catch or route errors in a way that hides failed updates, callouts, or subflow failures from
+    users and operations.
+  rationale: Silent failures create data integrity defects and support incidents.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Error Handling
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Error Handling
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-016
+  title: Flow Errors Must Preserve Correlation Context
+  category: Salesforce Flow
+  description: Critical flows must capture record IDs, interview IDs, transaction context, or correlation IDs where available.
+  rationale: Correlation evidence is essential for diagnosing failures across Flow, Apex, and integrations.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Error Handling
+  - Flow
+  - Flow
+  - operations
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Error Handling
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-017
+  title: Flow Must Minimize Database Operations
+  category: Salesforce Flow
+  description: Flows must minimize Get Records, Create Records, Update Records, and Delete Records elements inside repeated
+    paths.
+  rationale: Repeated database work increases limit consumption and slows transactions.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Performance
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Performance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-018
+  title: Flow Must Avoid Unnecessary Loops
+  category: Salesforce Flow
+  description: Flows must avoid large loops and repeated collection scans where assignment, collection filters, formulas,
+    or Apex are more appropriate.
+  rationale: Large declarative loops can hit CPU and element execution limits.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Performance
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Performance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-019
+  title: Flow Must Limit Retrieved Fields And Records
+  category: Salesforce Flow
+  description: Get Records elements must retrieve only needed fields and use selective filters.
+  rationale: Overfetching increases transaction cost and can expose unnecessary data.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Performance
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Performance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-020
+  title: High-Volume Flow Requires Architecture Review
+  category: Salesforce Flow
+  description: Flows expected to process high-volume transactions must receive architecture review for limits, selectivity,
+    and Apex alternatives.
+  rationale: Some high-scale automation is safer in Apex, async processing, or event-driven patterns.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Performance
+  - High-Volume
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Performance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-021
+  title: Data-Changing Flow Elements Need Fault Paths
+  category: Salesforce Flow
+  description: Flow elements that create, update, delete, call Apex, call external services, or publish events must have fault
+    handling unless explicitly justified.
+  rationale: Fault paths prevent platform errors from becoming unmanaged user and data failures.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Fault Paths
+  - Data-Changing
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Fault Paths
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-022
+  title: Fault Paths Must Route To Owned Recovery
+  category: Salesforce Flow
+  description: Fault paths must route failures to an owned support process such as error logging, queue creation, platform
+    event, or user remediation.
+  rationale: A fault connector without owned recovery is only visual decoration, and we are trying not to decorate production
+    incidents.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Fault Paths
+  - Fault
+  - Flow
+  - operations
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Fault Paths
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-023
+  title: Fault Paths Must Avoid Recursive Failure
+  category: Salesforce Flow
+  description: Fault handling must avoid invoking automation that can fail recursively or create repeated retries without
+    limits.
+  rationale: Fault recovery can amplify incidents when it writes records or calls services that trigger the same failure.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Fault Paths
+  - Fault
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Fault Paths
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-024
+  title: Fault Path Behavior Must Be Tested
+  category: Salesforce Flow
+  description: Fault path behavior must be covered by Flow tests, Apex tests, or documented manual validation when automation
+    cannot simulate the failure.
+  rationale: Untested fault paths often fail exactly when they are needed.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Fault Paths
+  - Fault
+  - Flow
+  - testing
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Fault Paths
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-025
+  title: Use Subflows For Reusable Process Steps
+  category: Salesforce Flow
+  description: Reusable Flow logic must be extracted into subflows when it reduces duplication and preserves clarity.
+  rationale: Subflows improve consistency and maintainability for shared declarative process logic.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Subflows
+  - Use
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Subflows
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-026
+  title: Subflow Contracts Must Be Explicit
+  category: Salesforce Flow
+  description: Subflows must define input variables, output variables, required fields, side effects, and error behavior.
+  rationale: Implicit subflow contracts create brittle callers and unsafe reuse.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Subflows
+  - Subflow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Subflows
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-027
+  title: Subflows Must Not Hide Heavy Side Effects
+  category: Salesforce Flow
+  description: Subflows that perform DML, callouts, Apex actions, or event publishing must make those side effects visible
+    to callers.
+  rationale: Hidden side effects make flow orchestration and rollback behavior hard to reason about.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Subflows
+  - Subflows
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Subflows
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-028
+  title: Shared Subflows Require Ownership
+  category: Salesforce Flow
+  description: Shared subflows used by multiple products or processes must have named ownership, versioning expectations,
+    and change review.
+  rationale: Shared automation changes can affect many teams and need stronger governance.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Subflows
+  - Shared
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Subflows
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-029
+  title: Flow Names Must Follow Enterprise Convention
+  category: Salesforce Flow
+  description: Flow API names and labels must follow enterprise naming conventions for domain, object, purpose, and flow type.
+  rationale: Consistent names make automation discoverable and reduce accidental duplication.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Naming
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Naming
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-030
+  title: Flow Elements Must Be Named For Intent
+  category: Salesforce Flow
+  description: Flow elements must be named for business or technical intent rather than defaults such as Assignment 1 or Get
+    Records 2.
+  rationale: Intentional names make reviews and production troubleshooting faster.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Naming
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Naming
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-031
+  title: Flow Descriptions Must Explain Purpose
+  category: Salesforce Flow
+  description: Flow descriptions must summarize purpose, owner, triggering condition, and downstream effects.
+  rationale: Metadata descriptions provide low-friction context for administrators, reviewers, and support teams.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Naming
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Naming
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-032
+  title: Flow Resources Must Use Clear Prefixes
+  category: Salesforce Flow
+  description: Variables, constants, formulas, collections, and record variables must use clear naming patterns that identify
+    their role.
+  rationale: Clear resource names reduce maintenance risk in complex flows.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Naming
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Naming
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-033
+  title: Flow Activation Must Be Release-Controlled
+  category: Salesforce Flow
+  description: Flow activation and deactivation must occur through approved release procedures with rollback instructions.
+  rationale: Activating a Flow changes runtime behavior and must be governed like code deployment.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Versioning
+  - Flow
+  - Flow
+  - deployment
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Versioning
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-034
+  title: Flow Version Changes Must Be Documented
+  category: Salesforce Flow
+  description: New Flow versions must document behavioral changes, migration impact, and testing evidence.
+  rationale: Version history alone does not explain why automation changed or what risk was introduced.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Versioning
+  - Flow
+  - Flow
+  - deployment
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Versioning
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-035
+  title: Retired Flow Versions Must Be Cleaned Up
+  category: Salesforce Flow
+  description: Obsolete inactive Flow versions must be reviewed and retired according to enterprise retention policy.
+  rationale: Old versions increase metadata noise and can be reactivated accidentally.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Versioning
+  - Retired
+  - Flow
+  - deployment
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Versioning
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-036
+  title: Flow Rollback Must Be Planned
+  category: Salesforce Flow
+  description: Production Flow changes must have a rollback or mitigation plan before activation.
+  rationale: Declarative automation can create immediate production impact and needs a backout path.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Versioning
+  - Flow
+  - Flow
+  - deployment
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Versioning
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-037
+  title: Avoid Duplicate Flow Logic
+  category: Salesforce Flow
+  description: Product teams must reuse existing approved subflows, invocable actions, or patterns when they satisfy the requirement.
+  rationale: Duplicate automation diverges over time and creates inconsistent behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Reuse
+  - Avoid
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Reuse
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-038
+  title: Reusable Flow Assets Must Be Product-Agnostic
+  category: Salesforce Flow
+  description: Enterprise reusable Flow assets must avoid product-specific assumptions unless clearly scoped.
+  rationale: Reusable assets become unsafe when hidden assumptions leak across teams.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Reuse
+  - Reusable
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Reuse
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-039
+  title: Invocable Apex Reuse Must Be Reviewed
+  category: Salesforce Flow
+  description: Flows using invocable Apex must document the Apex contract, security behavior, limits, and supported callers.
+  rationale: Invocable Apex can centralize powerful behavior and needs clear governance.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Reuse
+  - Invocable
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Reuse
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-040
+  title: Flow Reuse Must Preserve Security Context
+  category: Salesforce Flow
+  description: Reusable flows and actions must not assume caller permissions or bypass security checks.
+  rationale: Shared automation can be invoked from different contexts with different security expectations.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Reuse
+  - Flow
+  - Flow
+  - flow
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Reuse
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-041
+  title: Flow Tests Must Cover Happy Path
+  category: Salesforce Flow
+  description: Flow changes must include automated or documented validation of the expected successful path.
+  rationale: Basic path evidence is required before production activation.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Testing
+  - Flow
+  - Flow
+  - testing
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Testing
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-042
+  title: Flow Tests Must Cover Negative Paths
+  category: Salesforce Flow
+  description: Flow changes must test validation failures, missing data, permission failures, and downstream errors where
+    relevant.
+  rationale: Negative tests catch the cases that usually become support incidents.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Testing
+  - Flow
+  - Flow
+  - testing
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Testing
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-043
+  title: Record-Triggered Flow Tests Must Cover Bulk Data
+  category: Salesforce Flow
+  description: Record-triggered flows must be tested with bulk data update scenarios or equivalent volume evidence.
+  rationale: Bulk tests reveal limit and selectivity defects that one-record UI testing misses.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Testing
+  - Record-Triggered
+  - Flow
+  - testing
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Testing
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-044
+  title: Flow Tests Must Identify Test Data Requirements
+  category: Salesforce Flow
+  description: Flow test plans must identify required records, permission sets, custom metadata, and integration mocks.
+  rationale: Flow tests are only repeatable when their data and configuration dependencies are explicit.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - testing
+  keywords:
+  - Testing
+  - Flow
+  - Flow
+  - testing
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Testing
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-045
+  title: Flow Must Have Clear Ownership
+  category: Salesforce Flow
+  description: Every enterprise Flow must have a business owner, technical owner, and support owner.
+  rationale: Ownership prevents declarative automation from becoming unmanaged platform behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governance
+  - Flow
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Governance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-046
+  title: Complex Flow Requires Architecture Review
+  category: Salesforce Flow
+  description: Flows with many decisions, loops, subflows, Apex actions, or integrations must be reviewed for maintainability
+    and Apex alternatives.
+  rationale: Declarative complexity can become harder to govern than code.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governance
+  - Complex
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Governance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-047
+  title: Flow Exceptions Must Be Documented
+  category: Salesforce Flow
+  description: Any approved deviation from Flow standards must be documented with risk, owner, compensating control, and expiration.
+  rationale: Exceptions need visibility so temporary risk does not become permanent architecture.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Governance
+  - Flow
+  - Flow
+  - plan
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Governance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
+- id: SFFLOW-048
+  title: Flow Inventory Must Stay Current
+  category: Salesforce Flow
+  description: Product teams must keep Flow inventory, ownership, status, and business purpose current for governed products.
+  rationale: Enterprise automation inventory supports impact analysis, audits, and incident response.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Governance
+  - Flow
+  - Flow
+  - operations
+  recommendation: Document the Flow design decision, ownership, test evidence, activation plan, and operational impact for
+    this rule.
+  references:
+  - Salesforce Flow Best Practices
+  - Salesforce Flow Builder Documentation
+  - Salesforce Order of Execution Documentation
+  owner: Salesforce Center of Excellence
+  version: 1.0.0
+  rule_pack: salesforce-flow
+  domain: Flow
+  topic: Governance
+  required_evidence:
+  - Flow type, owner, and invocation path are documented.
+  - Tests or review notes prove the expected behavior.
+  - Error, limit, activation, and operational impacts are documented where applicable.
+  negative_evidence:
+  - Design relies on undocumented automation order or single-record assumptions.
+  - Flow hides failures, side effects, or ownership.
+  - Tests cover only the happy path or manual click-through behavior.
+  examples:
+    compliant: The Flow has clear ownership, selective criteria, fault handling, test evidence, and a release-controlled activation
+      plan.
+    non_compliant: The Flow is activated from Setup after manual testing with no owner, fault path, bulk evidence, or rollback
+      plan.
