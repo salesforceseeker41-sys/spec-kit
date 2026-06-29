@@ -68,7 +68,7 @@ At a glance:
 
 | Role | Primary ESF Responsibility | Key Files Or Artifacts |
 | --- | --- | --- |
-| Platform Team | Own enterprise governance, standards, templates, and rule packs. | `enterprise/`, profiles, command templates, validation scripts |
+| Platform Team | Own enterprise governance, standards, bootstrap recipes, and rule packs. | Root `enterprise/`, profiles, command templates, validation scripts |
 | Product Owner | Own business outcome, story priority, and acceptance of product intent. | Jira story, acceptance criteria, product principles |
 | Business Analyst | Maintain business language, rules, process details, and edge cases. | `business-rules.yaml`, `principles.md`, `spec.md` |
 | Solution Architect | Shape the Salesforce solution within enterprise guardrails. | `domain-model.md`, `integrations.md`, `plan.md` |
@@ -154,7 +154,7 @@ Responsibilities:
 - Maintain `enterprise/`.
 - Maintain enterprise rule packs.
 - Review exception requests.
-- Keep ESF templates and governance guidance current.
+- Keep ESF bootstrap recipes, templates, and governance guidance current.
 
 ### Product Team
 
@@ -186,7 +186,7 @@ flowchart TD
     J --> K[Governance Validation]
 ```
 
-The Platform Team owns enterprise governance and standards. Product Teams own product knowledge. The Context Loader combines both at runtime so Codex can generate governed delivery artifacts.
+The Platform Team owns enterprise governance and standards in the root `enterprise/` folder. Product Teams own product knowledge under `products/<product-name>/`. The Context Loader combines both at runtime so Codex can generate governed delivery artifacts.
 
 ```mermaid
 flowchart TD
@@ -226,6 +226,8 @@ products/rdra/integrations.md
 
 If the Product Team edits those files, the next ESF command run uses the updated content.
 
+Bootstrap profile folders are not runtime governance sources. The Salesforce Enterprise profile is a recipe that creates starter project files and product templates. Enterprise Governance is copied from the Platform Team's root `enterprise/` folder into the generated project as a complete snapshot.
+
 ## 5. Folder Structure Explanation
 
 A Salesforce enterprise project initialized with ESF typically looks like this:
@@ -249,7 +251,8 @@ my-project/
 |   |   |-- deployment.md
 |   |   |-- flow.md
 |   |   |-- lwc.md
-|   |   `-- testing.md
+|   |   |-- testing.md
+|   |   `-- ...
 |   `-- rules/
 |       |-- security/
 |       |-- apex/
@@ -286,6 +289,10 @@ my-project/
 | `.specify/` | Spec Kit / ESF | Runtime memory, feature tracking, and workflow support. |
 | `docs/` | Shared | Human-readable documentation. |
 
+`enterprise/` in a generated project is a point-in-time snapshot from the Platform Team's root Enterprise Governance source. Product Teams should not edit enterprise rules to solve one product issue unless the Platform Team approves the change or grants an exception.
+
+`profiles/salesforce-enterprise/` is template-time only. It provides `enterprise.yaml`, onboarding docs, `specs/` scaffolding, and the starter `products/sample-product/` template. It does not own duplicate enterprise standards or sample enterprise rules.
+
 ## 6. Enterprise Governance Vs Product Governance
 
 Enterprise governance and product governance are different layers.
@@ -314,6 +321,16 @@ Enterprise governance answers:
 - What Salesforce patterns are approved?
 - What security, compliance, testing, and architecture evidence is required?
 - What needs exception approval?
+
+Enterprise governance is loaded from runtime project files under:
+
+```text
+enterprise/constitution.md
+enterprise/principles/*.md
+enterprise/salesforce/**/*.md
+```
+
+The enterprise constitution is the top-level decision framework for interpreting enterprise principles and Salesforce standards. It complements `.specify/memory/constitution.md`; it does not replace the core Spec Kit project constitution.
 
 Examples:
 
@@ -639,6 +656,8 @@ Create a new ESF-ready Salesforce project:
 specify init my-project --integration codex --profile salesforce-enterprise
 ```
 
+The `salesforce-enterprise` profile is a bootstrap recipe. During initialization, the CLI copies product starter templates from the profile and copies the complete Enterprise Governance snapshot from the Platform Team-owned root `enterprise/` folder.
+
 Expected generated structure:
 
 ```text
@@ -656,6 +675,15 @@ my-project/
 `-- enterprise.yaml
 ```
 
+Bootstrap source and runtime source are different:
+
+| Phase | Source | Purpose |
+| --- | --- | --- |
+| Template-time | `profiles/salesforce-enterprise/` | Starter product template, onboarding docs, `enterprise.yaml`, empty scaffolding. |
+| Template-time | root `enterprise/` | Authoritative Enterprise Governance copied into the new project. |
+| Runtime | generated `enterprise/` | Enterprise constitution, principles, Salesforce standards, rules, and packs used by commands. |
+| Runtime | `products/<product-name>/` | Product principles, domain model, business rules, events, and integrations selected by `enterprise.yaml`. |
+
 After bootstrap:
 
 1. Rename `products/sample-product/` to your product name.
@@ -669,6 +697,8 @@ Example:
 product:
   name: rdra
 ```
+
+The next ESF command reads `products/rdra/` dynamically. No reinstall is required after Product Team file edits.
 
 > Screenshot placeholder: Initialized ESF project folder in VS Code Explorer.
 

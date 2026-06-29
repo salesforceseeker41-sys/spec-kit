@@ -12,15 +12,17 @@ def _template(name: str) -> str:
     )
 
 
-def test_specify_plan_and_implement_prompts_describe_dynamic_product_context() -> None:
-    for name in ("specify.md", "plan.md", "implement.md"):
+def test_governed_prompts_describe_dynamic_product_context() -> None:
+    for name in ("specify.md", "plan.md", "implement.md", "tasks.md"):
         content = _template(name)
 
-        assert "Before generating output, use the Enterprise Context Loader." in content
+        assert "Enterprise Context Loader" in content
+        assert "enterprise/" in content
         assert "products/<product-name>/" in content
         assert "product-name` comes from `enterprise.yaml`" in content
         assert "business-rules.yaml" in content
-        assert "product-specific constraints" in content
+        assert "Do not rely only on `.specify/memory/constitution.md`" in content
+        assert "enterprise/salesforce/**/*.md" in content
 
 
 def test_prompts_explain_runtime_product_loading() -> None:

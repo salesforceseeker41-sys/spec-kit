@@ -341,6 +341,7 @@ class ContextLoader:
             layer="salesforce",
             category="standards",
             warnings=warnings,
+            recursive=True,
         )
 
     def _load_product_documents(
@@ -382,15 +383,17 @@ class ContextLoader:
         layer: Layer,
         category: Category,
         warnings: list[str],
+        recursive: bool = False,
     ) -> list[ContextDocument]:
         if not folder.is_dir():
             warnings.append(f"Context folder was not found: {folder.as_posix()}")
             return []
+        paths = folder.rglob("*.md") if recursive else folder.glob("*.md")
         return [
             self._load_context_document(
                 path, layer=layer, category=category, required=False
             )
-            for path in sorted(folder.glob("*.md"), key=lambda item: item.name)
+            for path in sorted(paths, key=lambda item: item.relative_to(folder).as_posix())
         ]
 
     def _resolve_feature_path(

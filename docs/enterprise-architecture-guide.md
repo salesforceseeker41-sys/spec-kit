@@ -64,7 +64,8 @@ Enterprise governance owns:
 - Compliance expectations.
 - Salesforce engineering standards.
 - Rule packs.
-- Bootstrap templates.
+- Root Enterprise Governance source files.
+- Bootstrap recipe definitions.
 - Context loading behavior.
 - Governance validation behavior.
 
@@ -153,7 +154,7 @@ Folder ownership:
 | --- | --- | --- |
 | `enterprise/` | Platform Team | Enterprise standards, rules, packs. |
 | `products/` | Product Teams | Product-specific governance context. |
-| `profiles/` | Platform Team | Bootstrap profiles. |
+| `profiles/` | Platform Team | Bootstrap recipes and product starter templates; not runtime Enterprise Governance. |
 | `templates/commands/` | Platform Team / Spec Kit Core | AI command prompt templates. |
 | `scripts/` | Platform Engineering | CLI wrappers for loaders and validators. |
 | `src/specify_cli/` | Framework Contributors | Python implementation. |
@@ -169,13 +170,15 @@ sequenceDiagram
     participant User
     participant CLI as specify init
     participant Core as Standard Spec Kit Scaffold
-    participant Profile as salesforce-enterprise Profile
+    participant Profile as salesforce-enterprise Profile Recipe
+    participant Enterprise as Root enterprise/
     participant Project as New Project
 
     User->>CLI: specify init my-project --profile salesforce-enterprise
     CLI->>Core: Create standard project
-    CLI->>Profile: Install enterprise profile
-    Profile->>Project: Copy enterprise/
+    CLI->>Profile: Install bootstrap recipe
+    CLI->>Enterprise: Read authoritative governance
+    Enterprise->>Project: Copy complete enterprise/ snapshot
     Profile->>Project: Copy products/sample-product/
     Profile->>Project: Copy enterprise.yaml
     Profile->>Project: Copy docs/esf-onboarding.md
@@ -184,8 +187,11 @@ sequenceDiagram
 Bootstrap source:
 
 ```text
-profiles/salesforce-enterprise/
+enterprise/                              # Platform-owned governance source
+profiles/salesforce-enterprise/          # Bootstrap recipe and product templates
 ```
+
+`profiles/salesforce-enterprise/` must not contain duplicate enterprise constitution, Salesforce standards, or enterprise rule samples. If a generated project needs Enterprise Governance, bootstrap copies it from root `enterprise/`.
 
 Bootstrap output:
 
@@ -196,6 +202,15 @@ enterprise.yaml
 docs/esf-onboarding.md
 specs/
 ```
+
+After bootstrap, runtime governance is loaded only from the generated project:
+
+```text
+enterprise/
+products/<product-name>/
+```
+
+The bootstrap profile is not consulted by the Context Loader.
 
 ## 7. Context Loader Architecture
 
@@ -226,7 +241,7 @@ Context loading order:
 
 1. `enterprise/constitution.md`
 2. `enterprise/principles/*.md`
-3. `enterprise/salesforce/*.md`
+3. `enterprise/salesforce/**/*.md`
 4. `products/<product-name>/`
 5. optional feature specification
 
@@ -458,7 +473,7 @@ Enterprise context includes:
 ```text
 enterprise/constitution.md
 enterprise/principles/*.md
-enterprise/salesforce/*.md
+enterprise/salesforce/**/*.md
 enterprise/rules/**/*.yaml
 enterprise/packs/**
 ```
@@ -491,6 +506,9 @@ templates/commands/
 Prompt responsibilities:
 
 - Tell the AI to use the Enterprise Context Loader.
+- Explain that Enterprise Governance comes from `enterprise/`.
+- Explain that Product Governance comes from `products/<product-name>/`, selected by `enterprise.yaml`.
+- Warn agents not to rely only on `.specify/memory/constitution.md`.
 - Explain dynamic product context.
 - Preserve Spec Kit workflow semantics.
 - Dispatch extension hooks.
@@ -581,15 +599,18 @@ flowchart TD
     Init[specify init] --> Standard[Standard Spec Kit Files]
     Standard --> Profile{Profile selected?}
     Profile -->|No| Done[Standard Project]
-    Profile -->|Yes| Enterprise[Copy ESF Profile]
-    Enterprise --> Product[Create sample product folder]
-    Product --> Config[Create enterprise.yaml]
-    Config --> Done2[Enterprise Project]
+    Profile -->|Yes| Recipe[Copy bootstrap recipe files]
+    Recipe --> Product[Create sample product folder]
+    Recipe --> Config[Create enterprise.yaml]
+    Config --> Snapshot[Copy root enterprise/ snapshot]
+    Product --> Snapshot
+    Snapshot --> Done2[Enterprise Project]
 ```
 
 Bootstrap constraints:
 
 - Profile is optional.
+- The profile is a recipe; root `enterprise/` is the Enterprise Governance source.
 - Existing files are preserved unless force behavior is requested.
 - Bootstrap does not sync future platform updates.
 - Product Teams should rename `sample-product`.

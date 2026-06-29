@@ -516,22 +516,30 @@ It controls what new enterprise projects receive when they run:
 specify init my-project --integration codex --profile salesforce-enterprise
 ```
 
-Bootstrap includes:
+The profile is a bootstrap recipe. It includes:
 
 - `enterprise.yaml`
-- `enterprise/`
 - `products/sample-product/`
 - `products/sample-product/business-rules.yaml`
 - `docs/esf-onboarding.md`
 - `specs/.gitkeep`
 
+Enterprise Governance is copied separately from the repository root `enterprise/` folder into the generated project as a complete snapshot. Do not add duplicate enterprise constitution, rule, standard, or knowledge-pack content under `profiles/salesforce-enterprise/enterprise/`.
+
 SOP: Update bootstrap profile.
 
-1. Update files under `profiles/salesforce-enterprise/`.
+1. Update product templates and recipe files under `profiles/salesforce-enterprise/`.
 2. Update `docs/project-bootstrap.md`.
 3. Update tests in `tests/test_project_bootstrap.py`.
 4. Run bootstrap tests.
 5. Validate generated project manually if change is material.
+
+SOP: Update Enterprise Governance.
+
+1. Update root files under `enterprise/`.
+2. Update or add rule catalog tests when rule structure changes.
+3. Run bootstrap tests to verify every root enterprise file is copied.
+4. Communicate snapshot impact to Product Teams that initialize new projects.
 
 ## 17. Updating Project Templates
 

@@ -10,6 +10,8 @@ from typing import Any
 
 import yaml
 
+from .._assets import _locate_bundled_enterprise_root
+
 
 @dataclass(frozen=True)
 class BootstrapResult:
@@ -44,6 +46,40 @@ def _load_profile_metadata(profile_path: Path) -> dict[str, Any]:
     return data
 
 
+def _copy_tree_files(
+    *,
+    source_root: Path,
+    destination_root: Path,
+    copied: list[str],
+    skipped: list[str],
+    force: bool,
+    skip_relative_prefixes: tuple[str, ...] = (),
+    output_prefix: str = "",
+) -> None:
+    for source in sorted(source_root.rglob("*")):
+        if source.is_dir():
+            continue
+
+        relative = _relative_to_root(source, source_root)
+        if relative in skip_relative_prefixes or any(
+            relative.startswith(f"{prefix}/") for prefix in skip_relative_prefixes
+        ):
+            continue
+
+        destination = destination_root / relative
+        _relative_to_root(destination, destination_root)
+
+        summary_path = f"{output_prefix}/{relative}" if output_prefix else relative
+
+        if destination.exists() and not force:
+            skipped.append(summary_path)
+            continue
+
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+        copied.append(summary_path)
+
+
 def install_profile(
     project_path: Path,
     profile_path: Path,
@@ -64,22 +100,33 @@ def install_profile(
 
     copied: list[str] = []
     skipped: list[str] = []
+    skip_profile_paths = ("profile.yml",)
+    if profile_id == "salesforce-enterprise":
+        skip_profile_paths = (*skip_profile_paths, "enterprise")
 
-    for source in sorted(profile_path.rglob("*")):
-        if source.is_dir() or source.name == "profile.yml":
-            continue
+    _copy_tree_files(
+        source_root=profile_path,
+        destination_root=project_path,
+        copied=copied,
+        skipped=skipped,
+        force=force,
+        skip_relative_prefixes=skip_profile_paths,
+    )
 
-        relative = _relative_to_root(source, profile_path)
-        destination = project_path / relative
-        _relative_to_root(destination, project_path)
-
-        if destination.exists() and not force:
-            skipped.append(relative)
-            continue
-
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, destination)
-        copied.append(relative)
+    if profile_id == "salesforce-enterprise":
+        enterprise_root = _locate_bundled_enterprise_root()
+        if enterprise_root is None:
+            raise ValueError(
+                "Bundled Enterprise Governance source was not found: enterprise/"
+            )
+        _copy_tree_files(
+            source_root=enterprise_root,
+            destination_root=project_path / "enterprise",
+            copied=copied,
+            skipped=skipped,
+            force=force,
+            output_prefix="enterprise",
+        )
 
     profile_summary = {
         "profile": profile_id,

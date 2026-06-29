@@ -24,15 +24,25 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Enterprise Governance Context
 
-Before generating `tasks.md`, check for enterprise governance context in the project root and consider it in this precedence order:
+Before generating `tasks.md`, use the Enterprise Context Loader and check for enterprise governance context in the project root. Load product-specific context from `products/<product-name>/`, where `product-name` comes from `enterprise.yaml`.
+
+Product files include:
+
+- `principles.md`
+- `domain-model.md`
+- `business-rules.yaml`
+- `events.md`
+- `integrations.md`
+
+Consider context in this precedence order:
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
-3. **Salesforce Standards**: `enterprise/salesforce/*.md`
-4. **Product Standards**: `products/<product-id>/*.md` when the feature identifies or implies a product
+3. **Salesforce Standards**: `enterprise/salesforce/**/*.md`
+4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the active `spec.md` and design artifacts
 
-Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
+Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above. Do not rely only on `.specify/memory/constitution.md`; enterprise governance comes from `enterprise/` and product governance comes from `products/<product-name>/`.
 
 If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory task-generation inputs:
 
@@ -87,7 +97,7 @@ Use the governance context to add actionable tasks for security, compliance, arc
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - **IF EXISTS**: Load `/memory/constitution.md` for project principles and governance constraints
-   - **IF EXISTS**: Load enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and applicable `products/<product-id>/*.md`
+   - **IF EXISTS**: Load enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/**/*.md`, and the configured product folder `products/<product-name>/` from `enterprise.yaml`, including `principles.md`, `domain-model.md`, `business-rules.yaml`, `events.md`, and `integrations.md`
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:

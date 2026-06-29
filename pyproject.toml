@@ -49,6 +49,8 @@ packages = ["src/specify_cli"]
 "presets/lean" = "specify_cli/core_pack/presets/lean"
 # Bundled project bootstrap profiles (installable via `specify init --profile <name>`)
 "profiles/salesforce-enterprise" = "specify_cli/core_pack/profiles/salesforce-enterprise"
+# Authoritative Enterprise Governance snapshot source for enterprise profiles
+"enterprise" = "specify_cli/core_pack/enterprise"
 
 [project.optional-dependencies]
 test = [

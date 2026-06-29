@@ -212,3 +212,39 @@ def test_deterministic_ordering_is_stable(tmp_path: Path) -> None:
         "products/rdra/domain-model.md",
         "products/rdra/events.md",
     ]
+
+
+def test_salesforce_context_loads_nested_runtime_documents(tmp_path: Path) -> None:
+    _write_config(tmp_path)
+    _write(tmp_path / "enterprise/constitution.md", "# Constitution\n")
+    _write(tmp_path / "enterprise/salesforce/apex.md", "# Apex\n")
+    _write(tmp_path / "enterprise/salesforce/security/sharing.md", "# Sharing\n")
+
+    bundle = ContextLoader(tmp_path).load()
+
+    assert bundle.list_loaded_paths() == [
+        "enterprise/constitution.md",
+        "enterprise/salesforce/apex.md",
+        "enterprise/salesforce/security/sharing.md",
+    ]
+
+
+def test_loader_ignores_profile_enterprise_templates(tmp_path: Path) -> None:
+    _write_config(tmp_path)
+    _write(tmp_path / "enterprise/constitution.md", "# Runtime Constitution\n")
+    _write(tmp_path / "enterprise/principles/security.md", "# Runtime Security\n")
+    _write(
+        tmp_path / "profiles/salesforce-enterprise/enterprise/constitution.md",
+        "# Profile Constitution\n",
+    )
+    _write(
+        tmp_path / "profiles/salesforce-enterprise/enterprise/principles/security.md",
+        "# Profile Security\n",
+    )
+
+    bundle = ContextLoader(tmp_path).load()
+
+    loaded = {doc.path: doc.content for doc in bundle.documents if doc.exists}
+    assert loaded["enterprise/constitution.md"] == "# Runtime Constitution\n"
+    assert loaded["enterprise/principles/security.md"] == "# Runtime Security\n"
+    assert all(not path.startswith("profiles/") for path in loaded)
