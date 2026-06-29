@@ -26,9 +26,12 @@ copy profile recipe files
   |
   v
 copy root enterprise/ snapshot
+  |
+  v
+write ESF-aware .specify/memory/constitution.md
 ```
 
-The profile installer copies bootstrap recipe files from `profiles/salesforce-enterprise/` after the normal Spec Kit scaffold is installed. Enterprise Governance is not maintained in the profile. The installer copies the complete bundled root `enterprise/` hierarchy into `my-project/enterprise/` as a point-in-time snapshot. Existing files are preserved unless `--force` is used.
+The profile installer copies bootstrap recipe files from `profiles/salesforce-enterprise/` after the normal Spec Kit scaffold is installed. Enterprise Governance is not maintained in the profile. The installer copies the complete bundled root `enterprise/` hierarchy into `my-project/enterprise/` as a point-in-time snapshot, then rewrites `.specify/memory/constitution.md` as an ESF-aware top-level governance pointer. Existing files are preserved unless `--force` is used, except the Salesforce Enterprise profile intentionally updates the memory constitution so Spec Kit workflows see ESF governance.
 
 ```mermaid
 flowchart TD
@@ -42,6 +45,7 @@ flowchart TD
     Profile -->|recipe files: enterprise.yaml, docs, specs| Project
     Product -->|product templates| Project
     Enterprise -->|authoritative governance snapshot| Project
+    Project --> Memory[.specify/memory/constitution.md ESF pointer]
 ```
 
 ## Generated Structure
@@ -49,6 +53,8 @@ flowchart TD
 ```text
 my-project/
 |-- .specify/
+|   `-- memory/
+|       `-- constitution.md
 |-- .agents/
 |-- enterprise/
 |   |-- constitution.md
@@ -94,6 +100,19 @@ governance:
 | `products/sample-product/` | Product Team | Product-specific principles, domain model, business rules, integrations, and event guidance. |
 | `specs/` | Delivery Team | Feature specifications, plans, tasks, and governance reports. |
 | `.specify/` | Spec Kit | Core workflows, templates, scripts, and integration metadata. |
+
+## Memory Constitution
+
+With `--profile salesforce-enterprise`, `.specify/memory/constitution.md` is generated as a compact ESF governance pointer. It tells `specify`, `plan`, implementation, and test workflows to use the ESF Context Loader and points them to the detailed runtime sources:
+
+- `enterprise/constitution.md`
+- `enterprise/salesforce/**`
+- `enterprise/rule-packs/**`
+- `enterprise/packs/**`
+- `products/<product-name>/**`
+- `enterprise.yaml`
+
+The memory constitution does not duplicate detailed Salesforce rules. Root `enterprise/` and the generated `enterprise/` snapshot remain the detailed Enterprise Governance source of truth.
 
 ## Bootstrap Templates vs Runtime Governance
 

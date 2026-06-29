@@ -8,6 +8,8 @@ The loader does not validate governance rules, block delivery, register hooks, o
 
 Runtime context is loaded only from the initialized project. Enterprise Governance comes from `enterprise/`; Product Governance comes from `products/<product-name>/`. Bootstrap profile folders such as `profiles/salesforce-enterprise/` are recipes and are never used as runtime governance sources.
 
+For Salesforce Enterprise projects, `.specify/memory/constitution.md` is generated as a top-level ESF memory pointer. It tells Spec Kit workflows to use the Enterprise Context Loader, but it does not contain detailed rule content. The loader still reads detailed enterprise and product context dynamically from `enterprise/` and `products/<product-name>/`.
+
 ## Architecture
 
 ```text
