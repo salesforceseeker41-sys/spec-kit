@@ -19,7 +19,7 @@ mocking, code coverage, and negative testing.
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-testing/
+enterprise/salesforce/testing/rules.yaml/
 ```
 
 Rule IDs use the `SFTEST-` prefix.

@@ -4,7 +4,7 @@ description: Enterprise-approved Salesforce architecture governance rules for pr
 version: "1.0.0"
 status: active
 owner: Enterprise Architecture
-rule_root: enterprise/rules/salesforce-architecture
+rule_file: enterprise/salesforce/architecture/rules.yaml
 rule_id_prefix: SFARCH
 domains:
   - Architecture

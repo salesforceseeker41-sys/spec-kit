@@ -117,7 +117,7 @@ def test_salesforce_enterprise_profile_creates_bootstrap(tmp_path: Path) -> None
     assert "[PRINCIPLE_1_NAME]" not in constitution
     assert (target / "enterprise" / "principles" / "security.md").exists()
     assert (target / "enterprise" / "salesforce" / "apex.md").exists()
-    assert (target / "enterprise" / "rules" / "security" / "SEC-001.yaml").exists()
+    assert (target / "enterprise" / "salesforce" / "security" / "rules.yaml").exists()
     assert (target / "products" / "sample-product" / "principles.md").exists()
     assert (target / "products" / "sample-product" / "business-rules.yaml").exists()
     assert (target / "docs" / "esf-onboarding.md").exists()
@@ -171,7 +171,7 @@ def test_salesforce_enterprise_profile_writes_esf_memory_constitution(
     assert "ESF Context Loader" in content
     assert "enterprise/constitution.md" in content
     assert "enterprise/salesforce/**" in content
-    assert "enterprise/rule-packs/**" in content
+    assert "enterprise/salesforce/*/rules.yaml" in content
     assert "products/sample-product/**" in content
     assert "product:\n  name: sample-product" in content
     assert "Product teams must not edit enterprise standards" in content
@@ -201,9 +201,10 @@ def test_salesforce_enterprise_profile_copies_authoritative_enterprise_snapshot(
     assert {
         path.name for path in (target / "enterprise").iterdir() if path.is_dir()
     }.isdisjoint(DEPRECATED_TOP_LEVEL_ENTERPRISE_FOLDERS)
+    assert not (target / "enterprise" / "rules").exists()
     assert {
         path.parent.name
-        for path in (target / "enterprise" / "rules").glob("*/*")
+        for path in (target / "enterprise" / "salesforce").glob("*/rules.yaml")
         if path.is_file()
     } >= ENTERPRISE_DOMAINS
     assert all(f"enterprise/{path}" in result.copied for path in expected_files)

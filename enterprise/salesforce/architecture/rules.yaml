@@ -1,0 +1,1609 @@
+rules:
+- id: ARCH-001
+  title: Enterprise Architecture Alignment
+  category: Architecture
+  description: Feature plans must align with approved enterprise architecture patterns.
+  rationale: Delivery teams should apply enterprise architecture, not redefine it in feature artifacts.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - architecture
+  - pattern
+  - standard
+  - alignment
+  recommendation: Reference applicable enterprise architecture patterns and document exceptions explicitly.
+  references:
+  - Enterprise Architecture Principles
+  owner: Platform Team
+  version: '1.0'
+- id: ARCH-002
+  title: System Boundary Definition
+  category: Architecture
+  description: Designs must identify system boundaries and ownership for data, processes, and integrations.
+  rationale: Clear boundaries reduce duplicate ownership and integration ambiguity.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - boundary
+  - ownership
+  - system of record
+  - integration
+  recommendation: Define systems involved, source of truth, ownership, and responsibility for each boundary.
+  references:
+  - Enterprise Integration Principles
+  owner: Platform Team
+  version: '1.0'
+- id: ARCH-003
+  title: API Contract Ownership
+  category: Architecture
+  description: Integration features must identify API contract ownership and compatibility expectations.
+  rationale: Stable contracts prevent downstream breakage across Salesforce applications.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - API
+  - contract
+  - version
+  - compatibility
+  recommendation: Document the owning team, contract version, compatibility expectations, and change process.
+  references:
+  - Enterprise API Governance
+  owner: Platform Team
+  version: '1.0'
+- id: ARCH-004
+  title: Event Model Consistency
+  category: Architecture
+  description: Event-driven designs must align with the product event model and enterprise event naming.
+  rationale: Consistent event semantics improve reuse, traceability, and integration reliability.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  keywords:
+  - event
+  - platform event
+  - event model
+  - naming
+  recommendation: Identify event names, producers, consumers, payload ownership, and versioning expectations.
+  references:
+  - Salesforce Platform Events Documentation
+  owner: Platform Team
+  version: '1.0'
+- id: ARCH-005
+  title: Nonfunctional Requirement Traceability
+  category: Architecture
+  description: Plans must trace nonfunctional requirements to design choices and tasks.
+  rationale: Enterprise quality attributes must remain visible through delivery.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  keywords:
+  - nonfunctional
+  - performance
+  - availability
+  - traceability
+  recommendation: Link security, performance, reliability, and supportability requirements to design and task evidence.
+  references:
+  - Enterprise Architecture Review Checklist
+  owner: Platform Team
+  version: '1.0'
+- id: SFARCH-001
+  title: Define Layer Responsibilities
+  category: Salesforce Architecture
+  description: Salesforce designs must define responsibilities for UI, application service, domain, selector, integration,
+    and persistence layers.
+  rationale: Layer clarity prevents business logic from spreading across triggers, controllers, Flows, and utility classes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Layered Architecture
+  - Define
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Layered Architecture
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-002
+  title: Prevent Cross-Layer Shortcuts
+  category: Salesforce Architecture
+  description: Implementation must not bypass established layers for convenience, such as UI directly performing complex persistence
+    or triggers calling integration clients directly.
+  rationale: Cross-layer shortcuts create hidden coupling and make behavior hard to test and operate.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Layered Architecture
+  - Prevent
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Layered Architecture
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-003
+  title: Document Layer Exceptions
+  category: Salesforce Architecture
+  description: Any intentional departure from the approved layered architecture must document rationale, risk, compensating
+    controls, and owner.
+  rationale: Some features need pragmatic exceptions, but unrecorded exceptions become permanent architecture drift.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Layered Architecture
+  - Document
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Layered Architecture
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-004
+  title: Trigger Logic Must Delegate To Handlers
+  category: Salesforce Architecture
+  description: Apex triggers must delegate behavior to handler classes and avoid inline business logic.
+  rationale: Trigger handlers make automation testable, bulk-safe, and easier to govern.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Handler
+  - Trigger
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Trigger Handler
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-005
+  title: Trigger Handlers Must Be Context-Aware
+  category: Salesforce Architecture
+  description: Trigger handlers must separate before and after behavior and document insert, update, delete, undelete, and
+    async interactions.
+  rationale: Context-aware design prevents unsafe DML timing and accidental recursion.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Handler
+  - Trigger
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Trigger Handler
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-006
+  title: Trigger Handler Recursion Must Be Controlled
+  category: Salesforce Architecture
+  description: Trigger handler frameworks must include intentional recursion and re-entry controls for cross-object automation.
+  rationale: Recursive trigger execution can corrupt data or exceed governor limits.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Trigger Handler
+  - Trigger
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Trigger Handler
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-007
+  title: Service Layer Must Own Use Cases
+  category: Salesforce Architecture
+  description: Apex service classes must represent business use cases or application operations with clear input, output,
+    and side-effect contracts.
+  rationale: Use-case services keep orchestration discoverable and prevent unrelated utility sprawl.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Service
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Service Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-008
+  title: Service Layer Must Coordinate Transactions
+  category: Salesforce Architecture
+  description: Service methods must document DML, callouts, async enqueueing, event publishing, and rollback expectations.
+  rationale: Transaction coordination is essential for consistency and supportability.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Service Layer
+  - Service
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Service Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-009
+  title: Service Layer Must Enforce Boundaries
+  category: Salesforce Architecture
+  description: Services must not expose internal domain, selector, or persistence details to UI or external callers.
+  rationale: Boundary enforcement protects maintainability and allows internal refactoring.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Service Layer
+  - Service
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Service Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-010
+  title: Domain Layer Must Own Object Behavior
+  category: Salesforce Architecture
+  description: Object-specific business rules and lifecycle behavior must live in domain classes when implemented in Apex.
+  rationale: Domain classes centralize behavior that otherwise becomes scattered across handlers and services.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Domain Layer
+  - Domain
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Domain Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-011
+  title: Domain Logic Must Be Bulk-Safe
+  category: Salesforce Architecture
+  description: Domain methods must operate on collections and avoid single-record-only assumptions.
+  rationale: Domain logic often runs from triggers and data loads, where bulk execution is normal.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Domain Layer
+  - Domain
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Domain Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-012
+  title: Domain Boundaries Must Be Explicit
+  category: Salesforce Architecture
+  description: Domain classes must not take ownership of unrelated objects or business capabilities without an architecture
+    decision.
+  rationale: Unclear domain boundaries create coupling across products and data ownership lines.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Domain Layer
+  - Domain
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Domain Layer
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-013
+  title: Selectors Must Centralize SOQL
+  category: Salesforce Architecture
+  description: Reusable or complex SOQL must be centralized in selector classes or an approved equivalent query abstraction.
+  rationale: Centralized selectors improve security enforcement, performance tuning, and reuse.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selector Pattern
+  - Selectors
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Selector Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-014
+  title: Selectors Must Be Security-Aware
+  category: Salesforce Architecture
+  description: Selectors that return user-visible data must enforce or document CRUD, FLS, and sharing behavior.
+  rationale: Centralized query code without security rules centralizes data exposure risk.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selector Pattern
+  - Selectors
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Selector Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-015
+  title: Selectors Must Support Bulk Access
+  category: Salesforce Architecture
+  description: Selectors must accept collection criteria and return collection or map results rather than encouraging per-record
+    queries.
+  rationale: Bulk selectors prevent SOQL-in-loop patterns and improve performance.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Selector Pattern
+  - Selectors
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Selector Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-016
+  title: Repository Pattern Requires Justification
+  category: Salesforce Architecture
+  description: A repository abstraction over Salesforce data access must be justified by real complexity, testability, or
+    external persistence needs.
+  rationale: Unnecessary repositories can obscure platform-native data behavior and add ceremony.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Repository Pattern
+  - Repository
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Repository Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-017
+  title: Repositories Must Preserve Platform Semantics
+  category: Salesforce Architecture
+  description: Repository implementations must preserve sharing, CRUD/FLS, transaction, trigger, and governor-limit semantics.
+  rationale: Abstracting data access must not hide Salesforce platform behavior that affects correctness and security.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Repository Pattern
+  - Repositories
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Repository Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-018
+  title: Repositories Must Not Hide Expensive Queries
+  category: Salesforce Architecture
+  description: Repository methods must make query scope, selectivity, and side effects clear to callers.
+  rationale: Hidden broad queries make limit usage and performance hard to reason about.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Repository Pattern
+  - Repositories
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Repository Pattern
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-019
+  title: Events Must Represent Business Facts
+  category: Salesforce Architecture
+  description: Platform Events, CDC, or outbound events must represent meaningful business facts, not arbitrary implementation
+    steps.
+  rationale: Business events create durable contracts and reduce coupling between systems.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Event-Driven Design
+  - Events
+  - Architecture
+  - specification
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Event-Driven Design
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-020
+  title: Event Consumers Must Be Idempotent
+  category: Salesforce Architecture
+  description: Event-driven consumers must tolerate duplicate, delayed, replayed, or out-of-order events.
+  rationale: Event platforms provide resilient delivery, not guaranteed exactly-once business processing.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - testing
+  keywords:
+  - Event-Driven Design
+  - Event
+  - Architecture
+  - integration
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Event-Driven Design
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-021
+  title: Event Contracts Must Be Versioned
+  category: Salesforce Architecture
+  description: Event schemas must define field semantics, compatibility rules, deprecation approach, and consumer migration
+    expectations.
+  rationale: Events become integration contracts and need lifecycle management.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - testing
+  keywords:
+  - Event-Driven Design
+  - Event
+  - Architecture
+  - integration
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Event-Driven Design
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-022
+  title: Configuration Must Be Externalized
+  category: Salesforce Architecture
+  description: Environment-specific or changeable behavior must be externalized from Apex and Flow code into approved configuration
+    mechanisms.
+  rationale: Hard-coded configuration makes releases brittle and environment promotion unsafe.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  keywords:
+  - Configuration
+  - Configuration
+  - Architecture
+  - metadata
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Configuration
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-023
+  title: Configuration Must Have Ownership
+  category: Salesforce Architecture
+  description: Configuration records that change runtime behavior must have owner, review process, deployment path, and rollback
+    plan.
+  rationale: Configuration is architecture, not incidental setup.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Configuration
+  - Configuration
+  - Architecture
+  - operations
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Configuration
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-024
+  title: Configuration Must Not Store Secrets
+  category: Salesforce Architecture
+  description: Configuration metadata must not store passwords, tokens, API keys, or private credentials.
+  rationale: Configuration is often visible to admins and source control systems.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  keywords:
+  - Configuration
+  - Configuration
+  - Architecture
+  - metadata
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Configuration
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-025
+  title: Architecture Must State Volume Assumptions
+  category: Salesforce Architecture
+  description: Salesforce architecture plans must document expected record volumes, transaction sizes, concurrency, integration
+    throughput, and growth assumptions.
+  rationale: Scalable design requires concrete volume assumptions, not optimism with a cape.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Scalability
+  - Architecture
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Scalability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-026
+  title: High-Volume Features Require Pattern Review
+  category: Salesforce Architecture
+  description: Features touching large data volumes, high-frequency automation, or high-throughput integrations must receive
+    architecture pattern review.
+  rationale: High-volume Salesforce work needs selective queries, async patterns, and operational controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Scalability
+  - High-Volume
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Scalability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-027
+  title: Design Must Degrade Safely Under Load
+  category: Salesforce Architecture
+  description: Architecture must define behavior when limits, downstream capacity, or queue backlogs are approached.
+  rationale: Systems need controlled degradation rather than sudden user-facing failures.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Scalability
+  - Design
+  - Architecture
+  - operations
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Scalability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-028
+  title: Prefer Clear Ownership Over Shared Utility Sprawl
+  category: Salesforce Architecture
+  description: Reusable logic must have clear ownership and placement rather than accumulating in generic utility classes.
+  rationale: Utility sprawl hides business ownership and makes changes risky.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Maintainability
+  - Prefer
+  - Architecture
+  - apex
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Maintainability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-029
+  title: Complex Declarative Automation Requires Review
+  category: Salesforce Architecture
+  description: Complex Flow or mixed Flow and Apex automation must be reviewed for maintainability and ownership.
+  rationale: Declarative automation can become as complex as code while being harder to diff and test.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Maintainability
+  - Complex
+  - Architecture
+  - flow
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Maintainability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-030
+  title: Architecture Must Minimize Hidden Coupling
+  category: Salesforce Architecture
+  description: Designs must identify and reduce hidden coupling through shared objects, automation side effects, custom metadata,
+    events, and integrations.
+  rationale: Hidden coupling causes regressions when teams change seemingly unrelated features.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Maintainability
+  - Architecture
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Maintainability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-031
+  title: Architecture Must Define Operational Signals
+  category: Salesforce Architecture
+  description: Critical Salesforce capabilities must define logs, metrics, alerts, dashboards, and business health indicators.
+  rationale: Operational ownership needs signals that explain system and business health.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Observability
+  - Architecture
+  - Architecture
+  - operations
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Observability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-032
+  title: Use Correlation IDs Across Boundaries
+  category: Salesforce Architecture
+  description: Architecture involving async work, events, or integrations must propagate correlation identifiers where practical.
+  rationale: Correlation IDs let support teams trace one business transaction across Salesforce and external systems.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Observability
+  - Use
+  - Architecture
+  - operations
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Observability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-033
+  title: Observability Must Avoid Sensitive Data Exposure
+  category: Salesforce Architecture
+  description: Logs, metrics, events, and diagnostic records must not expose secrets or regulated data.
+  rationale: Support telemetry must not become a secondary data leak.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Observability
+  - Observability
+  - Architecture
+  - operations
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Observability
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-034
+  title: Architecture Must Define Deployment Sequence
+  category: Salesforce Architecture
+  description: Architecture plans must document deployment order, activation steps, dependencies, feature toggles, and validation
+    checks.
+  rationale: Salesforce changes often require coordinated metadata, permissions, data, and integration sequencing.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Deployment
+  - Architecture
+  - Architecture
+  - deployment
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Deployment
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-035
+  title: Architecture Must Include Rollback Or Mitigation
+  category: Salesforce Architecture
+  description: Production architecture changes must include rollback, disablement, or mitigation strategy.
+  rationale: Not every Salesforce change rolls back cleanly, so mitigation must be planned before release.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Deployment
+  - Architecture
+  - Architecture
+  - deployment
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Deployment
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-036
+  title: Release Must Coordinate Cross-System Dependencies
+  category: Salesforce Architecture
+  description: Deployments that affect integrations, events, middleware, or downstream consumers must coordinate release windows
+    and compatibility.
+  rationale: Cross-system changes fail when each team deploys as if it owns the whole universe.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - Deployment
+  - Release
+  - Architecture
+  - deployment
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Deployment
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-037
+  title: Architecture Decisions Must Be Recorded
+  category: Salesforce Architecture
+  description: Material Salesforce architecture decisions must record context, options, decision, tradeoffs, risks, owner,
+    and review date.
+  rationale: Decision records preserve why the design exists and prevent repeated debates.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Documentation
+  - Architecture
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Documentation
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-038
+  title: Architecture Diagrams Must Match Reality
+  category: Salesforce Architecture
+  description: Required architecture diagrams must show actual Salesforce components, system boundaries, data flows, event
+    flows, and operational ownership.
+  rationale: Accurate diagrams improve review, onboarding, and incident response.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Documentation
+  - Architecture
+  - Architecture
+  - specification
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Documentation
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.
+- id: SFARCH-039
+  title: Documentation Must Include Exception Evidence
+  category: Salesforce Architecture
+  description: Architecture documentation must link approved exceptions, compensating controls, expiration dates, and owners.
+  rationale: Exception evidence keeps risk visible and reviewable.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  keywords:
+  - Documentation
+  - Documentation
+  - Architecture
+  - plan
+  recommendation: Document the architecture decision, ownership, tradeoffs, test or review evidence, and operational impact
+    for this rule.
+  references:
+  - Enterprise Architecture Principles
+  - Salesforce Apex Enterprise Patterns
+  - Salesforce Integration Patterns
+  owner: Enterprise Architecture
+  version: 1.0.0
+  rule_pack: salesforce-architecture
+  domain: Architecture
+  topic: Documentation
+  required_evidence:
+  - Architecture decision or design section identifies the relevant pattern.
+  - Ownership, boundaries, and tradeoffs are documented.
+  - Testing, deployment, and operational impacts are addressed where applicable.
+  negative_evidence:
+  - Design relies on undocumented coupling or implementation convenience.
+  - Ownership, boundaries, or side effects are unclear.
+  - Exceptions are taken without documented approval or expiration.
+  examples:
+    compliant: The design names the responsible layer, owner, dependencies, test evidence, deployment plan, and support signals.
+    non_compliant: The implementation places logic wherever it is fastest with no ownership, boundary, or operational evidence.

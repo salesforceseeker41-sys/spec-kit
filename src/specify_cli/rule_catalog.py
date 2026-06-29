@@ -1,8 +1,8 @@
 """Machine-readable enterprise governance rule catalog.
 
-Sprint 3.5 models rules as data. This module discovers and loads rule YAML
-files, but it does not evaluate rules, match keywords, enforce severities, or
-perform validation.
+Sprint 3.5 models rules as data. This module discovers and loads domain
+``rules.yaml`` files and legacy single-rule YAML files, but it does not
+evaluate rules, match keywords, enforce severities, or perform validation.
 """
 
 from __future__ import annotations
@@ -19,7 +19,8 @@ from .enterprise_context import ContextLoader
 from .framework.exceptions import RuleCatalogError
 
 
-RULES_ROOT = Path("enterprise") / "rules"
+SALESFORCE_RULES_ROOT = Path("enterprise") / "salesforce"
+LEGACY_RULES_ROOT = Path("enterprise") / "rules"
 logger = logging.getLogger(__name__)
 
 
@@ -222,17 +223,25 @@ class RuleLoader:
     def __init__(self, root_path: str | Path | None = None):
         start = Path(root_path) if root_path else Path.cwd()
         self.root_path = ContextLoader.locate_root(start)
-        self.rules_path = self.root_path / RULES_ROOT
+        self.salesforce_rules_path = self.root_path / SALESFORCE_RULES_ROOT
+        self.legacy_rules_path = self.root_path / LEGACY_RULES_ROOT
 
     def load(self, *, category: str | None = None) -> RuleCollection:
         warnings: list[str] = []
         errors: list[str] = []
         rules: list[Rule] = []
+        seen_rule_ids: set[str] = set()
 
         paths = self._discover_rule_files(category, warnings)
         for path in paths:
-            rule = self._load_rule(path, warnings, errors)
-            if rule is not None:
+            loaded = self._load_rules(path, warnings, errors)
+            for rule in loaded:
+                if rule.id in seen_rule_ids:
+                    warnings.append(
+                        f"Duplicate rule ID was skipped: {rule.id} from {_display_path(path, self.root_path)}"
+                    )
+                    continue
+                seen_rule_ids.add(rule.id)
                 rules.append(rule)
 
         return RuleCollection(
@@ -248,26 +257,54 @@ class RuleLoader:
     def _discover_rule_files(
         self, category: str | None, warnings: list[str]
     ) -> list[Path]:
+        paths: list[Path] = []
         if category:
-            category_path = self.rules_path / _slug(category)
-            if not category_path.is_dir():
-                warnings.append(
-                    f"Rule category folder was not found: {_display_path(category_path, self.root_path)}"
+            domain = _domain_slug(category)
+            domain_rules = self.salesforce_rules_path / domain / "rules.yaml"
+            if domain_rules.is_file():
+                paths.append(domain_rules)
+
+            legacy_category_path = self.legacy_rules_path / _slug(category)
+            if legacy_category_path.is_dir():
+                paths.extend(
+                    sorted(legacy_category_path.glob("*.yaml"), key=lambda path: path.name)
                 )
-                return []
-            return sorted(category_path.glob("*.yaml"), key=lambda path: path.name)
+            legacy_domain_path = self.legacy_rules_path / domain
+            if legacy_domain_path != legacy_category_path and legacy_domain_path.is_dir():
+                paths.extend(
+                    sorted(legacy_domain_path.glob("*.yaml"), key=lambda path: path.name)
+                )
 
-        if not self.rules_path.is_dir():
-            warnings.append(
-                f"Rule catalog folder was not found: {_display_path(self.rules_path, self.root_path)}"
+            if not paths:
+                warnings.append(
+                    f"Rule domain was not found: {_display_path(self.salesforce_rules_path / domain, self.root_path)}"
+                )
+            return paths
+
+        if self.salesforce_rules_path.is_dir():
+            paths.extend(
+                sorted(
+                    self.salesforce_rules_path.glob("*/rules.yaml"),
+                    key=lambda path: path.as_posix(),
+                )
             )
-            return []
+        if self.legacy_rules_path.is_dir():
+            paths.extend(
+                sorted(
+                    self.legacy_rules_path.glob("*/*.yaml"),
+                    key=lambda path: path.as_posix(),
+                )
+            )
 
-        return sorted(self.rules_path.glob("*/*.yaml"), key=lambda path: path.as_posix())
+        if not paths:
+            warnings.append(
+                f"Rule catalog folder was not found: {_display_path(self.salesforce_rules_path, self.root_path)}"
+            )
+        return paths
 
-    def _load_rule(
+    def _load_rules(
         self, path: Path, warnings: list[str], errors: list[str]
-    ) -> Rule | None:
+    ) -> list[Rule]:
         display_path = _display_path(path, self.root_path)
         try:
             raw = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -280,7 +317,7 @@ class RuleLoader:
                     )
                 )
             )
-            return None
+            return []
         except OSError as exc:
             logger.debug("Rule file could not be read: %s", display_path, exc_info=True)
             errors.append(
@@ -290,15 +327,32 @@ class RuleLoader:
                     )
                 )
             )
-            return None
+            return []
 
         if not isinstance(raw, dict):
             warnings.append(
                 f"Rule file was skipped because it is not a mapping: {display_path}"
             )
-            return None
+            return []
 
-        return Rule.from_mapping(raw, path=display_path)
+        if "rules" in raw:
+            rules = raw.get("rules")
+            if not isinstance(rules, list):
+                warnings.append(
+                    f"Rule file was skipped because rules is not a list: {display_path}"
+                )
+                return []
+            loaded: list[Rule] = []
+            for index, item in enumerate(rules, start=1):
+                if not isinstance(item, dict):
+                    warnings.append(
+                        f"Rule entry was skipped because it is not a mapping: {display_path}#{index}"
+                    )
+                    continue
+                loaded.append(Rule.from_mapping(item, path=display_path))
+            return loaded
+
+        return [Rule.from_mapping(raw, path=display_path)]
 
 
 def _string_value(value: Any) -> str:
@@ -321,6 +375,15 @@ def _bool_value(value: Any) -> bool:
 
 def _slug(value: str) -> str:
     return value.strip().lower().replace("_", "-").replace(" ", "-")
+
+
+def _domain_slug(value: str) -> str:
+    slug = _slug(value)
+    if slug.startswith("salesforce-"):
+        slug = slug.removeprefix("salesforce-")
+    if slug == "scalability":
+        return "performance"
+    return slug
 
 
 def _display_path(path: Path, root: Path) -> str:

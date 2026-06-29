@@ -1,0 +1,940 @@
+rules:
+- id: SFTEST-001
+  title: Apex Tests Must Assert Business Behavior
+  category: Salesforce Testing
+  description: Apex tests must assert business outcomes, persisted data, emitted events, queued work, and error behavior rather
+    than only executing code for coverage.
+  rationale: Line execution without assertions does not prove that Salesforce behavior is correct or safe.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Apex Tests
+  - assertions
+  - business behavior
+  - unit tests
+  recommendation: Write Apex tests around observable business outcomes and include assertions for both changed and unchanged
+    state.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Apex Developer Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Apex Tests
+  required_evidence:
+  - Test methods assert expected records, fields, events, jobs, or errors.
+  - Tests prove the business rule, not only code execution.
+  negative_evidence:
+  - Test has no assertions.
+  - Test only calls methods to increase coverage.
+  examples:
+    compliant: Test updates an Opportunity and asserts renewal task creation, expected owner, and no duplicate tasks.
+    non_compliant: Test inserts an Opportunity, calls the handler, and performs no assertions.
+- id: SFTEST-002
+  title: Apex Tests Must Cover Trigger And Service Entry Points
+  category: Salesforce Testing
+  description: Apex tests must cover relevant trigger handlers, service methods, selectors, async jobs, and invocable entry
+    points introduced or changed by the feature.
+  rationale: Enterprise Apex behavior is commonly invoked through multiple entry points and must be tested where it is actually
+    called.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Apex Tests
+  - trigger handler
+  - service layer
+  - invocable
+  - async
+  recommendation: Map each Apex entry point to one or more test methods that prove expected behavior and side effects.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Apex Developer Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Apex Tests
+  required_evidence:
+  - Apex entry points are listed in the test plan.
+  - Each changed entry point has direct or scenario-based test coverage.
+  negative_evidence:
+  - Service is tested but trigger invocation is not.
+  - Invocable Apex used by Flow has no targeted test.
+  examples:
+    compliant: Tests cover Account trigger behavior and direct AccountService behavior for the same business rule.
+    non_compliant: Only a utility method is tested while the trigger path remains untested.
+- id: SFTEST-003
+  title: Flow Tests Must Cover Successful Paths
+  category: Salesforce Testing
+  description: Flow changes must include automated Flow tests, Apex-driven tests, or documented validation evidence for primary
+    successful paths.
+  rationale: Flow activation changes runtime behavior and requires evidence that the intended process works.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Flow Tests
+  - happy path
+  - validation
+  - automation
+  recommendation: Test the primary flow path with representative users, records, inputs, and expected outputs.
+  references:
+  - Salesforce Flow Builder Documentation
+  - Salesforce Flow Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Flow Tests
+  required_evidence:
+  - Primary Flow scenario is documented.
+  - Expected record changes or screen outcomes are verified.
+  negative_evidence:
+  - Flow is activated after only visual inspection.
+  - No validation evidence exists for the primary path.
+  examples:
+    compliant: Record-triggered Flow test verifies that qualifying Case records receive the expected escalation fields.
+    non_compliant: Admin manually clicks through the Flow once and activates it without evidence.
+- id: SFTEST-004
+  title: Flow Tests Must Cover Fault And Decision Paths
+  category: Salesforce Testing
+  description: Flow tests must cover important decisions, validation failures, no-match branches, and fault paths for data-changing
+    or integration behavior.
+  rationale: Declarative automation often fails in branches that are not exercised by the default happy path.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - flow
+  - testing
+  keywords:
+  - Flow Tests
+  - fault path
+  - decision
+  - negative path
+  recommendation: Include test scenarios for decision branches and fault handling, especially where the Flow writes data or
+    calls Apex or external services.
+  references:
+  - Salesforce Flow Builder Documentation
+  - Salesforce Flow Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Flow Tests
+  required_evidence:
+  - Decision and fault paths are identified.
+  - Tests or documented validation prove branch behavior.
+  negative_evidence:
+  - Fault connectors exist but are never tested.
+  - Only the default decision branch is validated.
+  examples:
+    compliant: Flow validation covers eligible, ineligible, missing-data, and failed-update branches.
+    non_compliant: Flow test covers only the path where all data is present and update succeeds.
+- id: SFTEST-005
+  title: Bulk Tests Required For Triggered Automation
+  category: Salesforce Testing
+  description: Apex triggers, record-triggered Flows, invocable actions, and object automation must include tests using multiple
+    records and representative bulk sizes.
+  rationale: Salesforce automation executes in bulk during imports, integrations, API updates, and data maintenance.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - Bulk Tests
+  - trigger
+  - record-triggered Flow
+  - multiple records
+  recommendation: Test automation with collections of records, including mixed qualifying and non-qualifying records.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Flow Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Bulk Tests
+  required_evidence:
+  - Bulk test scenario is included for triggered automation.
+  - Test includes more than one record and mixed conditions where relevant.
+  negative_evidence:
+  - Tests create only one record.
+  - Bulk behavior is assumed from manual UI testing.
+  examples:
+    compliant: Test updates 200 Contacts with mixed regions and asserts only eligible records are changed.
+    non_compliant: Trigger test inserts one Contact and assumes data loader behavior is safe.
+- id: SFTEST-006
+  title: Bulk Tests Must Prove No Duplicate Side Effects
+  category: Salesforce Testing
+  description: Bulk tests must verify that automation does not create duplicate tasks, events, messages, child records, or
+    external requests.
+  rationale: Duplicate side effects are a common enterprise defect when single-record logic is scaled to bulk execution.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  keywords:
+  - Bulk Tests
+  - duplicate side effects
+  - idempotency
+  recommendation: Assert record counts and side-effect uniqueness after bulk processing and repeated execution where relevant.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Integration Patterns
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Bulk Tests
+  required_evidence:
+  - Bulk test asserts exact side-effect counts.
+  - Duplicate prevention is tested for repeated or mixed inputs.
+  negative_evidence:
+  - Test only checks that processing completed.
+  - Duplicate tasks or events are not asserted.
+  examples:
+    compliant: Bulk Case escalation test asserts one escalation task per eligible Case and no duplicate tasks after rerun.
+    non_compliant: Test verifies no exception but never checks how many tasks were created.
+- id: SFTEST-007
+  title: Security Tests Must Use Least-Privilege Personas
+  category: Salesforce Testing
+  description: Security-sensitive features must test behavior with users that represent least-privilege business personas,
+    not only admin or implicit test context.
+  rationale: Admin-context tests hide CRUD, FLS, sharing, and permission defects.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - Security Tests
+  - least privilege
+  - runAs
+  - permissions
+  recommendation: Create test users with representative permission sets and assert allowed and denied behavior.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Apex Testing Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Security Tests
+  required_evidence:
+  - Least-privilege persona is defined.
+  - Tests run under representative user context where feasible.
+  negative_evidence:
+  - All tests run as implicit system context.
+  - Permission-sensitive feature has no persona-based tests.
+  examples:
+    compliant: Test uses System.runAs standard user with assigned permission set and verifies restricted fields are not updated.
+    non_compliant: Test runs as admin-equivalent context and never verifies access denial.
+- id: SFTEST-008
+  title: Security Tests Must Prove Denied Paths
+  category: Salesforce Testing
+  description: Tests must prove that unauthorized users cannot perform restricted operations or access restricted data.
+  rationale: Positive permission tests are incomplete without proving access is denied when it should be.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  keywords:
+  - Security Tests
+  - denied path
+  - CRUD
+  - FLS
+  - sharing
+  recommendation: Include negative authorization tests for restricted objects, fields, records, Apex actions, Flows, and integration
+    operations.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Security Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Security Tests
+  required_evidence:
+  - Denied access scenarios are listed.
+  - Tests assert failure, stripped fields, or no data returned.
+  negative_evidence:
+  - Test proves only that privileged users succeed.
+  - Restricted field or record access is not tested.
+  examples:
+    compliant: Test verifies user without Case_Edit permission cannot update escalation fields.
+    non_compliant: Test verifies only that support manager can update escalation fields.
+- id: SFTEST-009
+  title: Integration Tests Must Validate Contracts
+  category: Salesforce Testing
+  description: Integration tests must validate request schema, response schema, required fields, error schema, and version
+    compatibility.
+  rationale: Contract drift between Salesforce and external systems causes production failures even when unit tests pass.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  keywords:
+  - Integration Tests
+  - contract
+  - schema
+  - API
+  recommendation: Use mocks, contract fixtures, sandbox endpoints, or provider tests to prove integration compatibility.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Testing Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Integration Tests
+  required_evidence:
+  - Integration contract fields and errors are tested.
+  - Version compatibility is validated.
+  negative_evidence:
+  - Test validates only that a callout method was invoked.
+  - Contract schema is inferred from production behavior.
+  examples:
+    compliant: Test fixture validates required billing response fields and maps provider error codes.
+    non_compliant: Test mock returns a minimal success string unrelated to the real API contract.
+- id: SFTEST-010
+  title: Integration Tests Must Cover Failure And Retry
+  category: Salesforce Testing
+  description: Integration tests must cover timeout, throttling, authentication failure, validation failure, malformed response,
+    and retry exhaustion where relevant.
+  rationale: Integration reliability depends more on failure handling than ideal success responses.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - testing
+  keywords:
+  - Integration Tests
+  - retry
+  - timeout
+  - failure
+  recommendation: Mock representative failure responses and assert retry eligibility, terminal state, and support evidence.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Callouts Documentation
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Integration Tests
+  required_evidence:
+  - Failure classes are included in test cases.
+  - Retry and terminal failure behavior are asserted.
+  negative_evidence:
+  - Integration test covers only HTTP 200.
+  - All failures use the same untested catch block.
+  examples:
+    compliant: Tests assert 429 retries with backoff while 400 creates a non-retryable integration error.
+    non_compliant: Mock always returns success and error handling is never executed.
+- id: SFTEST-011
+  title: Governor Limit Tests Must Exercise Scale
+  category: Salesforce Testing
+  description: Features with automation, loops, queries, DML, async work, or callouts must include tests that exercise realistic
+    scale and limit-sensitive paths.
+  rationale: Governor limit defects often appear only when data volume or automation layering increases.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - Governor Limit Tests
+  - limits
+  - scale
+  - CPU
+  - SOQL
+  - DML
+  recommendation: Include tests that simulate expected transaction sizes and assert behavior remains within safe limits.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Apex Testing Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Governor Limit Tests
+  required_evidence:
+  - Limit-sensitive paths are identified.
+  - Test data volume reflects expected transaction size.
+  negative_evidence:
+  - Tests use tiny data sets for high-volume logic.
+  - Limit risk is documented but not tested.
+  examples:
+    compliant: Test processes 200 records with related children and verifies no limit exception occurs.
+    non_compliant: Batch-sensitive logic is tested with one parent and one child.
+- id: SFTEST-012
+  title: Governor Limit Tests Must Avoid False Confidence
+  category: Salesforce Testing
+  description: Tests must not hide limit problems by using unrealistic setup, bypass flags, disabled automation, or simplified
+    data relationships unless explicitly justified.
+  rationale: Artificially easy tests can pass while production fails under real automation and data shape.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - Governor Limit Tests
+  - false confidence
+  - bypass
+  - realistic data
+  recommendation: Keep test scenarios close to production automation and document any bypasses used only for setup.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Flow Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Governor Limit Tests
+  required_evidence:
+  - Test setup reflects relevant production data relationships.
+  - Automation bypass use is documented and limited.
+  negative_evidence:
+  - Tests disable the automation being evaluated.
+  - Test data omits relationships that drive production load.
+  examples:
+    compliant: Test includes related Accounts, Contacts, and Cases that trigger the same automation chain expected in production.
+    non_compliant: Test bypasses all triggers and then claims trigger logic is limit-safe.
+- id: SFTEST-013
+  title: Tests Must Be Isolated From Org Data
+  category: Salesforce Testing
+  description: Salesforce tests must create their own records and avoid `SeeAllData=true` except for approved platform metadata
+    cases.
+  rationale: Org-data dependencies make tests brittle, non-portable, and unsafe across environments.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Test Isolation
+  - SeeAllData
+  - org data
+  - test data
+  recommendation: Use factories and setup methods to create required records, users, and relationships inside the test.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Apex Developer Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Test Isolation
+  required_evidence:
+  - Tests create required business data.
+  - Any SeeAllData usage is justified and approved.
+  negative_evidence:
+  - Tests query existing Accounts, Users, or configuration records by name.
+  - SeeAllData is used for convenience.
+  examples:
+    compliant: Test creates Account, Contact, Product, and required custom metadata fixture before execution.
+    non_compliant: Test queries the first active Account in the org.
+- id: SFTEST-014
+  title: Tests Must Be Deterministic And Order-Independent
+  category: Salesforce Testing
+  description: Tests must not depend on execution order, shared mutable state, current time without control, existing async
+    jobs, or data created by other tests.
+  rationale: Nondeterministic tests erode trust in CI and slow delivery.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Test Isolation
+  - deterministic
+  - order independent
+  - flaky tests
+  recommendation: Use isolated setup, explicit inputs, controlled dates, and independent assertions for each test method.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Developer Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Test Isolation
+  required_evidence:
+  - Tests can run independently and repeatedly.
+  - Time-sensitive logic has controlled inputs or safe assertions.
+  negative_evidence:
+  - Test passes only after another test method runs.
+  - Test depends on current date in a brittle way.
+  examples:
+    compliant: Test creates its own data and injects or computes controlled effective dates.
+    non_compliant: Test assumes another class has already inserted shared setup records.
+- id: SFTEST-015
+  title: Test Data Factories Must Create Valid Minimal Data
+  category: Salesforce Testing
+  description: Test data factories must create valid, minimal, reusable records with explicit options for scenario-specific
+    fields and relationships.
+  rationale: Bloated or unclear factories hide test intent and make schema changes expensive.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - Test Data Factory
+  - factory
+  - minimal data
+  - reusable
+  recommendation: Build factories with sane defaults, explicit overrides, and clear relationship helpers.
+  references:
+  - Salesforce Apex Testing Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Test Data Factory
+  required_evidence:
+  - Factory creates required valid records.
+  - Scenario-specific values are explicit in tests.
+  negative_evidence:
+  - Factory creates large unrelated object graphs by default.
+  - Tests hide important setup values inside opaque factory calls.
+  examples:
+    compliant: AccountFactory.createCustomer accepts named overrides for region and status while defaulting only required
+      fields.
+    non_compliant: Factory creates Account, five Contacts, Opportunity, Case, and Orders for every test regardless of need.
+- id: SFTEST-016
+  title: Test Data Factories Must Support Personas
+  category: Salesforce Testing
+  description: Test data factories must support creation of representative users, permission assignments, queues, groups,
+    and ownership models where security or routing behavior depends on them.
+  rationale: Enterprise Salesforce behavior often depends on user context and ownership relationships.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - Test Data Factory
+  - personas
+  - users
+  - permissions
+  recommendation: Provide reusable helpers for least-privilege users, managers, support agents, integration users, and product-specific
+    personas.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Security Guide
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Test Data Factory
+  required_evidence:
+  - Persona factory or setup helper is available where needed.
+  - Permission and ownership assumptions are explicit.
+  negative_evidence:
+  - Security tests manually duplicate user setup inconsistently.
+  - Tests rely on admin ownership for persona-sensitive logic.
+  examples:
+    compliant: UserFactory creates support agent with Case permission set and queue membership.
+    non_compliant: Every persona-sensitive test uses the default test-running user.
+- id: SFTEST-017
+  title: Callouts Must Be Mocked
+  category: Salesforce Testing
+  description: Apex tests for HTTP or SOAP callouts must use approved mocks such as HttpCalloutMock, WebServiceMock, injected
+    clients, or equivalent test boundaries.
+  rationale: Salesforce tests cannot depend on live external systems and must prove callout behavior deterministically.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - testing
+  keywords:
+  - Mocking
+  - HttpCalloutMock
+  - WebServiceMock
+  - callout
+  recommendation: Mock success, failure, timeout-like, malformed, and retryable responses where relevant.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Apex Callouts Documentation
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Mocking
+  required_evidence:
+  - Callout tests use approved mock mechanisms.
+  - Mocks represent realistic contracts and error responses.
+  negative_evidence:
+  - Test depends on a real external endpoint.
+  - Mock returns unrealistic placeholder payload only.
+  examples:
+    compliant: HttpCalloutMock returns provider success, validation error, and throttling fixtures.
+    non_compliant: Test skips callout behavior because the external system is unavailable in CI.
+- id: SFTEST-018
+  title: Mocks Must Preserve Contract Semantics
+  category: Salesforce Testing
+  description: Mocks and stubs must reflect real method contracts, payload schemas, status codes, exceptions, and side effects
+    closely enough to catch integration or boundary defects.
+  rationale: Over-simplified mocks create false confidence and miss production incompatibilities.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - testing
+  keywords:
+  - Mocking
+  - stubs
+  - contract
+  - fixtures
+  recommendation: Use versioned fixtures and contract-aware mocks instead of generic success responses.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Integration Patterns
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Mocking
+  required_evidence:
+  - Mock fixture matches documented contract.
+  - Tests cover relevant response variants.
+  negative_evidence:
+  - Mock always returns an empty success response.
+  - Mock ignores request body and headers when they matter.
+  examples:
+    compliant: Mock validates outbound request fields and returns versioned API fixture.
+    non_compliant: Mock returns `{success:true}` for every request regardless of contract.
+- id: SFTEST-019
+  title: Code Coverage Must Not Be The Only Quality Gate
+  category: Salesforce Testing
+  description: Code coverage thresholds must be supplemented with assertions, scenario coverage, negative tests, security
+    tests, and bulk tests.
+  rationale: Salesforce coverage is necessary for deployment but insufficient as a quality measure.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  - deployment
+  keywords:
+  - Code Coverage
+  - quality gate
+  - assertions
+  - scenario coverage
+  recommendation: Use coverage as a baseline and require evidence that important behavior and risks are tested.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Deployment Documentation
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Code Coverage
+  required_evidence:
+  - Test plan includes behavior, risk, and scenario coverage.
+  - Coverage report is paired with meaningful assertions.
+  negative_evidence:
+  - Tests are written only to reach deployment threshold.
+  - Covered code has no asserted outcomes.
+  examples:
+    compliant: Release gate requires coverage threshold plus bulk, negative, and security scenario evidence.
+    non_compliant: Team adds no-op tests solely to reach 75 percent coverage.
+- id: SFTEST-020
+  title: Coverage Must Include Changed Risk Areas
+  category: Salesforce Testing
+  description: Test coverage review must focus on changed classes, changed Flows, changed integration paths, and high-risk
+    branches rather than only org-wide aggregate coverage.
+  rationale: High aggregate coverage can hide untested new or risky behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  - deployment
+  keywords:
+  - Code Coverage
+  - changed code
+  - risk areas
+  - branch coverage
+  recommendation: Review coverage and scenario evidence for the changed behavior in each release.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Deployment Documentation
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Code Coverage
+  required_evidence:
+  - Changed components have targeted tests.
+  - High-risk branches are identified and covered or justified.
+  negative_evidence:
+  - Org-wide coverage is high but changed class is untested.
+  - New Flow branch has no validation evidence.
+  examples:
+    compliant: PR review identifies changed pricing branch and includes targeted tests for it.
+    non_compliant: Release proceeds because org-wide coverage is 88 percent while new Queueable has no assertions.
+- id: SFTEST-021
+  title: Negative Tests Required For Validation Failures
+  category: Salesforce Testing
+  description: Tests must cover invalid inputs, missing required data, invalid state transitions, duplicate records, and validation
+    rule failures where relevant.
+  rationale: Negative tests prove the system rejects bad data safely and predictably.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  keywords:
+  - Negative Testing
+  - validation failure
+  - invalid input
+  - duplicate
+  recommendation: Add tests that assert expected rejection behavior, safe messages, and unchanged data state.
+  references:
+  - Salesforce Apex Testing Best Practices
+  - Salesforce Flow Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Negative Testing
+  required_evidence:
+  - Invalid data scenarios are documented.
+  - Tests assert failure mode and data preservation.
+  negative_evidence:
+  - Only valid happy-path inputs are tested.
+  - Invalid input behavior is left to manual testing.
+  examples:
+    compliant: Test asserts invalid Account status raises controlled error and does not update dependent records.
+    non_compliant: Test covers only the valid status transition.
+- id: SFTEST-022
+  title: Negative Tests Required For Downstream Failures
+  category: Salesforce Testing
+  description: Tests must cover downstream dependency failures such as callout errors, event publish failures, async job failures,
+    missing configuration, and unavailable services where relevant.
+  rationale: Enterprise Salesforce features depend on external and asynchronous systems that fail in production.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - integration
+  - testing
+  keywords:
+  - Negative Testing
+  - downstream failure
+  - missing configuration
+  - async failure
+  recommendation: Simulate downstream failures and assert retry, recovery, logging, and user or support behavior.
+  references:
+  - Salesforce Integration Patterns
+  - Salesforce Apex Testing Best Practices
+  owner: Quality Engineering
+  version: 1.0.0
+  rule_pack: salesforce-testing
+  domain: Testing
+  topic: Negative Testing
+  required_evidence:
+  - Downstream failure scenarios are identified.
+  - Tests assert recovery, logging, or terminal failure behavior.
+  negative_evidence:
+  - Dependency failure path is untested.
+  - Missing configuration causes uncontrolled exception.
+  examples:
+    compliant: Test simulates vendor timeout and asserts Integration_Error__c with retry eligibility and correlation ID.
+    non_compliant: Callout catch block is never executed by tests.
+- id: TEST-001
+  title: Unit Test Coverage
+  category: Testing
+  description: Feature plans must identify unit tests for business logic and automation.
+  rationale: Unit tests provide fast evidence that core logic behaves as expected.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - tasks
+  - testing
+  keywords:
+  - unit test
+  - unit tests
+  - test class
+  recommendation: Add unit test tasks for service logic, trigger handlers, flows, and utility classes.
+  references:
+  - Salesforce Apex Testing Best Practices
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_test_coverage
+    min_confidence: 0.7
+  required_evidence:
+  - includes unit tests
+  - includes negative tests
+  - includes bulk tests
+  - includes integration tests where relevant
+  negative_evidence:
+  - happy path only
+  - no bulk tests
+  evidence_terms:
+    includes unit tests:
+    - unit test
+    - unit tests
+    - test class
+    includes negative tests:
+    - negative test
+    - validation failure
+    - error scenario
+    includes bulk tests:
+    - bulk test
+    - bulk tests
+    - 200 records
+    - multiple records
+    includes integration tests where relevant:
+    - integration test
+    - mock callout
+    - HttpCalloutMock
+    happy path only:
+    - happy path only
+    no bulk tests:
+    - no bulk tests
+- id: TEST-002
+  title: Negative Test Scenarios
+  category: Testing
+  description: Tests must include expected failures and denied-access scenarios where applicable.
+  rationale: Negative tests prove controls and error handling work, not only happy paths.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  - testing
+  keywords:
+  - negative test
+  - failure
+  - denied
+  - invalid
+  recommendation: Add tests for invalid input, missing permissions, integration failures, and business-rule violations.
+  references:
+  - Enterprise Testing Standards
+  owner: Platform Team
+  version: '1.0'
+- id: TEST-003
+  title: Bulk Test Scenarios
+  category: Testing
+  description: Tests must cover bulk record scenarios for Apex, Flow, and integration entry points.
+  rationale: Bulk tests expose governor limit and data-shape defects before production.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - plan
+  - tasks
+  - testing
+  keywords:
+  - bulk test
+  - bulk
+  - governor limits
+  - collection
+  recommendation: Add tests that execute realistic batch sizes and mixed data conditions.
+  references:
+  - Salesforce Apex Testing Best Practices
+  owner: Platform Team
+  version: '1.0'
+- id: TEST-004
+  title: Integration Test Evidence
+  category: Testing
+  description: Integration features must define test evidence for contracts, retries, timeouts, and failures.
+  rationale: Integration failures are common enterprise risk points and need explicit test evidence.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - tasks
+  - testing
+  keywords:
+  - integration test
+  - contract
+  - retry
+  - timeout
+  recommendation: Identify mock, sandbox, contract, and end-to-end evidence needed for integration confidence.
+  references:
+  - Enterprise Integration Testing Standards
+  owner: Platform Team
+  version: '1.0'
+- id: TEST-005
+  title: User Acceptance Evidence
+  category: Testing
+  description: Feature specifications must define user acceptance evidence for business-critical behavior.
+  rationale: Business acceptance criteria connect technical delivery to product outcomes.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - tasks
+  - testing
+  keywords:
+  - acceptance criteria
+  - UAT
+  - user acceptance
+  - evidence
+  recommendation: Capture business acceptance scenarios, owners, and expected evidence artifacts.
+  references:
+  - Enterprise Delivery Lifecycle
+  owner: Platform Team
+  version: '1.0'

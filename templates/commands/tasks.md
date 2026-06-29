@@ -38,7 +38,7 @@ Consider context in this precedence order:
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
-3. **Salesforce Standards**: `enterprise/salesforce/**/*.md`
+3. **Enterprise Salesforce Knowledge Pack**: `enterprise/salesforce/**/*.md` and `enterprise/salesforce/*/rules.yaml`
 4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the active `spec.md` and design artifacts
 
@@ -97,7 +97,7 @@ Use the governance context to add actionable tasks for security, compliance, arc
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - **IF EXISTS**: Load `/memory/constitution.md` for project principles and governance constraints
-   - **IF EXISTS**: Load enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/**/*.md`, and the configured product folder `products/<product-name>/` from `enterprise.yaml`, including `principles.md`, `domain-model.md`, `business-rules.yaml`, `events.md`, and `integrations.md`
+   - **IF EXISTS**: Load enterprise governance context in this order: `enterprise/constitution.md`, `enterprise/principles/*.md`, Enterprise Salesforce Knowledge Pack files under `enterprise/salesforce/**/*.md` and `enterprise/salesforce/*/rules.yaml`, and the configured product folder `products/<product-name>/` from `enterprise.yaml`, including `principles.md`, `domain-model.md`, `business-rules.yaml`, `events.md`, and `integrations.md`
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:

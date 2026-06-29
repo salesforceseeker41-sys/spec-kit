@@ -320,13 +320,13 @@ See the [Governance Validation guide](./docs/governance-validation.md) for check
 
 ### Sprint 3.5: Enterprise Rule Catalog
 
-The Enterprise Rule Catalog stores governance rules as YAML data under `enterprise/rules/`. This becomes the machine-readable source of truth for future validators and rule engines while keeping Sprint 3 advisory validation behavior unchanged.
+The Enterprise Rule Catalog stores governance rules as YAML data under `enterprise/salesforce/<domain>/rules.yaml`. This becomes the machine-readable source of truth for future validators and rule engines while keeping Sprint 3 advisory validation behavior unchanged.
 
 ```text
 Platform Team
   |
   v
-enterprise/rules/**/*.yaml
+enterprise/salesforce/*/rules.yaml
   |
   v
 RuleLoader -> RuleCollection -> RuleCatalog

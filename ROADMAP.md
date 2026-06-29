@@ -132,7 +132,7 @@ Objective: Represent governance rules as machine-readable data.
 
 Deliverables:
 
-- `enterprise/rules/`
+- `enterprise/salesforce/<domain>/rules.yaml`
 - YAML rule schema
 - sample enterprise rule catalog
 - `Rule`

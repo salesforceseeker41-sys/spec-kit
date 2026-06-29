@@ -80,8 +80,9 @@ Documents are loaded in this deterministic order:
 1. `enterprise/constitution.md`
 2. `enterprise/principles/*.md`
 3. `enterprise/salesforce/**/*.md`
-4. `products/<product-name>/`
-5. Feature specification, when explicitly provided
+4. `enterprise/salesforce/*/rules.yaml`
+5. `products/<product-name>/`
+6. Feature specification, when explicitly provided
 
 Files inside folders are sorted alphabetically by relative path. `enterprise/constitution.md` is always loaded before folder-based enterprise documents.
 

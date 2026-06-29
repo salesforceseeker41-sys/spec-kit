@@ -33,13 +33,11 @@ def _write(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
-def _write_rule(root: Path, category: str = "security", rule_id: str = "SEC-001") -> None:
-    _write(
-        root / "enterprise" / "rules" / category / f"{rule_id}.yaml",
-        f"""
+def _rule_yaml(category: str = "security", rule_id: str = "SEC-001") -> str:
+    return f"""
 id: {rule_id}
 title: CRUD/FLS Enforcement
-category: Security
+category: {category.title()}
 description: All Apex operations must enforce CRUD and FLS.
 rationale: Enterprise security policy requires permission enforcement.
 severity: advisory
@@ -57,7 +55,25 @@ references:
 owner: Platform Team
 version: "1.0"
 future_field: preserved
+""".lstrip()
+
+
+def _write_rule(root: Path, category: str = "security", rule_id: str = "SEC-001") -> None:
+    _write(
+        root / "enterprise" / "salesforce" / category / "rules.yaml",
+        f"""
+rules:
+  - {_rule_yaml(category, rule_id).replace(chr(10), chr(10) + '    ').rstrip()}
 """.lstrip(),
+    )
+
+
+def _write_legacy_rule(
+    root: Path, category: str = "security", rule_id: str = "SEC-001"
+) -> None:
+    _write(
+        root / "enterprise" / "rules" / category / f"{rule_id}.yaml",
+        _rule_yaml(category, rule_id),
     )
 
 
@@ -72,17 +88,29 @@ def test_rule_loader_loads_rules_from_catalog(tmp_path: Path) -> None:
 
 
 def test_bundled_rule_catalog_has_unique_ids_and_required_fields() -> None:
-    rule_files = sorted((REPO_ROOT / "enterprise" / "rules").glob("*/*.yaml"))
+    rule_files = sorted((REPO_ROOT / "enterprise" / "salesforce").glob("*/rules.yaml"))
     assert rule_files
 
     ids: list[str] = []
     for rule_file in rule_files:
         payload = yaml.safe_load(rule_file.read_text(encoding="utf-8"))
         assert isinstance(payload, dict), rule_file.as_posix()
-        assert REQUIRED_RULE_FIELDS <= set(payload), rule_file.as_posix()
-        ids.append(payload["id"])
+        assert set(payload) == {"rules"}, rule_file.as_posix()
+        assert isinstance(payload["rules"], list), rule_file.as_posix()
+        for rule in payload["rules"]:
+            assert isinstance(rule, dict), rule_file.as_posix()
+            assert REQUIRED_RULE_FIELDS <= set(rule), rule_file.as_posix()
+            ids.append(rule["id"])
 
     assert len(ids) == len(set(ids))
+
+
+def test_bundled_rule_catalog_uses_domain_rules_files_only() -> None:
+    assert not (REPO_ROOT / "enterprise" / "rules").exists()
+    rule_files = sorted((REPO_ROOT / "enterprise" / "salesforce").glob("**/*.yaml"))
+
+    assert rule_files
+    assert all(path.name == "rules.yaml" for path in rule_files)
 
 
 def test_missing_rule_catalog_folder_warns_without_crashing(tmp_path: Path) -> None:
@@ -94,7 +122,7 @@ def test_missing_rule_catalog_folder_warns_without_crashing(tmp_path: Path) -> N
 
 
 def test_malformed_rule_yaml_returns_clear_error(tmp_path: Path) -> None:
-    _write(tmp_path / "enterprise/rules/security/BAD-001.yaml", "id: [unterminated\n")
+    _write(tmp_path / "enterprise/salesforce/security/rules.yaml", "rules: [unterminated\n")
 
     collection = RuleLoader(tmp_path).load()
 
@@ -129,6 +157,28 @@ def test_rule_loader_preserves_unknown_fields_for_schema_evolution(
     rule = RuleLoader(tmp_path).load().rules[0]
 
     assert rule.metadata == {"future_field": "preserved"}
+
+
+def test_rule_loader_supports_legacy_single_rule_files(tmp_path: Path) -> None:
+    _write_legacy_rule(tmp_path)
+
+    collection = RuleLoader(tmp_path).load()
+
+    assert collection.list_rule_ids() == ["SEC-001"]
+    assert collection.rules[0].path == "enterprise/rules/security/SEC-001.yaml"
+
+
+def test_rule_loader_prefers_domain_rules_yaml_over_duplicate_legacy_rule(
+    tmp_path: Path,
+) -> None:
+    _write_rule(tmp_path, category="security", rule_id="SEC-001")
+    _write_legacy_rule(tmp_path, category="security", rule_id="SEC-001")
+
+    collection = RuleLoader(tmp_path).load()
+
+    assert collection.list_rule_ids() == ["SEC-001"]
+    assert collection.rules[0].path == "enterprise/salesforce/security/rules.yaml"
+    assert any("Duplicate rule ID was skipped: SEC-001" in warning for warning in collection.warnings)
 
 
 def test_load_rules_cli_json_output(tmp_path: Path) -> None:

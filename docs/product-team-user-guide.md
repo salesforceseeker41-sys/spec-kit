@@ -328,6 +328,7 @@ Enterprise governance is loaded from runtime project files under:
 enterprise/constitution.md
 enterprise/principles/*.md
 enterprise/salesforce/**/*.md
+enterprise/salesforce/*/rules.yaml
 ```
 
 The enterprise constitution is the top-level decision framework for interpreting enterprise principles and Salesforce standards. It complements `.specify/memory/constitution.md`; it does not replace the core Spec Kit project constitution.
@@ -1080,7 +1081,7 @@ If a business rule applies across stories, put it in `business-rules.yaml`.
 
 Product Teams own product rules. Platform Teams own enterprise rules.
 
-Do not edit `enterprise/rules/` to solve a single product issue unless the Platform Team agrees.
+Do not edit `enterprise/salesforce/<domain>/rules.yaml` to solve a single product issue unless the Platform Team agrees.
 
 ### Mistake: Skipping Plan Review
 

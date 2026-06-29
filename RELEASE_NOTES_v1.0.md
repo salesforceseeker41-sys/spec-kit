@@ -27,7 +27,7 @@ The v1.0 release is intentionally advisory. It helps teams discover governance g
 
 ### Enterprise Rule Catalog
 
-- Machine-readable YAML rules under `enterprise/rules/`.
+- Machine-readable YAML rules under `enterprise/salesforce/<domain>/rules.yaml`.
 - Rule categories for security, governance, scalability, compliance, architecture, Apex, LWC, Flow, and testing.
 - Rule loading through `RuleLoader`, `RuleCollection`, and `RuleCatalog`.
 - Rule inspection through `scripts/load-rules.py`.

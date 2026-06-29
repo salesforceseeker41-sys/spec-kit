@@ -78,7 +78,7 @@ Ownership view:
 Platform Team
   ├─ enterprise/
   ├─ enterprise.yaml
-  ├─ enterprise/rules/
+  ├─ enterprise/salesforce/<domain>/rules.yaml
   └─ architecture documentation
 
 Product Teams
@@ -123,7 +123,7 @@ ContextLoader
   v
 ContextBundle
 
-enterprise/rules/**/*.yaml
+enterprise/salesforce/*/rules.yaml
   |
   v
 RuleLoader
@@ -188,7 +188,7 @@ Responsibilities:
 
 ### RuleLoader
 
-`RuleLoader` discovers and loads YAML rule files from `enterprise/rules/`.
+`RuleLoader` discovers and loads YAML rule files from `enterprise/salesforce/<domain>/rules.yaml`.
 
 Responsibilities:
 
@@ -281,7 +281,7 @@ The first supported profile is `salesforce-enterprise`, which creates `enterpris
 | `EnterpriseConfig` | Platform Team | `enterprise.yaml` | normalized config | load files |
 | `ContextLoader` | Platform Team | filesystem, `EnterpriseConfig` | `ContextBundle` | validate rules |
 | `ContextBundle` | Platform Team | loaded documents | structured context | execute prompts |
-| `RuleLoader` | Platform Team | `enterprise/rules/` | `RuleCollection` | evaluate rules |
+| `RuleLoader` | Platform Team | `enterprise/salesforce/<domain>/rules.yaml` | `RuleCollection` | evaluate rules |
 | `RuleCatalog` | Platform Team | `RuleCollection` | grouped rule access | enforce severity |
 | Validator | Platform Team | CLI inputs, loaders, engine | rendered advisory report | evaluate rules |
 | GovernanceEngine | Platform Team | context, rules, artifacts | `GovernanceReport` | own rule definitions |
@@ -439,7 +439,7 @@ ContextBundle
   +--> product standards
   +--> feature specification
 
-enterprise/rules/**/*.yaml
+enterprise/salesforce/*/rules.yaml
   |
   v
 RuleCollection
@@ -474,7 +474,7 @@ New rule categories, product packs, validators, and prompt builders should be ad
 
 ### Convention Over Configuration
 
-Standard folders such as `enterprise/`, `products/`, `enterprise/rules/`, and `specs/` reduce configuration burden across many applications.
+Standard folders such as `enterprise/`, `products/`, `enterprise/salesforce/<domain>/rules.yaml`, and `specs/` reduce configuration burden across many applications.
 
 ### Backward Compatibility
 

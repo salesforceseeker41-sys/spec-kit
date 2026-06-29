@@ -107,7 +107,7 @@ With `--profile salesforce-enterprise`, `.specify/memory/constitution.md` is gen
 
 - `enterprise/constitution.md`
 - `enterprise/salesforce/**`
-- `enterprise/rule-packs/**`
+- `enterprise/salesforce/*/rules.yaml`
 - `enterprise/packs/**`
 - `products/<product-name>/**`
 - `enterprise.yaml`

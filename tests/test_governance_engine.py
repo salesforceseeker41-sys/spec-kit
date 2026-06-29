@@ -34,7 +34,7 @@ def _rule(
         references=["Salesforce Secure Coding Guide"],
         owner="Platform Team",
         version="1.0",
-        path=f"enterprise/rules/security/{rule_id}.yaml",
+        path="enterprise/salesforce/security/rules.yaml",
         metadata=metadata or {},
     )
 
@@ -337,7 +337,7 @@ def test_governance_report_groups_findings_by_category() -> None:
                 artifact="specification",
                 message="Rule SEC-001 may not be addressed in specification.md.",
                 recommendation="Add security coverage.",
-                source_path="enterprise/rules/security/SEC-001.yaml",
+                source_path="enterprise/salesforce/security/rules.yaml",
                 missing_keywords=["CRUD"],
             )
         ],

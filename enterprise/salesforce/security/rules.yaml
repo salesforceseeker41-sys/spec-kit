@@ -1,0 +1,2013 @@
+rules:
+- id: SFSEC-001
+  title: Enforce CRUD Before Object Access
+  category: Salesforce Security
+  description: Designs must state how Salesforce object-level create, read, update, and delete permissions are enforced before
+    Apex, Flow, or integration logic accesses records.
+  rationale: Object permissions are the first authorization boundary for Salesforce data and prevent users or integrations
+    from performing unauthorized operations.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - CRUD
+  - object permission
+  - authorization
+  - createable
+  - updateable
+  - deleteable
+  - accessible
+  recommendation: Check object permissions explicitly or use platform features that enforce CRUD before reading or mutating
+    Salesforce records.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Objects touched by the feature are listed.
+  - Required object permissions are identified for each operation.
+  - Enforcement mechanism is documented for Apex, Flow, and integrations.
+  negative_evidence:
+  - Apex performs DML without checking object permissions.
+  - Flow or integration assumes admin-equivalent access.
+  - Design says permissions are handled later.
+  examples:
+    compliant: Service layer checks Schema.sObjectType.Account.isUpdateable before update and denies unauthorized users.
+    non_compliant: Apex controller updates Account records for any authenticated user without object permission checks.
+- id: SFSEC-002
+  title: Enforce Field-Level Security Before Field Access
+  category: Salesforce Security
+  description: Designs must explain how field-level security is enforced before sensitive or restricted fields are read, displayed,
+    changed, exported, or sent to external systems.
+  rationale: Field-level security protects sensitive data even when a user has access to the parent object or record.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  - integration
+  keywords:
+  - FLS
+  - field-level security
+  - field permission
+  - accessible
+  - updateable
+  - stripInaccessible
+  recommendation: Use platform-enforced access paths, `Security.stripInaccessible`, describe calls, or equivalent checks for
+    every protected field.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  - Salesforce Lightning Web Components Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Sensitive fields are identified.
+  - Read and write FLS enforcement is described.
+  - UI and API exposure paths are covered.
+  negative_evidence:
+  - LWC displays fields returned by Apex without FLS enforcement.
+  - Apex writes restricted fields without update permission checks.
+  - Integration payload includes fields without FLS review.
+  examples:
+    compliant: Apex strips inaccessible Contact fields before returning data to LWC.
+    non_compliant: LWC receives and renders all queried Contact fields from a system-context Apex method.
+- id: SFSEC-003
+  title: Use Security.stripInaccessible For Untrusted Record Payloads
+  category: Salesforce Security
+  description: Apex that processes user-supplied, integration-supplied, or UI-supplied sObject payloads must sanitize inaccessible
+    fields before DML or response serialization.
+  rationale: Untrusted payloads can include fields the caller is not allowed to create, update, or read.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - integration
+  - lwc
+  keywords:
+  - stripInaccessible
+  - sanitize
+  - untrusted payload
+  - AccessType
+  - field security
+  recommendation: Use `Security.stripInaccessible` with the correct access type before DML and before returning sObjects to
+    callers.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Payload sources are identified.
+  - Correct AccessType is selected for create, update, or read.
+  - Removed fields are handled safely.
+  negative_evidence:
+  - Deserialized JSON is directly upserted.
+  - LWC payload fields are trusted because the UI hides fields.
+  - Removed fields are ignored without audit or user feedback.
+  examples:
+    compliant: Controller calls Security.stripInaccessible(AccessType.UPDATABLE, records) before update.
+    non_compliant: REST resource deserializes Account JSON and performs upsert immediately.
+- id: SFSEC-004
+  title: Use WITH SECURITY_ENFORCED For Read Queries Where Appropriate
+  category: Salesforce Security
+  description: Apex SOQL queries that read user-visible data should use `WITH SECURITY_ENFORCED` or an equivalent documented
+    FLS enforcement strategy.
+  rationale: Query-time security enforcement prevents unauthorized field reads before data reaches application logic.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - WITH SECURITY_ENFORCED
+  - SOQL
+  - field security
+  - FLS
+  - read access
+  recommendation: Use `WITH SECURITY_ENFORCED` for simple read queries and document alternatives when dynamic queries or partial
+    field handling require another pattern.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Read queries returning user-visible fields are identified.
+  - Query-time or post-query enforcement is documented.
+  - Exceptions for dynamic query patterns are justified.
+  negative_evidence:
+  - SOQL returns restricted fields without enforcement.
+  - Dynamic SOQL is treated as exempt from FLS.
+  - Controller relies only on page layout visibility.
+  examples:
+    compliant: SOQL query for Account UI data includes WITH SECURITY_ENFORCED and handles QueryException.
+    non_compliant: Apex queries Salary__c and returns it to LWC without FLS enforcement.
+- id: SFSEC-005
+  title: Document Record Sharing Model
+  category: Salesforce Security
+  description: Every feature that reads or changes Salesforce records must document the applicable org-wide defaults, role
+    hierarchy, sharing rules, teams, territories, and manual sharing assumptions.
+  rationale: Record access depends on sharing configuration and can differ across products, users, and business units.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  keywords:
+  - sharing
+  - OWD
+  - role hierarchy
+  - sharing rules
+  - record access
+  - territory
+  recommendation: Include a record access section in the design and validate it against the product's data ownership model.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Sharing Architecture Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Target objects and OWD assumptions are listed.
+  - Expected user populations and record visibility are described.
+  - Automation behavior under sharing is explained.
+  negative_evidence:
+  - Design states that all users can see all records without proof.
+  - Apex behavior is described without user context.
+  - Sharing rules are deferred until deployment.
+  examples:
+    compliant: Plan states Case is private, agents gain access through queues and criteria-based sharing.
+    non_compliant: Feature assumes sales users can view all Opportunities because they use the same app.
+- id: SFSEC-006
+  title: Prefer inherited sharing For Service Apex
+  category: Salesforce Security
+  description: Apex service classes that operate in user-driven flows should use `inherited sharing` unless a stronger or
+    explicitly justified sharing mode is required.
+  rationale: Inherited sharing makes caller context explicit and reduces accidental privilege escalation.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - inherited sharing
+  - with sharing
+  - without sharing
+  - Apex sharing
+  - user context
+  recommendation: Use `inherited sharing` for service classes and document why `without sharing` is required when used.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Sharing declaration is shown for Apex entry points and services.
+  - User-context versus system-context behavior is explained.
+  - Any `without sharing` usage has an approved rationale.
+  negative_evidence:
+  - Class omits sharing declaration.
+  - Service layer uses `without sharing` for convenience.
+  - Design relies on inherited behavior without stating it.
+  examples:
+    compliant: AccountService is declared inherited sharing and is invoked by with-sharing controllers.
+    non_compliant: CaseEscalationService uses without sharing to avoid access errors without security approval.
+- id: SFSEC-007
+  title: Justify Every without sharing Class
+  category: Salesforce Security
+  description: Any Apex class declared `without sharing` must have a documented business need, compensating controls, test
+    coverage, and enterprise security approval.
+  rationale: '`without sharing` bypasses record sharing and can expose or mutate records beyond the user''s authorization.'
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - testing
+  keywords:
+  - without sharing
+  - bypass sharing
+  - privileged Apex
+  - system context
+  recommendation: Avoid `without sharing` unless implementing an approved privileged operation with narrow scope and explicit
+    checks.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Business justification for system-context access.
+  - Compensating CRUD/FLS and record-scope controls.
+  - Security approval or exception reference.
+  negative_evidence:
+  - '`without sharing` used to simplify queries.'
+  - No limit on records affected by privileged code.
+  - Tests only run as admin.
+  examples:
+    compliant: Privileged reassignment job uses without sharing with scoped queue ownership checks and approved exception.
+    non_compliant: LWC controller uses without sharing so all users can search all Accounts.
+- id: SFSEC-008
+  title: Run Security Tests With Least-Privilege Users
+  category: Salesforce Security
+  description: Security-sensitive Apex and automation must include tests that run as least-privilege users and verify denied
+    access paths.
+  rationale: Admin-only tests hide authorization defects that appear in production user profiles and permission sets.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - flow
+  - testing
+  keywords:
+  - runAs
+  - least privilege test
+  - negative test
+  - permission test
+  - security test
+  recommendation: Create representative test users with minimum permissions and assert both allowed and denied behavior.
+  references:
+  - Salesforce Apex Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Least-privilege persona is identified.
+  - Denied CRUD, FLS, or sharing behavior is tested.
+  - Positive and negative access scenarios are covered.
+  negative_evidence:
+  - All tests use default system context.
+  - No test proves access denial.
+  - Security behavior is manually tested only.
+  examples:
+    compliant: Tests create a standard user with limited permission sets and verify restricted field updates fail.
+    non_compliant: Tests insert and update all records as the implicit test-running user.
+- id: SFSEC-009
+  title: Use Named Credentials For External Authentication
+  category: Salesforce Security
+  description: External callouts requiring authentication must use Named Credentials or External Credentials rather than hard-coded
+    endpoints, usernames, passwords, tokens, or certificates.
+  rationale: Named Credentials centralize authentication, rotation, endpoint governance, and secret protection.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - deployment
+  keywords:
+  - Named Credential
+  - External Credential
+  - callout
+  - endpoint
+  - authentication
+  recommendation: Define the Named Credential, authentication protocol, principal type, and deployment ownership in the integration
+    design.
+  references:
+  - Salesforce Named Credentials Documentation
+  - Salesforce Integration Patterns
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Named Credential or External Credential name is specified.
+  - Authentication method and principal model are documented.
+  - Secret rotation ownership is assigned.
+  negative_evidence:
+  - Endpoint credentials are stored in Apex or custom settings.
+  - Callout code constructs Authorization headers from plain text secrets.
+  - Integration depends on a shared human user password.
+  examples:
+    compliant: Apex callout uses callout:Billing_API with per-org External Credential configuration.
+    non_compliant: Apex reads API key from custom metadata and adds it to Authorization header.
+- id: SFSEC-010
+  title: Do Not Store Secrets In Apex Or Unprotected Metadata
+  category: Salesforce Security
+  description: Passwords, API keys, client secrets, tokens, private keys, and signing materials must not be stored in Apex,
+    Custom Metadata, unprotected Custom Settings, labels, static resources, or source control.
+  rationale: Unprotected metadata and source-controlled files can expose secrets to developers, admins, packages, or downstream
+    tooling.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - metadata
+  - deployment
+  keywords:
+  - secret
+  - API key
+  - client secret
+  - token
+  - password
+  - private key
+  recommendation: Store secrets in approved Salesforce credential features or enterprise secret management platforms and reference
+    them indirectly.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Named Credentials Documentation
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Secret inventory and storage mechanism are documented.
+  - Source control exposure risk is addressed.
+  - Rotation and revocation process is assigned.
+  negative_evidence:
+  - Secret value appears in Apex, metadata XML, labels, or deployment scripts.
+  - Custom Metadata contains API keys.
+  - Token rotation is not planned.
+  examples:
+    compliant: OAuth client secret is managed by External Credential configuration and rotated by Platform Engineering.
+    non_compliant: Client secret is committed in a Custom Metadata record for deployment convenience.
+- id: SFSEC-011
+  title: Define Secret Rotation And Revocation
+  category: Salesforce Security
+  description: Designs that use credentials, certificates, tokens, or integration secrets must define how they are rotated,
+    revoked, and validated after rotation.
+  rationale: Long-lived unmanaged credentials increase blast radius after leakage or personnel changes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  - operations
+  keywords:
+  - secret rotation
+  - revocation
+  - certificate rotation
+  - token rotation
+  - credential lifecycle
+  recommendation: Include rotation frequency, owner, operational runbook, and rollback approach for each secret.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Named Credentials Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Rotation cadence is documented.
+  - Owner and approver are named.
+  - Validation and rollback steps are defined.
+  negative_evidence:
+  - Secret has no expiry or owner.
+  - Rotation requires code changes.
+  - No plan exists for compromised credential response.
+  examples:
+    compliant: Certificate-backed integration has a 90-day rotation runbook and validation smoke test.
+    non_compliant: API key is created once by a developer and reused indefinitely.
+- id: SFSEC-012
+  title: Use OAuth Flows Approved For The Integration Pattern
+  category: Salesforce Security
+  description: Connected Apps and external integrations must use OAuth flows approved for the client type, trust boundary,
+    and user interaction model.
+  rationale: Inappropriate OAuth flows can expose refresh tokens, over-privilege clients, or bypass enterprise identity controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - OAuth
+  - Connected App
+  - authorization code
+  - JWT bearer
+  - client credentials
+  - refresh token
+  recommendation: Select the OAuth flow through architecture review and document token lifetime, scopes, callback handling,
+    and client type.
+  references:
+  - Salesforce OAuth Documentation
+  - Salesforce Connected Apps Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - OAuth flow and client type are documented.
+  - Token scopes and lifetimes are justified.
+  - Callback, redirect, and token storage controls are described.
+  negative_evidence:
+  - Password grant is used for server integration without approval.
+  - Refresh tokens are stored outside approved secret storage.
+  - OAuth scopes are broader than required.
+  examples:
+    compliant: Server-to-server integration uses JWT bearer flow with certificate rotation and minimal scopes.
+    non_compliant: Middleware stores an admin username and password to request access tokens.
+- id: SFSEC-013
+  title: Limit OAuth Scopes To Least Privilege
+  category: Salesforce Security
+  description: Connected Apps must request only the OAuth scopes required for the approved integration use case.
+  rationale: Broad OAuth scopes expand the impact of token compromise and violate least privilege.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - OAuth scope
+  - least privilege
+  - api
+  - refresh_token
+  - full
+  - Connected App
+  recommendation: Map each requested OAuth scope to a business function and remove unused or convenience scopes.
+  references:
+  - Salesforce OAuth Documentation
+  - Salesforce Connected Apps Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Requested scopes are listed.
+  - Each scope has a business justification.
+  - Privileged scopes receive security approval.
+  negative_evidence:
+  - '`full` scope is requested by default.'
+  - Refresh token scope is used without lifecycle controls.
+  - Scope list copied from another app.
+  examples:
+    compliant: Connected App requests api and refresh_token only after documenting why offline access is needed.
+    non_compliant: Connected App requests full, web, api, and refresh_token because it is easier.
+- id: SFSEC-014
+  title: Govern Connected App Policies
+  category: Salesforce Security
+  description: Connected Apps must define permitted users, IP relaxation, refresh token policy, session policy, admin approval,
+    and certificate requirements before production use.
+  rationale: Connected App policy controls are a core enforcement point for API access and delegated authorization.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  - operations
+  keywords:
+  - Connected App
+  - permitted users
+  - IP relaxation
+  - refresh token policy
+  - admin approved
+  recommendation: Use admin-approved users with assigned permission sets and restrictive token/session policies unless an
+    exception is approved.
+  references:
+  - Salesforce Connected Apps Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Connected App policy settings are documented.
+  - Assigned users or permission sets are identified.
+  - Token and IP relaxation settings are justified.
+  negative_evidence:
+  - All users may self-authorize a production Connected App.
+  - Refresh tokens never expire without approval.
+  - IP restrictions are relaxed for convenience.
+  examples:
+    compliant: Connected App is admin-approved, assigned through an integration permission set, and uses restrictive refresh
+      token policy.
+    non_compliant: Connected App allows all users to authorize and keeps refresh tokens valid until revoked.
+- id: SFSEC-015
+  title: Require Integration User Least Privilege
+  category: Salesforce Security
+  description: Integration users and principals must receive only the permission sets, object access, field access, and system
+    permissions needed for the integration contract.
+  rationale: Over-privileged integration identities can create broad data exposure if credentials or tokens are compromised.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - deployment
+  keywords:
+  - integration user
+  - least privilege
+  - permission set
+  - API user
+  - principal
+  recommendation: Define a dedicated integration permission set or permission set group scoped to the exact objects, fields,
+    and operations required.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Integration Patterns
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Integration principal is identified.
+  - Required permissions are mapped to API operations.
+  - Privileged system permissions are justified.
+  negative_evidence:
+  - Integration uses System Administrator profile.
+  - Permission set grants broad modify-all data without approval.
+  - Shared integration user serves unrelated systems.
+  examples:
+    compliant: Billing integration user has read/write access only to Invoice__c and required Account fields.
+    non_compliant: External middleware authenticates as a System Administrator user.
+- id: SFSEC-016
+  title: Enforce Enterprise Session Security Settings
+  category: Salesforce Security
+  description: Features that introduce new apps, Experience sites, Connected Apps, or access channels must comply with enterprise
+    session timeout, MFA, IP, and high-assurance session requirements.
+  rationale: Session controls reduce unauthorized access from compromised credentials, unattended sessions, or untrusted networks.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  - operations
+  keywords:
+  - session security
+  - MFA
+  - timeout
+  - high assurance
+  - IP restrictions
+  recommendation: Document session policy impact and confirm alignment with enterprise identity and access management standards.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Identity Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Access channel and user population are identified.
+  - Session timeout and MFA posture are documented.
+  - High-assurance requirements are assessed.
+  negative_evidence:
+  - New app bypasses existing session policy.
+  - IP restrictions are weakened without approval.
+  - MFA implications are not reviewed.
+  examples:
+    compliant: Partner site access requires MFA for privileged actions and follows enterprise timeout policy.
+    non_compliant: New Connected App relaxes IP restrictions and session policies without IAM review.
+- id: SFSEC-017
+  title: Restrict Guest User Access
+  category: Salesforce Security
+  description: Guest user access for Experience Cloud or public sites must be minimized, explicitly approved, and limited
+    to public data and public operations.
+  rationale: Guest users are unauthenticated and can expose data or business actions to the internet if misconfigured.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - apex
+  - metadata
+  - deployment
+  keywords:
+  - guest user
+  - Experience Cloud
+  - public site
+  - unauthenticated
+  - guest profile
+  recommendation: Avoid guest access for sensitive operations and require security approval for any guest-readable object,
+    field, Apex class, or Flow.
+  references:
+  - Salesforce Experience Cloud Security Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Public access use case is documented.
+  - Guest profile object, field, Apex, and Flow access are listed.
+  - Data exposure review and approval are recorded.
+  negative_evidence:
+  - Guest user can access non-public records.
+  - Guest profile has broad object permissions.
+  - Public form writes records without abuse controls.
+  examples:
+    compliant: Guest form creates a limited Lead record through validated Apex with no record readback.
+    non_compliant: Guest profile has read access to Case records for status lookup without authentication.
+- id: SFSEC-018
+  title: Protect Public Forms Against Abuse
+  category: Salesforce Security
+  description: Public Salesforce forms and unauthenticated endpoints must include bot, spam, validation, rate, and operational
+    monitoring controls.
+  rationale: Public entry points can be abused for spam, denial of service, data poisoning, or fraudulent record creation.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - apex
+  - integration
+  - operations
+  keywords:
+  - public form
+  - bot protection
+  - rate limit
+  - CAPTCHA
+  - validation
+  - abuse
+  recommendation: Use approved bot mitigation, strict validation, throttling where available, and monitoring for unexpected
+    submission patterns.
+  references:
+  - Salesforce Experience Cloud Security Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Public endpoint or form is identified.
+  - Abuse scenarios and mitigations are documented.
+  - Monitoring and response owner are assigned.
+  negative_evidence:
+  - Anonymous users can submit unlimited records.
+  - No validation beyond required fields.
+  - Operations team has no alert for submission spikes.
+  examples:
+    compliant: Public lead form uses CAPTCHA, server-side validation, duplicate checks, and alerting.
+    non_compliant: Guest Flow creates Cases directly with free-form fields and no abuse monitoring.
+- id: SFSEC-019
+  title: Classify Data Before Security Design
+  category: Salesforce Security
+  description: Salesforce features must classify objects and fields by enterprise data classification before access, encryption,
+    logging, integration, or retention decisions are finalized.
+  rationale: Security controls depend on whether data is public, internal, confidential, regulated, or highly restricted.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - integration
+  keywords:
+  - data classification
+  - sensitive data
+  - regulated data
+  - PII
+  - PHI
+  - confidential
+  recommendation: Add data classification to the feature design and align controls with enterprise data handling standards.
+  references:
+  - Salesforce Data Classification Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Objects and fields are classified.
+  - Regulated or sensitive data is identified.
+  - Security controls are mapped to classification.
+  negative_evidence:
+  - New fields are created without classification.
+  - Integration sends data before classification review.
+  - Design treats all business data as equivalent.
+  examples:
+    compliant: New Customer_Health_ID__c field is classified as regulated and excluded from nonessential integrations.
+    non_compliant: New free-text Description__c field can contain PII but has no classification or controls.
+- id: SFSEC-020
+  title: Assess Shield Platform Encryption For Regulated Data
+  category: Salesforce Security
+  description: Regulated or highly restricted Salesforce data must be assessed for Shield Platform Encryption or an approved
+    compensating control.
+  rationale: Encryption helps protect sensitive data at rest and supports regulatory and contractual requirements.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  keywords:
+  - Shield Platform Encryption
+  - encryption at rest
+  - regulated data
+  - encrypted field
+  recommendation: Document whether Shield encryption is required, supported field behavior, search/reporting impact, and key
+    ownership.
+  references:
+  - Salesforce Shield Platform Encryption Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Regulated fields are identified.
+  - Encryption decision and rationale are recorded.
+  - Functional impacts are assessed.
+  negative_evidence:
+  - Regulated fields are stored unencrypted without review.
+  - Encryption impact on filters or integrations is ignored.
+  - Key management ownership is undefined.
+  examples:
+    compliant: National ID field is evaluated for deterministic encryption and reporting impact before implementation.
+    non_compliant: Sensitive identifier field is added as plain text because users need to search it.
+- id: SFSEC-021
+  title: Govern Shield Key Management
+  category: Salesforce Security
+  description: Shield encryption key creation, rotation, destruction, and tenant secret operations must follow enterprise
+    key management procedures.
+  rationale: Weak key governance can cause data exposure, failed compliance, or irreversible data loss.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - Shield key
+  - tenant secret
+  - key rotation
+  - key destruction
+  - BYOK
+  recommendation: Assign key custodians, approval workflow, rotation cadence, and recovery procedures before enabling or changing
+    encryption.
+  references:
+  - Salesforce Shield Platform Encryption Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Key owner and approvers are named.
+  - Rotation and backup procedures are documented.
+  - Destructive key operations require explicit approval.
+  negative_evidence:
+  - Admins can rotate keys without governance.
+  - No procedure exists for key compromise.
+  - Feature assumes encryption keys are platform-only concerns.
+  examples:
+    compliant: Shield key rotation is handled through a documented change with Security and Compliance approval.
+    non_compliant: Project admin rotates tenant secret in production without impact review.
+- id: SFSEC-022
+  title: Prevent Sensitive Data In Logs
+  category: Salesforce Security
+  description: Apex debug logs, platform events, custom logs, integration logs, and operational telemetry must not expose
+    secrets, tokens, credentials, or regulated data.
+  rationale: Logs are broadly accessed for support and can become an unmanaged data exposure channel.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - logging
+  - debug log
+  - sensitive data
+  - token
+  - PII
+  - telemetry
+  recommendation: Redact or omit sensitive values and log stable identifiers, correlation IDs, and error categories instead.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Logged fields and payloads are described.
+  - Redaction strategy is documented.
+  - Log access and retention are addressed.
+  negative_evidence:
+  - Full request or response payload is logged.
+  - Access tokens appear in debug output.
+  - Regulated field values are sent to monitoring tools.
+  examples:
+    compliant: Integration logs correlation ID, endpoint alias, status code, and redacted error category.
+    non_compliant: Apex logs full JSON payload including SSN and bearer token.
+- id: SFSEC-023
+  title: Enable Audit Logging For Security-Relevant Changes
+  category: Salesforce Security
+  description: Security-relevant configuration, permission, integration, and data access changes must be auditable through
+    Salesforce setup audit trail, field history, Shield Field Audit Trail, or approved equivalent controls.
+  rationale: Audit evidence is required to investigate incidents, prove compliance, and detect unauthorized changes.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  - operations
+  keywords:
+  - audit logging
+  - setup audit trail
+  - field history
+  - Field Audit Trail
+  - compliance
+  recommendation: Identify which changes must be audited and configure the appropriate Salesforce or enterprise audit mechanism.
+  references:
+  - Salesforce Setup Audit Trail Documentation
+  - Salesforce Shield Field Audit Trail Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Security-relevant changes are identified.
+  - Audit source and retention are documented.
+  - Audit review owner is assigned.
+  negative_evidence:
+  - Permission changes are not auditable.
+  - Critical field changes have no history or audit trail.
+  - Audit data retention is unspecified.
+  examples:
+    compliant: Changes to Account risk fields are tracked with Field Audit Trail and retained per compliance policy.
+    non_compliant: Admins can change integration permissions without any monitored audit process.
+- id: SFSEC-024
+  title: Use Event Monitoring For High-Risk Access
+  category: Salesforce Security
+  description: High-risk Salesforce access patterns must define Event Monitoring coverage for login, API, report export, URI,
+    Lightning, or transaction events as appropriate.
+  rationale: Event Monitoring provides visibility into suspicious activity and supports detection and response.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - operations
+  keywords:
+  - Event Monitoring
+  - login event
+  - API event
+  - report export
+  - transaction security
+  recommendation: Map high-risk access to relevant event types and document alerting, review cadence, and response ownership.
+  references:
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Shield Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - High-risk activities are identified.
+  - Event types and detection logic are documented.
+  - Operations owner and alert path are assigned.
+  negative_evidence:
+  - Bulk data export has no monitoring.
+  - API integration activity is invisible to operations.
+  - Event Monitoring is assumed but not configured.
+  examples:
+    compliant: Sensitive report exports are monitored through ReportEvent with alerts to Security Operations.
+    non_compliant: New integration can query customer records at scale with no API event monitoring.
+- id: SFSEC-025
+  title: Review Transaction Security For Risky Events
+  category: Salesforce Security
+  description: Features that introduce high-risk user actions must assess whether Salesforce Transaction Security policies
+    are required.
+  rationale: Transaction Security can detect or block risky activity in near real time.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - operations
+  keywords:
+  - Transaction Security
+  - policy
+  - risky event
+  - block
+  - alert
+  recommendation: Evaluate Transaction Security policies for sensitive exports, anomalous logins, and privileged setup or
+    API activity.
+  references:
+  - Salesforce Transaction Security Documentation
+  - Salesforce Event Monitoring Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Risky event types are identified.
+  - Alert-only or block policy decision is documented.
+  - Exception handling is described.
+  negative_evidence:
+  - Sensitive exports rely only on user training.
+  - No assessment for high-risk events.
+  - Policy impact on business users is ignored.
+  examples:
+    compliant: Large export of regulated records triggers a Transaction Security alert and case creation.
+    non_compliant: Users can export all customer data without any event policy assessment.
+- id: SFSEC-026
+  title: Use Permission Sets Instead Of Profile Sprawl
+  category: Salesforce Security
+  description: New access must be granted through permission sets or permission set groups rather than creating or expanding
+    broad profiles.
+  rationale: Permission sets support least privilege, modular access, easier review, and cleaner lifecycle management.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  keywords:
+  - permission set
+  - permission set group
+  - profile
+  - access management
+  - least privilege
+  recommendation: Model access as job-function permission sets and keep profiles minimal.
+  references:
+  - Salesforce Permission Sets Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Required access is mapped to permission sets.
+  - Profile changes are avoided or justified.
+  - Assignment model is documented.
+  negative_evidence:
+  - New profile created for a single feature.
+  - Existing profile is broadened for convenience.
+  - Access cannot be reviewed by capability.
+  examples:
+    compliant: New case export capability is granted by a dedicated permission set assigned to approved users.
+    non_compliant: Sales profile receives View All Data to support one dashboard.
+- id: SFSEC-027
+  title: Avoid View All Data And Modify All Data
+  category: Salesforce Security
+  description: '`View All Data`, `Modify All Data`, object-level View All, and object-level Modify All permissions must not
+    be granted unless explicitly justified and approved.'
+  rationale: Broad data permissions bypass sharing and create major data exposure and integrity risk.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  keywords:
+  - View All Data
+  - Modify All Data
+  - View All
+  - Modify All
+  - privileged permission
+  recommendation: Use narrowly scoped object, field, sharing, queue, or delegated administration patterns instead of broad
+    data permissions.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Permission Sets Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Broad permission need is justified.
+  - Approval and compensating controls are documented.
+  - Assignment population is minimized.
+  negative_evidence:
+  - Permission granted to solve record visibility issue.
+  - Permission assigned to integration or support users by default.
+  - No periodic access review.
+  examples:
+    compliant: Temporary Modify All on a custom object is approved for data migration and removed after completion.
+    non_compliant: Support users receive View All Data so they can find any customer record.
+- id: SFSEC-028
+  title: Require Access Review For Privileged Permissions
+  category: Salesforce Security
+  description: Privileged Salesforce permissions must have an assigned owner, approval record, periodic review cadence, and
+    removal process.
+  rationale: Privileged access tends to accumulate and must be reviewed to maintain least privilege over time.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - metadata
+  - deployment
+  - operations
+  keywords:
+  - access review
+  - privileged permission
+  - permission governance
+  - user access review
+  recommendation: Include privileged permissions in recurring access certification and remove unused assignments.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Permission Sets Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Privileged permissions are listed.
+  - Review owner and cadence are documented.
+  - Deprovisioning process is defined.
+  negative_evidence:
+  - Privileged permission sets have no owner.
+  - Access is granted permanently for temporary needs.
+  - No evidence of review or attestation.
+  examples:
+    compliant: Data export permission set is reviewed quarterly by Data Governance.
+    non_compliant: Admin-like permission set remains assigned to former project users indefinitely.
+- id: SFSEC-029
+  title: Separate Duties For Administration And Deployment
+  category: Salesforce Security
+  description: Administrative, release, integration, and break-glass duties must be separated where required by risk, compliance,
+    or production control policy.
+  rationale: Separation of duties reduces fraud, accidental production changes, and unchecked privilege.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - separation of duties
+  - admin access
+  - deployment access
+  - break glass
+  - production control
+  recommendation: Define who can build, approve, deploy, administer, and use break-glass access for the feature.
+  references:
+  - Salesforce Security Guide
+  - Salesforce DevOps Center Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Administrative roles are identified.
+  - Deployment approval path is documented.
+  - Break-glass access is controlled and audited.
+  negative_evidence:
+  - Same user builds, approves, and deploys sensitive changes without review.
+  - Break-glass credentials are shared.
+  - Production admin access has no audit process.
+  examples:
+    compliant: Release manager deploys approved metadata while security admin separately approves permission changes.
+    non_compliant: Developer self-approves and deploys production permission changes.
+- id: SFSEC-030
+  title: Protect Setup And Metadata Changes
+  category: Salesforce Security
+  description: Security-sensitive metadata changes must be reviewed, source-controlled, and deployed through approved release
+    paths.
+  rationale: Metadata controls can alter authentication, authorization, data exposure, and integration access.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - metadata
+  - deployment
+  keywords:
+  - metadata security
+  - setup change
+  - source control
+  - deployment
+  - permission metadata
+  recommendation: Route permission, sharing, Connected App, CSP, site, and security settings changes through controlled review
+    and deployment.
+  references:
+  - Salesforce Metadata API Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Security-sensitive metadata is identified.
+  - Review and deployment path is documented.
+  - Production change evidence is retained.
+  negative_evidence:
+  - Manual setup change is planned without source control.
+  - Permission changes are deployed without security review.
+  - Emergency change is not reconciled.
+  examples:
+    compliant: Connected App policy metadata is reviewed in pull request and deployed through CI.
+    non_compliant: Admin manually relaxes CORS and CSP settings in production during testing.
+- id: SFSEC-031
+  title: Govern CSP Trusted Sites
+  category: Salesforce Security
+  description: CSP Trusted Sites must be limited to approved domains, required directives, and documented business use cases.
+  rationale: Overly broad CSP entries can allow untrusted scripts, frames, images, or connections in Salesforce pages.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  - metadata
+  - deployment
+  keywords:
+  - CSP Trusted Site
+  - Content Security Policy
+  - connect-src
+  - frame-src
+  - script-src
+  recommendation: Add only specific HTTPS origins required by the feature and avoid wildcard or broad domain entries.
+  references:
+  - Salesforce CSP Trusted Sites Documentation
+  - Lightning Web Components Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - External domains and CSP directives are listed.
+  - Business justification is documented.
+  - Domain ownership and trust are verified.
+  negative_evidence:
+  - Wildcard domains are used without approval.
+  - CSP entry allows all subdomains for convenience.
+  - External script source is trusted without review.
+  examples:
+    compliant: CSP allows connect-src to https://api.example.com only for a reviewed integration.
+    non_compliant: CSP Trusted Site allows https://*.example.com for all directives.
+- id: SFSEC-032
+  title: Do Not Bypass Lightning Web Security Controls
+  category: Salesforce Security
+  description: Lightning components must not use unsupported DOM, script loading, or iframe patterns to bypass Lightning Web
+    Security, Locker, or platform isolation controls.
+  rationale: Lightning security isolation protects Salesforce pages from cross-component tampering and unsafe script behavior.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  keywords:
+  - Lightning Web Security
+  - Locker
+  - DOM access
+  - iframe
+  - script injection
+  recommendation: Use supported LWC APIs and approved third-party libraries that operate within Lightning Web Security constraints.
+  references:
+  - Lightning Web Security Documentation
+  - Lightning Locker Documentation
+  - Lightning Web Components Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Third-party script and DOM requirements are described.
+  - Compatibility with Lightning Web Security is confirmed.
+  - Unsupported bypass techniques are absent.
+  negative_evidence:
+  - Component manipulates global DOM outside its template.
+  - Script injection is used to work around platform restrictions.
+  - iframe is used to avoid Salesforce security controls.
+  examples:
+    compliant: LWC uses scoped template DOM APIs and a reviewed static-resource library compatible with LWS.
+    non_compliant: Component injects remote script tags into document.body to load an unreviewed widget.
+- id: SFSEC-033
+  title: Review Third-Party JavaScript In Lightning
+  category: Salesforce Security
+  description: Third-party JavaScript used by Lightning components must be reviewed for source, licensing, integrity, data
+    access, LWS compatibility, and maintenance risk.
+  rationale: Client-side libraries can exfiltrate data, introduce vulnerabilities, or break platform security assumptions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  - deployment
+  keywords:
+  - third-party JavaScript
+  - static resource
+  - LWC library
+  - supply chain
+  - LWS
+  recommendation: Package approved libraries as static resources, pin versions, and document review evidence.
+  references:
+  - Lightning Web Components Developer Guide
+  - Lightning Web Security Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Library name, version, and source are documented.
+  - Security and license review is complete.
+  - Data accessed by the library is described.
+  negative_evidence:
+  - Library is loaded from public CDN without approval.
+  - Version floats to latest.
+  - Library receives record data without review.
+  examples:
+    compliant: Approved chart library is pinned as a static resource and tested under LWS.
+    non_compliant: LWC loads a remote minified script from a CDN at runtime.
+- id: SFSEC-034
+  title: Prevent Client-Side Secret Exposure
+  category: Salesforce Security
+  description: LWC, Aura, Visualforce, and client-side JavaScript must never contain secrets, tokens, private endpoints, privileged
+    identifiers, or security decisions that must be enforced server-side.
+  rationale: Browser-delivered code is visible to users and cannot protect confidential values or enforce trusted authorization.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  - metadata
+  keywords:
+  - client-side secret
+  - LWC
+  - JavaScript
+  - token
+  - API key
+  - browser
+  recommendation: Keep secrets and privileged decisions server-side and expose only least-privilege data through secured Apex
+    or platform APIs.
+  references:
+  - Lightning Web Components Developer Guide
+  - Salesforce Secure Coding Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Client-side configuration values are listed.
+  - Secrets are confirmed absent from browser code.
+  - Server-side enforcement is documented.
+  negative_evidence:
+  - API key appears in JavaScript.
+  - LWC hides buttons as the only authorization control.
+  - Client calculates whether privileged operation is allowed.
+  examples:
+    compliant: LWC calls Apex, and Apex validates authorization before invoking an external API via Named Credential.
+    non_compliant: LWC stores a third-party API key and calls the service directly from the browser.
+- id: SFSEC-035
+  title: Validate Server-Side Inputs
+  category: Salesforce Security
+  description: Apex, Flow, and integration entry points must validate and canonicalize untrusted input before using it in
+    queries, DML, callouts, or business decisions.
+  rationale: Client-side validation can be bypassed and untrusted input can cause injection, data corruption, or unauthorized
+    behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - integration
+  keywords:
+  - input validation
+  - canonicalization
+  - injection
+  - untrusted input
+  - server-side validation
+  recommendation: Validate type, range, format, ownership, allowed values, and record scope on the server side.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Apex Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Input sources are identified.
+  - Server-side validation rules are documented.
+  - Invalid input handling is described.
+  negative_evidence:
+  - Design relies only on LWC required fields.
+  - Apex trusts record IDs or field values from the client.
+  - Integration accepts arbitrary payloads.
+  examples:
+    compliant: Apex verifies submitted Case ID belongs to the user's accessible account before update.
+    non_compliant: Apex accepts any Account ID from LWC and updates the record.
+- id: SFSEC-036
+  title: Prevent SOQL Injection
+  category: Salesforce Security
+  description: Dynamic SOQL must use bind variables, allowlists, escaping, and structured query construction to prevent SOQL
+    injection.
+  rationale: Unsafe dynamic SOQL can allow attackers to alter filters and access unauthorized data.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  keywords:
+  - SOQL injection
+  - dynamic SOQL
+  - bind variable
+  - allowlist
+  - escapeSingleQuotes
+  recommendation: Prefer static SOQL; when dynamic SOQL is necessary, bind values and allowlist object, field, sort, and direction
+    inputs.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Apex Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Dynamic query inputs are identified.
+  - Bind variables or allowlists are used.
+  - User-controlled fields and sort clauses are constrained.
+  negative_evidence:
+  - User input is concatenated into WHERE clauses.
+  - Object or field names are accepted without allowlist.
+  - Escaping is used as the only control for all query parts.
+  examples:
+    compliant: Search term is bound in dynamic SOQL and sort field is selected from an allowlist.
+    non_compliant: Apex builds `WHERE Name LIKE '%` plus user input plus `%'`.
+- id: SFSEC-037
+  title: Prevent SOSL Injection
+  category: Salesforce Security
+  description: Dynamic SOSL and search features must constrain user input, use bind variables where supported, and avoid exposing
+    unauthorized object or field search scope.
+  rationale: Unsafe search construction can expose data across objects or alter intended search behavior.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - apex
+  - lwc
+  keywords:
+  - SOSL injection
+  - search
+  - dynamic SOSL
+  - FIND
+  - allowlist
+  recommendation: Use allowlisted search scopes and sanitize or bind search terms according to Salesforce guidance.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Apex Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Searchable objects and fields are listed.
+  - User search terms are constrained.
+  - Result visibility is security-enforced.
+  negative_evidence:
+  - User controls returned object list.
+  - Search term is concatenated without safeguards.
+  - Results include fields without FLS enforcement.
+  examples:
+    compliant: Global search component searches only allowlisted objects and strips inaccessible result fields.
+    non_compliant: LWC passes raw search text and object names into an Apex SOSL string.
+- id: SFSEC-038
+  title: Protect Against Open Redirects
+  category: Salesforce Security
+  description: Salesforce pages, controllers, Flows, and integrations must not redirect users to untrusted or user-controlled
+    URLs without validation.
+  rationale: Open redirects can support phishing, token theft, and user confusion.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  keywords:
+  - open redirect
+  - redirect URL
+  - allowlist
+  - phishing
+  - returnUrl
+  recommendation: Use relative URLs or allowlisted domains and validate redirect targets on the server side.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Redirect sources and destinations are documented.
+  - Allowed destinations are constrained.
+  - Invalid redirect handling is described.
+  negative_evidence:
+  - User-provided returnUrl is trusted.
+  - Redirect destination can be any external URL.
+  - Validation occurs only in JavaScript.
+  examples:
+    compliant: Controller redirects only to allowlisted internal paths after server-side validation.
+    non_compliant: Flow reads a `next` parameter and redirects browser to that URL.
+- id: SFSEC-039
+  title: Protect Against CSRF In Custom Endpoints
+  category: Salesforce Security
+  description: Custom Salesforce endpoints and pages that perform state-changing operations must use platform CSRF protections
+    or equivalent anti-forgery controls.
+  rationale: CSRF can trick authenticated users into performing unintended actions.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - metadata
+  keywords:
+  - CSRF
+  - anti-forgery
+  - state changing
+  - Visualforce
+  - endpoint
+  recommendation: Use standard platform forms and controllers where possible and document anti-CSRF controls for custom endpoints.
+  references:
+  - Salesforce Secure Coding Guide
+  - Visualforce Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - State-changing endpoints are identified.
+  - Anti-CSRF mechanism is documented.
+  - Same-origin and authentication assumptions are reviewed.
+  negative_evidence:
+  - GET request performs a data change.
+  - Custom endpoint lacks anti-forgery protection.
+  - Design assumes authentication alone prevents CSRF.
+  examples:
+    compliant: Visualforce action uses platform view state protections and POST-only state changes.
+    non_compliant: Public link invokes an Apex endpoint that updates a record via GET.
+- id: SFSEC-040
+  title: Protect File Uploads And Content Access
+  category: Salesforce Security
+  description: Features that upload, generate, share, or expose Salesforce Files must define file type, size, visibility,
+    scanning, sharing, and retention controls.
+  rationale: Files can contain malware, regulated data, or sensitive content and often have different sharing behavior than
+    records.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  - operations
+  keywords:
+  - Salesforce Files
+  - ContentDocument
+  - file upload
+  - malware
+  - file sharing
+  recommendation: Restrict accepted file types, control file visibility, scan where required, and document file ownership
+    and retention.
+  references:
+  - Salesforce Files Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - File types, size limits, and storage objects are identified.
+  - Sharing and visibility model is documented.
+  - Malware or content scanning requirements are assessed.
+  negative_evidence:
+  - Any file type is accepted from unauthenticated users.
+  - Files inherit unintended broad visibility.
+  - File retention is unspecified.
+  examples:
+    compliant: Authenticated users upload PDF documents with size/type validation and restricted record-linked visibility.
+    non_compliant: Guest users upload arbitrary executable files to public records.
+- id: SFSEC-041
+  title: Secure Platform Events And Event Payloads
+  category: Salesforce Security
+  description: Platform Events, Change Data Capture, and event-driven integrations must avoid unnecessary sensitive data and
+    define subscriber authorization, replay, and retention controls.
+  rationale: Event payloads can be replicated to multiple subscribers and are harder to retract once published.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - integration
+  - operations
+  keywords:
+  - Platform Event
+  - Change Data Capture
+  - event payload
+  - replay
+  - subscriber
+  recommendation: Publish identifiers and minimal required fields, validate subscriber access, and avoid regulated data unless
+    approved.
+  references:
+  - Salesforce Platform Events Documentation
+  - Salesforce Change Data Capture Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Event payload fields are listed.
+  - Sensitive data exposure is assessed.
+  - Subscriber permissions and replay behavior are documented.
+  negative_evidence:
+  - Event includes full customer or payment payload.
+  - Any subscriber can consume sensitive events.
+  - Replay retention risk is ignored.
+  examples:
+    compliant: Order event publishes OrderId and status while subscribers query details through authorized APIs.
+    non_compliant: Platform Event broadcasts full customer profile including regulated fields.
+- id: SFSEC-042
+  title: Secure Report And Dashboard Data Exposure
+  category: Salesforce Security
+  description: Reports, dashboards, subscriptions, and exports must be reviewed for running user, folder sharing, row-level
+    visibility, and sensitive field exposure.
+  rationale: Analytics assets can expose data broadly through folder access, subscriptions, exports, or elevated running users.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - operations
+  keywords:
+  - report
+  - dashboard
+  - running user
+  - folder sharing
+  - export
+  - subscription
+  recommendation: Use least-privilege folder access and validate running-user implications for each dashboard.
+  references:
+  - Salesforce Reports and Dashboards Security Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Report/dashboard audience is identified.
+  - Running user and folder sharing are documented.
+  - Export and subscription risks are assessed.
+  negative_evidence:
+  - Dashboard runs as admin for broad audience.
+  - Sensitive reports are in public folders.
+  - Export capability is not reviewed.
+  examples:
+    compliant: Executive dashboard running user and folder access are approved for the exact audience.
+    non_compliant: Public report folder contains customer PII report exportable by all internal users.
+- id: SFSEC-043
+  title: Govern Data Export Capabilities
+  category: Salesforce Security
+  description: Features that enable data export, download, sync, or bulk extraction must define authorization, monitoring,
+    volume limits, purpose, and retention controls.
+  rationale: Export paths are high-risk because they move Salesforce data outside platform access controls.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - integration
+  - metadata
+  - operations
+  keywords:
+  - data export
+  - download
+  - bulk API
+  - report export
+  - extract
+  - sync
+  recommendation: Restrict export capability to approved personas and monitor high-volume or sensitive exports.
+  references:
+  - Salesforce Security Guide
+  - Salesforce Event Monitoring Documentation
+  - Salesforce Data Export Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Exported data scope and purpose are documented.
+  - Authorization and monitoring controls are defined.
+  - Downstream retention and protection are addressed.
+  negative_evidence:
+  - Users can export regulated data without approval.
+  - Bulk API extraction has no monitoring.
+  - Export destination retention is unknown.
+  examples:
+    compliant: Approved analysts export limited fields with Event Monitoring alerts and downstream retention policy.
+    non_compliant: All sales users can download full customer lists including sensitive fields.
+- id: SFSEC-044
+  title: Secure Sandbox Data
+  category: Salesforce Security
+  description: Sandbox usage must define whether production data is copied, masked, minimized, encrypted, and access-controlled.
+  rationale: Non-production environments often have broader access and weaker monitoring but may contain production-sensitive
+    data.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - sandbox
+  - data masking
+  - production data
+  - non-production
+  - test data
+  recommendation: Use data minimization and masking for sensitive production data in sandboxes and restrict sandbox access.
+  references:
+  - Salesforce Data Mask Documentation
+  - Salesforce Sandbox Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Sandbox type and data source are documented.
+  - Masking or minimization strategy is defined.
+  - Sandbox access is reviewed.
+  negative_evidence:
+  - Full copy sandbox contains regulated data without masking.
+  - Contractors receive broad sandbox access to production data.
+  - Refresh process ignores data protection.
+  examples:
+    compliant: Full sandbox refresh applies Data Mask rules before testers receive access.
+    non_compliant: Production customer data is copied to developer sandbox with unrestricted developer access.
+- id: SFSEC-045
+  title: Secure Change Sets And Deployment Credentials
+  category: Salesforce Security
+  description: Deployment tools, CI/CD connections, and release users must use approved authentication, least privilege, and
+    auditable deployment paths.
+  rationale: Deployment credentials can change security posture across the org and must be controlled like privileged access.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - deployment credential
+  - CI/CD
+  - DevOps
+  - release user
+  - change set
+  recommendation: Use dedicated release principals, approved OAuth or certificate-based auth, and audit deployment activity.
+  references:
+  - Salesforce CLI Documentation
+  - Salesforce DevOps Center Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Deployment principal and permissions are documented.
+  - Authentication method is approved.
+  - Deployment audit path is defined.
+  negative_evidence:
+  - CI uses a personal admin account.
+  - Deployment token is stored in plain text.
+  - Release user has unnecessary broad access.
+  examples:
+    compliant: CI deploys through a dedicated release user with scoped permissions and protected credential storage.
+    non_compliant: Developer's System Administrator refresh token is stored in CI variables for production deployments.
+- id: SFSEC-046
+  title: Require Secure Error Handling
+  category: Salesforce Security
+  description: User-facing errors, API responses, and logs must not expose stack traces, internal object names, credentials,
+    implementation details, or sensitive data.
+  rationale: Verbose errors can disclose information useful for attacks or leak protected data.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  - flow
+  - lwc
+  - integration
+  keywords:
+  - error handling
+  - stack trace
+  - information disclosure
+  - exception
+  - user message
+  recommendation: Return safe user messages, log redacted diagnostic details, and use correlation IDs for support.
+  references:
+  - Salesforce Secure Coding Guide
+  - Salesforce Apex Developer Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Error paths are identified.
+  - User-facing and operational messages are separated.
+  - Sensitive data redaction is documented.
+  negative_evidence:
+  - Stack trace shown to end user.
+  - API returns raw exception messages.
+  - Error payload includes credentials or sensitive fields.
+  examples:
+    compliant: LWC displays a generic failure message with support reference while Apex logs redacted details.
+    non_compliant: REST API returns full Apex exception stack and SOQL query to caller.
+- id: SFSEC-047
+  title: Validate Cross-Origin And CORS Requirements
+  category: Salesforce Security
+  description: CORS, remote site, CSP, and cross-origin browser interactions must be explicitly justified, narrowly scoped,
+    and reviewed.
+  rationale: Cross-origin trust settings can expose Salesforce data or browser capabilities to untrusted domains.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  - integration
+  - metadata
+  - deployment
+  keywords:
+  - CORS
+  - cross-origin
+  - Remote Site Setting
+  - CSP
+  - trusted domain
+  recommendation: Approve only specific HTTPS origins and remove unused cross-origin trust entries.
+  references:
+  - Salesforce CORS Documentation
+  - Salesforce CSP Trusted Sites Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Cross-origin domains are listed.
+  - Required trust setting type is identified.
+  - Domain ownership and data exposure are reviewed.
+  negative_evidence:
+  - Broad wildcard domain is approved without review.
+  - Old CORS entries remain after feature retirement.
+  - CORS is added to fix an unclear browser error.
+  examples:
+    compliant: CORS entry is limited to https://portal.example.com for a documented browser integration.
+    non_compliant: CORS allows all subdomains for a vendor domain because the exact endpoint is unknown.
+- id: SFSEC-048
+  title: Protect External Services And Schema Imports
+  category: Salesforce Security
+  description: External Services, OpenAPI schemas, and generated invocable actions must be reviewed for authentication, data
+    exposure, least privilege, and schema trust.
+  rationale: Generated integrations can expose external operations to Flow or users without enough security review.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - flow
+  - integration
+  - metadata
+  keywords:
+  - External Services
+  - OpenAPI
+  - schema import
+  - invocable action
+  - Flow integration
+  recommendation: Review imported schemas, restrict who can invoke generated actions, and route authentication through Named
+    Credentials.
+  references:
+  - Salesforce External Services Documentation
+  - Salesforce Named Credentials Documentation
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Imported schema source and version are documented.
+  - Authentication and Named Credential are identified.
+  - Flow invocation permissions are controlled.
+  negative_evidence:
+  - Unreviewed OpenAPI schema is imported into production.
+  - Any Flow builder can invoke sensitive external operation.
+  - Generated action exposes sensitive payloads without review.
+  examples:
+    compliant: Approved payment API schema is version-pinned and invocable actions are limited to a secured Flow.
+    non_compliant: Vendor OpenAPI schema is imported directly and exposed to all Flow authors.
+- id: SFSEC-049
+  title: Require Security Review For Managed Packages And AppExchange Apps
+  category: Salesforce Security
+  description: Managed packages, AppExchange apps, and third-party Salesforce components must be reviewed for permissions,
+    data access, integration endpoints, vendor risk, and operational ownership.
+  rationale: Installed packages can introduce code, permissions, integrations, and data access outside product team control.
+  severity: warning
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - metadata
+  - deployment
+  - operations
+  keywords:
+  - managed package
+  - AppExchange
+  - vendor risk
+  - package permission
+  - third-party app
+  recommendation: Complete vendor and package security review before installation or production enablement.
+  references:
+  - Salesforce AppExchange Security Review Documentation
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Package name, vendor, and version are documented.
+  - Requested permissions and data access are reviewed.
+  - Support and upgrade ownership are assigned.
+  negative_evidence:
+  - Package installed directly in production.
+  - Permission sets are assigned without review.
+  - Vendor integration endpoints are unknown.
+  examples:
+    compliant: AppExchange app undergoes vendor review, sandbox testing, and permission analysis before production install.
+    non_compliant: Admin installs a managed package and assigns all included permission sets to users.
+- id: SFSEC-050
+  title: Require Security Exception Records
+  category: Salesforce Security
+  description: Any approved deviation from Salesforce security rules must be documented with risk, owner, compensating controls,
+    approval, and expiration date.
+  rationale: Security exceptions must be visible, time-bound, and reviewable to prevent permanent unmanaged risk.
+  severity: blocking
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  - operations
+  keywords:
+  - security exception
+  - waiver
+  - compensating control
+  - risk acceptance
+  - expiration
+  recommendation: Record exceptions in the product exception register and review them before expiration or release.
+  references:
+  - Enterprise Governance Constitution
+  - Salesforce Security Guide
+  owner: Enterprise Salesforce Security Architecture
+  version: 1.0.0
+  required_evidence:
+  - Rule being waived is identified.
+  - Risk, compensating controls, owner, and expiry are documented.
+  - Enterprise approval is linked.
+  negative_evidence:
+  - Design says exception approved without evidence.
+  - Exception has no expiration.
+  - Compensating controls are vague or unowned.
+  examples:
+    compliant: Temporary guest user exception expires after 60 days and includes monitoring plus remediation owner.
+    non_compliant: Product proceeds with broad guest access because the launch date is fixed.
+- id: SEC-001
+  title: CRUD/FLS Enforcement
+  category: Security
+  description: All Apex data access must describe how object and field permissions are enforced.
+  rationale: Enterprise security policy requires object and field permission enforcement before data is read or changed.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  keywords:
+  - CRUD
+  - FLS
+  - field-level security
+  - security enforcement
+  recommendation: Explicitly describe CRUD/FLS enforcement for each Salesforce object and field touched by the feature.
+  references:
+  - Salesforce Secure Coding Guide
+  owner: Platform Team
+  version: '1.0'
+  practice:
+    type: salesforce_security_enforcement
+    min_confidence: 0.7
+  required_evidence:
+  - enforces CRUD and FLS
+  - describes sharing model
+  - checks permissions
+  - uses platform security APIs
+  - follows least privilege
+  negative_evidence:
+  - without sharing without justification
+  - direct data access without security checks
+  evidence_terms:
+    enforces CRUD and FLS:
+    - CRUD/FLS
+    - CRUD
+    - FLS
+    - object permission
+    - field permission
+    describes sharing model:
+    - sharing model
+    - with sharing
+    - inherited sharing
+    - record access
+    checks permissions:
+    - permission set
+    - permission checks
+    - user permissions
+    - object permissions
+    uses platform security APIs:
+    - stripInaccessible
+    - WITH SECURITY_ENFORCED
+    - Security.stripInaccessible
+    follows least privilege:
+    - least privilege
+    - minimum permissions
+    - permission set group
+    without sharing without justification:
+    - without sharing
+    - bypass sharing
+    direct data access without security checks:
+    - direct DML without security
+    - query without FLS
+- id: SEC-002
+  title: Sharing Model Alignment
+  category: Security
+  description: Feature designs must state how the implementation respects the applicable Salesforce sharing model.
+  rationale: Consistent sharing behavior prevents unauthorized access across products and business units.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  keywords:
+  - sharing
+  - with sharing
+  - inherited sharing
+  - record access
+  recommendation: Document the expected record access model and how Apex, Flow, or UI behavior honors it.
+  references:
+  - Salesforce Apex Developer Guide
+  owner: Platform Team
+  version: '1.0'
+- id: SEC-003
+  title: Permission Set Strategy
+  category: Security
+  description: Access changes must identify permission sets, permission set groups, or profiles impacted by the feature.
+  rationale: Centralized access management keeps enterprise authorization auditable and maintainable.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - deployment
+  keywords:
+  - permission set
+  - permission set group
+  - profile
+  - access
+  recommendation: Identify required permission changes and ownership for each persona or integration user.
+  references:
+  - Salesforce User Access and Permissions Assistant
+  owner: Platform Team
+  version: '1.0'
+- id: SEC-004
+  title: Sensitive Data Handling
+  category: Security
+  description: Features that touch sensitive data must describe masking, encryption, logging, and access expectations.
+  rationale: Sensitive data exposure must be controlled consistently across enterprise applications.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - lwc
+  - apex
+  keywords:
+  - sensitive data
+  - PII
+  - encryption
+  - masking
+  recommendation: Add explicit handling requirements for PII, PHI, financial, or regulated data.
+  references:
+  - Salesforce Shield Platform Encryption
+  owner: Platform Team
+  version: '1.0'
+- id: SEC-005
+  title: Integration Credential Protection
+  category: Security
+  description: External integrations must use managed credential patterns instead of embedded secrets.
+  rationale: Secrets in source code or configuration create audit, rotation, and incident response risk.
+  severity: advisory
+  default_enabled: true
+  applies_to:
+  - specification
+  - plan
+  - apex
+  keywords:
+  - Named Credential
+  - External Credential
+  - secret
+  - credential
+  recommendation: Use Named Credentials or External Credentials and describe credential ownership and rotation expectations.
+  references:
+  - Salesforce Named Credentials Documentation
+  owner: Platform Team
+  version: '1.0'

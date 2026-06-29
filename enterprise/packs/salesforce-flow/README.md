@@ -13,7 +13,7 @@ This pack covers Screen Flow, Record-Triggered Flow, Scheduled Flow, error handl
 Rules are stored in:
 
 ```text
-enterprise/rules/salesforce-flow/
+enterprise/salesforce/flow/rules.yaml/
 ```
 
 Rule IDs use the `SFFLOW-` prefix.

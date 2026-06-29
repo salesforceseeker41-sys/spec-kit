@@ -4,7 +4,7 @@ description: Enterprise-approved Salesforce integration governance rules for pro
 version: "1.0.0"
 status: active
 owner: Integration Architecture
-rule_root: enterprise/rules/salesforce-integration
+rule_file: enterprise/salesforce/integration/rules.yaml
 rule_id_prefix: SFINT
 domains:
   - Integrations

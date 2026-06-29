@@ -4,7 +4,7 @@ description: Enterprise-approved Salesforce security governance rules for produc
 version: "1.0.0"
 status: active
 owner: Enterprise Salesforce Security Architecture
-rule_root: enterprise/rules/salesforce-security
+rule_file: enterprise/salesforce/security/rules.yaml
 rule_id_prefix: SFSEC
 domains:
   - Security

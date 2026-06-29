@@ -32,7 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--category",
-        help="Optional rule category folder to load, such as security or governance.",
+        help="Optional Salesforce rule domain to load, such as security, apex, or governance.",
     )
     parser.add_argument(
         "--json",

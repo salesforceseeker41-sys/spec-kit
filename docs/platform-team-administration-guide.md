@@ -55,7 +55,7 @@ flowchart TD
     Context --> Implement
     Context --> Validation[Governance Validation]
 
-    Rules[enterprise/rules/**/*.yaml] --> RuleLoader[Rule Catalog Loader]
+    Rules[enterprise/salesforce/*/rules.yaml] --> RuleLoader[Rule Catalog Loader]
     RuleLoader --> Engine[Governance Engine]
     Engine --> Validation
 ```
@@ -68,7 +68,7 @@ Core components:
 | Enterprise standards | `enterprise/` | Platform Team | Constitution, principles, Salesforce standards, and rules. |
 | Product context | `products/<product-name>/` | Product Team | Product principles, domain model, business rules, events, integrations. |
 | Context Loader | `src/specify_cli/enterprise_context.py` | Platform Team | Loads enterprise and product context deterministically. |
-| Rule Catalog | `enterprise/rules/` | Platform Team | Machine-readable governance rules. |
+| Rule Catalog | `enterprise/salesforce/<domain>/rules.yaml` | Platform Team | Machine-readable governance rules. |
 | Governance Engine | `src/specify_cli/framework/` | Platform Team | Evaluates rule evidence in advisory mode. |
 | Bootstrap profile | `profiles/salesforce-enterprise/` | Platform Team | Initializes enterprise-ready projects. |
 | Command templates | `templates/commands/` | Platform Team / Spec Kit Core | Instruct AI agents to use governance context. |
@@ -92,7 +92,7 @@ flowchart TD
 Ownership rules:
 
 - `enterprise/` is platform-owned.
-- `enterprise/rules/` is platform-owned.
+- `enterprise/salesforce/<domain>/rules.yaml` is platform-owned.
 - `enterprise/packs/` is platform-owned.
 - `profiles/` is platform-owned.
 - `templates/commands/` changes require platform review.
@@ -114,20 +114,20 @@ enterprise/packs/
 |-- salesforce-security/
 `-- salesforce-testing/
 
-enterprise/rules/
-|-- salesforce-apex/
-|-- salesforce-architecture/
-|-- salesforce-flow/
-|-- salesforce-integration/
-|-- salesforce-security/
-`-- salesforce-testing/
+enterprise/salesforce/
+|-- apex/rules.yaml
+|-- architecture/rules.yaml
+|-- flow/rules.yaml
+|-- integration/rules.yaml
+|-- security/rules.yaml
+`-- testing/rules.yaml
 ```
 
 Each pack should include:
 
 - `README.md`
 - `pack.yml`
-- Rule folder under `enterprise/rules/<pack-name>/`
+- Rule file under `enterprise/salesforce/<domain>/rules.yaml`
 - Rule ID prefix
 - Owner
 - Version
@@ -143,7 +143,7 @@ description: Enterprise-approved Salesforce security governance rules for produc
 version: "1.0.0"
 status: active
 owner: Enterprise Salesforce Security Architecture
-rule_root: enterprise/rules/salesforce-security
+rule_file: enterprise/salesforce/security/rules.yaml
 rule_id_prefix: SFSEC
 release_channel: preview
 minimum_esf_version: "1.0"
@@ -540,7 +540,7 @@ SOP: Update ESF memory constitution behavior.
 
 1. Update the ESF memory constitution renderer in `src/specify_cli/bootstrap/installer.py`.
 2. Keep the generated memory constitution concise and pointer-based.
-3. Verify it references `enterprise/constitution.md`, `enterprise/salesforce/**`, `enterprise/rule-packs/**`, `products/<product-name>/**`, `enterprise.yaml`, and the ESF Context Loader.
+3. Verify it references `enterprise/constitution.md`, `enterprise/salesforce/**`, `enterprise/salesforce/*/rules.yaml`, `products/<product-name>/**`, `enterprise.yaml`, and the ESF Context Loader.
 4. Run `tests/test_project_bootstrap.py`.
 
 SOP: Update Enterprise Governance.
@@ -1064,7 +1064,7 @@ Roadmap governance:
 1. Create `enterprise/packs/<pack-name>/`.
 2. Add `README.md`.
 3. Add `pack.yml`.
-4. Create `enterprise/rules/<pack-name>/`.
+4. Create or update `enterprise/salesforce/<domain>/rules.yaml`.
 5. Add rules.
 6. Validate rule catalog.
 7. Update docs.

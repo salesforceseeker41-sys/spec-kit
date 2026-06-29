@@ -57,7 +57,7 @@ Governance findings are advisory and do not cause a failing exit code.
 
 ## What Is Checked
 
-The Governance Engine evaluates rules from `enterprise/rules/**/*.yaml`. A rule is applicable when the requested artifact appears in the rule's `applies_to` list.
+The Governance Engine evaluates rules from `enterprise/salesforce/*/rules.yaml`. A rule is applicable when the requested artifact appears in the rule's `applies_to` list.
 
 Current artifact targets:
 
