@@ -43,11 +43,11 @@ Before generating or updating the specification, check for enterprise governance
 
 1. **Enterprise Constitution**: `enterprise/constitution.md`
 2. **Enterprise Principles**: `enterprise/principles/*.md`
-3. **Salesforce Standards**: `enterprise/salesforce/*.md`
+3. **Salesforce Standards**: `enterprise/salesforce/**/*.md`
 4. **Product Standards and Business Rules**: `products/<product-name>/*.md`, `products/<product-name>/*.yaml`, and `products/<product-name>/*.yml` from the product selected in `enterprise.yaml`
 5. **Feature Specification**: the current feature request and resulting `spec.md`
 
-Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above.
+Use the Enterprise Context Loader output when available. If loader output is unavailable, fall back to the documented governance files above. Do not rely only on `.specify/memory/constitution.md`; enterprise governance comes from `enterprise/` and product governance comes from `products/<product-name>/`.
 
 If these files or folders are absent, continue with the normal Spec Kit workflow. If present, their standards are mandatory inputs for the specification:
 

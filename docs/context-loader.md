@@ -6,6 +6,8 @@ The Enterprise Context Loader is the deterministic discovery layer for the Enter
 
 The loader does not validate governance rules, block delivery, register hooks, or invoke AI agents. It only makes governance context discoverable, ordered, and reusable for future prompt builders, advisory validators, and multi-agent integrations.
 
+Runtime context is loaded only from the initialized project. Enterprise Governance comes from `enterprise/`; Product Governance comes from `products/<product-name>/`. Bootstrap profile folders such as `profiles/salesforce-enterprise/` are recipes and are never used as runtime governance sources.
+
 ## Architecture
 
 ```text
@@ -21,6 +23,15 @@ ContextBundle
   +-- ContextDocument[]
   +-- warnings
   +-- errors
+```
+
+```mermaid
+flowchart LR
+    Config[enterprise.yaml] --> Loader[ContextLoader]
+    Enterprise[enterprise/] --> Loader
+    Product[products/<product-name>/] --> Loader
+    Profile[profiles/salesforce-enterprise/] -. not loaded .-> Loader
+    Loader --> Bundle[ContextBundle]
 ```
 
 Core concepts:
@@ -66,11 +77,11 @@ Documents are loaded in this deterministic order:
 
 1. `enterprise/constitution.md`
 2. `enterprise/principles/*.md`
-3. `enterprise/salesforce/*.md`
+3. `enterprise/salesforce/**/*.md`
 4. `products/<product-name>/`
 5. Feature specification, when explicitly provided
 
-Files inside folders are sorted alphabetically. `enterprise/constitution.md` is always loaded before folder-based enterprise documents.
+Files inside folders are sorted alphabetically by relative path. `enterprise/constitution.md` is always loaded before folder-based enterprise documents.
 
 Product files use a product-specific deterministic order:
 
@@ -129,6 +140,8 @@ products/product-team1/business-rules.yaml
 then future `/speckit-specify`, `/speckit-plan`, and `/speckit-implement` runs use the updated content automatically because the loader reads the configured product folder on each run.
 
 Enterprise rules remain platform-owned under `enterprise/`. Product rules and business rules remain product-owned under `products/<product-name>/`.
+
+Bootstrap product templates may originate in `profiles/salesforce-enterprise/products/`, but after initialization the loader reads the generated runtime product folder only.
 
 ## Feature Resolution
 

@@ -14,6 +14,10 @@ This project was initialized with the `salesforce-enterprise` bootstrap profile.
 | `specs/` | Delivery Teams | Feature specifications, implementation plans, tasks, and governance reviews. |
 | `docs/` | Shared | Human-readable onboarding and project documentation. |
 
+## Enterprise Governance Snapshot
+
+The `enterprise/` folder in this project is a complete snapshot copied from the Platform Team's root Enterprise Governance source during bootstrap. Product Teams should not treat the bootstrap profile as an enterprise rule source. Future enterprise updates come from the Platform Team and must be intentionally adopted into this project.
+
 ## Development Lifecycle
 
 1. Product Team updates `products/sample-product/` with product-specific standards and `business-rules.yaml`.

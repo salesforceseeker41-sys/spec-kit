@@ -34,7 +34,7 @@ Product files include:
 
 Treat these files as product-specific constraints during implementation. The loader reads the configured product folder at runtime, so updates made by a Product Team are picked up on the next `/speckit-implement` run.
 
-If loader output is unavailable, fall back to reading `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/*.md`, and the configured product folder manually.
+If loader output is unavailable, fall back to reading `enterprise/constitution.md`, `enterprise/principles/*.md`, `enterprise/salesforce/**/*.md`, and the configured product folder manually. Do not rely only on `.specify/memory/constitution.md`; enterprise governance comes from `enterprise/` and product governance comes from `products/<product-name>/`.
 
 ## Pre-Execution Checks
 

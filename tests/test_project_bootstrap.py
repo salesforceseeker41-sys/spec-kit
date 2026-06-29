@@ -9,13 +9,56 @@ import yaml
 from typer.testing import CliRunner
 
 from specify_cli import app
-from specify_cli._assets import _locate_bundled_profile
+from specify_cli._assets import _locate_bundled_enterprise_root, _locate_bundled_profile
 from specify_cli.bootstrap import install_profile
 
 
 def _run_init(args: list[str]):
     runner = CliRunner()
     return runner.invoke(app, args)
+
+
+ENTERPRISE_DOMAINS = {
+    "security",
+    "apex",
+    "architecture",
+    "flow",
+    "lwc",
+    "integration",
+    "testing",
+    "governance",
+    "compliance",
+    "devops",
+    "observability",
+    "deployment",
+    "performance",
+    "data",
+    "monitoring",
+}
+
+DEPRECATED_TOP_LEVEL_ENTERPRISE_FOLDERS = {
+    "apex",
+    "architecture",
+    "flow",
+    "integration",
+    "lwc",
+    "salesforce-apex",
+    "salesforce-architecture",
+    "salesforce-flow",
+    "salesforce-integration",
+    "salesforce-security",
+    "salesforce-testing",
+    "security",
+    "testing",
+}
+
+
+def _relative_files(root: Path) -> set[str]:
+    return {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file()
+    }
 
 
 def test_init_without_profile_preserves_standard_behavior(tmp_path: Path) -> None:
@@ -61,6 +104,12 @@ def test_salesforce_enterprise_profile_creates_bootstrap(tmp_path: Path) -> None
     assert result.exit_code == 0, result.output
     assert (target / ".agents" / "skills" / "speckit-plan" / "SKILL.md").exists()
     assert (target / "enterprise" / "constitution.md").exists()
+    constitution = (target / "enterprise" / "constitution.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Enterprise Governance Constitution" in constitution
+    assert "[PROJECT_NAME]" not in constitution
+    assert "[PRINCIPLE_1_NAME]" not in constitution
     assert (target / "enterprise" / "principles" / "security.md").exists()
     assert (target / "enterprise" / "salesforce" / "apex.md").exists()
     assert (target / "enterprise" / "rules" / "security" / "SEC-001.yaml").exists()
@@ -83,6 +132,34 @@ def test_salesforce_enterprise_profile_creates_bootstrap(tmp_path: Path) -> None
     )
     assert profile_summary["profile"] == "salesforce-enterprise"
     assert profile_summary["source"] == "bundled"
+
+
+def test_salesforce_enterprise_profile_copies_authoritative_enterprise_snapshot(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "enterprise-project"
+    profile_path = _locate_bundled_profile("salesforce-enterprise")
+    enterprise_root = _locate_bundled_enterprise_root()
+    assert profile_path is not None
+    assert enterprise_root is not None
+    assert not (profile_path / "enterprise").exists()
+
+    result = install_profile(target, profile_path, "salesforce-enterprise")
+
+    expected_files = _relative_files(enterprise_root)
+    actual_files = _relative_files(target / "enterprise")
+    assert expected_files <= actual_files
+    assert {
+        path.name for path in (target / "enterprise").iterdir() if path.is_dir()
+    }.isdisjoint(DEPRECATED_TOP_LEVEL_ENTERPRISE_FOLDERS)
+    assert {
+        path.parent.name
+        for path in (target / "enterprise" / "rules").glob("*/*")
+        if path.is_file()
+    } >= ENTERPRISE_DOMAINS
+    assert all(f"enterprise/{path}" in result.copied for path in expected_files)
+    assert (target / "products" / "sample-product" / "principles.md").exists()
+    assert (target / "products" / "sample-product" / "business-rules.yaml").exists()
 
 
 def test_invalid_profile_gives_clear_error(tmp_path: Path) -> None:
