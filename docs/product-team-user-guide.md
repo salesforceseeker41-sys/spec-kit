@@ -332,6 +332,8 @@ enterprise/salesforce/**/*.md
 
 The enterprise constitution is the top-level decision framework for interpreting enterprise principles and Salesforce standards. It complements `.specify/memory/constitution.md`; it does not replace the core Spec Kit project constitution.
 
+For Salesforce Enterprise projects, `.specify/memory/constitution.md` is also ESF-aware. It is a lightweight memory pointer that tells `specify`, `plan`, implementation, and test workflows to use the ESF Context Loader. It does not contain every enterprise rule; detailed governance remains under `enterprise/` and product knowledge remains under `products/<product-name>/`.
+
 Examples:
 
 - Apex must be bulk-safe.
@@ -656,7 +658,7 @@ Create a new ESF-ready Salesforce project:
 specify init my-project --integration codex --profile salesforce-enterprise
 ```
 
-The `salesforce-enterprise` profile is a bootstrap recipe. During initialization, the CLI copies product starter templates from the profile and copies the complete Enterprise Governance snapshot from the Platform Team-owned root `enterprise/` folder.
+The `salesforce-enterprise` profile is a bootstrap recipe. During initialization, the CLI copies product starter templates from the profile, copies the complete Enterprise Governance snapshot from the Platform Team-owned root `enterprise/` folder, and updates `.specify/memory/constitution.md` with an ESF-aware governance pointer.
 
 Expected generated structure:
 
@@ -683,6 +685,7 @@ Bootstrap source and runtime source are different:
 | Template-time | root `enterprise/` | Authoritative Enterprise Governance copied into the new project. |
 | Runtime | generated `enterprise/` | Enterprise constitution, principles, Salesforce standards, rules, and packs used by commands. |
 | Runtime | `products/<product-name>/` | Product principles, domain model, business rules, events, and integrations selected by `enterprise.yaml`. |
+| Runtime | `.specify/memory/constitution.md` | Top-level pointer that reminds Spec Kit workflows to load detailed ESF context dynamically. |
 
 After bootstrap:
 

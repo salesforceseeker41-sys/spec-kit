@@ -526,6 +526,8 @@ The profile is a bootstrap recipe. It includes:
 
 Enterprise Governance is copied separately from the repository root `enterprise/` folder into the generated project as a complete snapshot. Do not add duplicate enterprise constitution, rule, standard, or knowledge-pack content under `profiles/salesforce-enterprise/enterprise/`.
 
+The Salesforce Enterprise profile also rewrites `.specify/memory/constitution.md` as an ESF-aware top-level memory pointer. That file should reference the ESF Context Loader, `enterprise.yaml`, `enterprise/`, and `products/<product-name>/`; it must not duplicate full enterprise rule content.
+
 SOP: Update bootstrap profile.
 
 1. Update product templates and recipe files under `profiles/salesforce-enterprise/`.
@@ -533,6 +535,13 @@ SOP: Update bootstrap profile.
 3. Update tests in `tests/test_project_bootstrap.py`.
 4. Run bootstrap tests.
 5. Validate generated project manually if change is material.
+
+SOP: Update ESF memory constitution behavior.
+
+1. Update the ESF memory constitution renderer in `src/specify_cli/bootstrap/installer.py`.
+2. Keep the generated memory constitution concise and pointer-based.
+3. Verify it references `enterprise/constitution.md`, `enterprise/salesforce/**`, `enterprise/rule-packs/**`, `products/<product-name>/**`, `enterprise.yaml`, and the ESF Context Loader.
+4. Run `tests/test_project_bootstrap.py`.
 
 SOP: Update Enterprise Governance.
 

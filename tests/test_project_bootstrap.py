@@ -79,6 +79,11 @@ def test_init_without_profile_preserves_standard_behavior(tmp_path: Path) -> Non
     assert result.exit_code == 0, result.output
     assert (target / ".agents" / "skills" / "speckit-plan" / "SKILL.md").exists()
     assert (target / ".specify" / "memory" / "constitution.md").exists()
+    memory_constitution = (
+        target / ".specify" / "memory" / "constitution.md"
+    ).read_text(encoding="utf-8")
+    assert "[PROJECT_NAME] Constitution" in memory_constitution
+    assert "Enterprise Spec Framework Governance" not in memory_constitution
     assert not (target / "enterprise.yaml").exists()
     assert not (target / "enterprise").exists()
     assert not (target / "products").exists()
@@ -132,6 +137,50 @@ def test_salesforce_enterprise_profile_creates_bootstrap(tmp_path: Path) -> None
     )
     assert profile_summary["profile"] == "salesforce-enterprise"
     assert profile_summary["source"] == "bundled"
+
+
+def test_salesforce_enterprise_profile_writes_esf_memory_constitution(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "enterprise-project"
+
+    result = _run_init(
+        [
+            "init",
+            str(target),
+            "--integration",
+            "codex",
+            "--ignore-agent-tools",
+            "--script",
+            "sh",
+            "--profile",
+            "salesforce-enterprise",
+        ]
+    )
+
+    assert result.exit_code == 0, result.output
+    content = (target / ".specify" / "memory" / "constitution.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "Enterprise Spec Framework Governance" in content
+    assert "This project follows Enterprise Spec Framework governance" in content
+    assert "Platform Team owns `enterprise/` standards" in content
+    assert "Product Team owns `products/sample-product/`" in content
+    assert "enterprise.yaml" in content
+    assert "ESF Context Loader" in content
+    assert "enterprise/constitution.md" in content
+    assert "enterprise/salesforce/**" in content
+    assert "enterprise/rule-packs/**" in content
+    assert "products/sample-product/**" in content
+    assert "product:\n  name: sample-product" in content
+    assert "Product teams must not edit enterprise standards" in content
+    assert "Product teams may update their product folder" in content
+    assert "[PROJECT_NAME]" not in content
+    assert "[PRINCIPLE_1_NAME]" not in content
+    assert "SFAPEX-101" not in content
+    assert "APEX-001" not in content
+    assert len(content) < 5000
 
 
 def test_salesforce_enterprise_profile_copies_authoritative_enterprise_snapshot(
